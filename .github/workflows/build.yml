@@ -93,7 +93,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: v${{ github.ref }}
           body: |
-            - GUI試験実装
+            - 詳細画面追加
           draft: false
           prerelease: true
 

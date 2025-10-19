@@ -6,16 +6,26 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.WeakEventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.*;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.*;
 import java.util.List;
 
@@ -29,6 +39,7 @@ public class Main extends Application {
     private static final Timer timer1 = new Timer();
     private static final Timer timer2 = new Timer();
 
+    private static HashMap<String, LogData> logDataList = new HashMap<>();
     private static ObservableList<String> items = FXCollections.observableArrayList();
     private static ListView<String> listView = new ListView<>(items);
 
@@ -186,6 +197,7 @@ public class Main extends Application {
                         lastLogData.setURLType(logData.getURLType());
 
                         //LogData.add(logData);
+                        logDataList.put(("["+log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")"), logData);
                         Platform.runLater(() -> {
                             items.add(("["+log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")"));
                             listView.refresh();
@@ -281,16 +293,17 @@ public class Main extends Application {
                 try {
                     File f = new File(lastLogFile);
                     for (LogData logData : Function.getLogForURL(Function.getTextForFile(f))){
-                        if (logData.getLogDate().getTime() > lastLogData.getLogDate().getTime()){
+                        String s = "[" + log_sdf.format(logData.getLogDate()) + "] " + logData.getURL() + " (" + logData.getURLType() + ")";
+                        if (logData.getLogDate().getTime() >= lastLogData.getLogDate().getTime() && logDataList.get(s) == null){
 
                             lastLogData.setLogDate(logData.getLogDate());
                             lastLogData.setURL(logData.getURL());
                             lastLogData.setErrorMessage(logData.getErrorMessage());
                             lastLogData.setURLType(logData.getURLType());
 
-                            //LogData.add(logData);
+                            logDataList.put(s, logData);
                             Platform.runLater(() -> {
-                                items.add(("["+log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")"));
+                                items.add(s);
                                 listView.refresh();
                                 listView.scrollTo(items.size());
                             });
@@ -333,6 +346,169 @@ public class Main extends Application {
         listView.setPrefSize(1200, 600);
         listView.setLayoutX(15);
         listView.setLayoutY(55);
+        listView.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                //System.out.println(listView.getItems().size() + " / " + value);
+                String selectedItem = listView.getSelectionModel().getSelectedItem();
+                if (selectedItem != null) {
+                    LogData data = logDataList.get(selectedItem);
+                    if (data == null){
+                        return;
+                    }
+                    Stage stage1 = new Stage();
+                    stage1.setResizable(false);
+                    stage1.setMaximized(false);
+                    stage1.setFullScreen(false);
+                    stage1.setTitle("詳細");
+                    stage1.setWidth(800);
+                    stage1.setHeight(800);
+
+                    AnchorPane root1 = new AnchorPane();
+                    Scene scene1 = new Scene(root1);
+
+                    Label label1 = new Label("詳細");
+                    label1.setLayoutX(5);
+                    label1.setLayoutY(5);
+                    label1.setFont(new Font(16));
+                    root1.getChildren().add(label1);
+
+                    Label label1_2 = new Label("Date");
+                    label1_2.setLayoutX(10);
+                    label1_2.setLayoutY(40);
+                    root1.getChildren().add(label1_2);
+
+                    Label label1_2_1 = new Label(log_sdf.format(data.getLogDate()));
+                    label1_2_1.setLayoutX(10);
+                    label1_2_1.setLayoutY(60);
+                    root1.getChildren().add(label1_2_1);
+
+                    Label label1_3 = new Label("URL");
+                    label1_3.setLayoutX(10);
+                    label1_3.setLayoutY(80);
+                    root1.getChildren().add(label1_3);
+
+                    TextField field2 = new TextField();
+                    field2.setLayoutX(10);
+                    field2.setLayoutY(100);
+                    field2.setEditable(false);
+                    field2.setFocusTraversable(false);
+                    field2.setText(data.getURL());
+                    field2.setPrefWidth(700);
+                    root1.getChildren().add(field2);
+
+                    Label label1_4 = new Label("種類");
+                    label1_4.setLayoutX(10);
+                    label1_4.setLayoutY(130);
+                    root1.getChildren().add(label1_4);
+
+                    Label label1_4_1 = new Label(data.getURLType().equals("Video") ? "動画(Video)" : data.getURLType().equals("String") ? "テキスト(String)" : "画像(Image)");
+                    label1_4_1.setLayoutX(10);
+                    label1_4_1.setLayoutY(150);
+                    root1.getChildren().add(label1_4_1);
+
+                    Label label1_5 = new Label("エラーメッセージ");
+                    label1_5.setLayoutX(10);
+                    label1_5.setLayoutY(170);
+                    root1.getChildren().add(label1_5);
+
+                    TextArea textArea = new TextArea();
+                    textArea.setLayoutX(10);
+                    textArea.setLayoutY(190);
+                    textArea.setText(data.getErrorMessage());
+                    textArea.setPrefSize(700, 150);
+                    textArea.setEditable(false);
+                    textArea.setWrapText(false);
+                    root1.getChildren().add(textArea);
+
+                    if (data.getURLType().equals("Image")){
+                        Image fxImage = null;
+                        try (HttpClient client = HttpClient.newBuilder()
+                                .version(HttpClient.Version.HTTP_2)
+                                .followRedirects(HttpClient.Redirect.NORMAL)
+                                .connectTimeout(Duration.ofSeconds(5))
+                                .build()){
+
+                            HttpRequest request = HttpRequest.newBuilder()
+                                    .uri(new URI("https://i2i.nicovrc.net/?url="+data.getURL().replaceAll("https://i2i\\.nicovrc\\.net/\\?url=", "")))
+                                    //.uri(new URI("https://i2i.nicovrc.net/?url=https://nicovrc.net/VRChat_2024-08-16_03-59-02.141_3840x2160.png"))
+                                    .headers("User-Agent", Function.UserAgent)
+                                    .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                                    .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                                    .GET()
+                                    .build();
+
+                            HttpResponse<byte[]> send = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+                            fxImage = new Image(new ByteArrayInputStream(send.body()));
+                        } catch (Exception e){
+                            // e.printStackTrace();
+                        }
+
+                        if (fxImage == null){
+                            return;
+                        }
+
+                        ImageView imageView = new ImageView(fxImage);
+                        imageView.setLayoutX(10);
+                        imageView.setLayoutY(360);
+                        imageView.setFitHeight(350);
+                        imageView.setPreserveRatio(true);
+                        root1.getChildren().add(imageView);
+                    }
+
+                    if (data.getURLType().equals("String")){
+
+                        String str = null;
+
+                        try (HttpClient client = HttpClient.newBuilder()
+                                .version(HttpClient.Version.HTTP_2)
+                                .followRedirects(HttpClient.Redirect.NORMAL)
+                                .connectTimeout(Duration.ofSeconds(5))
+                                .build()){
+
+                            HttpRequest request = HttpRequest.newBuilder()
+                                    .uri(new URI(data.getURL()))
+                                    //.uri(new URI("https://i2i.nicovrc.net/?url=https://nicovrc.net/VRChat_2024-08-16_03-59-02.141_3840x2160.png"))
+                                    .headers("User-Agent", Function.Unity_UserAgent)
+                                    .headers("Accept", "*/*")
+                                    .headers("x-unity-version", Function.HTTP_x_unity_version)
+                                    .GET()
+                                    .build();
+
+                            HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+                            str = send.body();
+
+                        } catch (Exception e){
+                            // e.printStackTrace();
+                        }
+
+                        if (str != null){
+
+                            TextArea textArea2 = new TextArea();
+                            textArea2.setLayoutX(10);
+                            textArea2.setLayoutY(360);
+                            textArea2.setText(str);
+                            textArea2.setPrefSize(700, 300);
+                            textArea2.setEditable(false);
+                            textArea2.setWrapText(false);
+                            root1.getChildren().add(textArea2);
+
+                        }
+                    }
+
+                    javafx.scene.control.Button button = new javafx.scene.control.Button("閉じる");
+                    button.setLayoutX(650);
+                    button.setLayoutY(10);
+                    button.setOnAction(e -> {
+                        stage1.close();
+                    });
+                    root1.getChildren().add(button);
+
+
+                    stage1.setScene(scene1);
+                    stage1.show();
+                }
+            }
+        });
         //listView.scrollTo(items.size() - 1);
         root.getChildren().add(listView);
 
