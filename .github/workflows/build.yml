@@ -78,7 +78,8 @@ jobs:
       - name: Create Release Package
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          wget https://r2.7mi.site/vrc/start.bat
+          wget https://r2.7mi.site/vrc/start_v0.2.x.bat
+          mv ./start_v0.2.x.bat start.bat
           zip VRCVideoLogViewer.zip VRCVideoLogViewer-1.0-SNAPSHOT-all.jar start.bat
         shell: bash
 
@@ -92,7 +93,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: v${{ github.ref }}
           body: |
-            -
+            - GUI試験実装
           draft: false
           prerelease: true
 
