@@ -2,17 +2,37 @@ package net.nicovrc.dev;
 
 import com.amihaiemil.eoyaml.Yaml;
 import com.amihaiemil.eoyaml.YamlMapping;
+import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.WeakEventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
-public class Main {
+public class Main extends Application {
 
     private static SimpleDateFormat file_sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
     private static SimpleDateFormat log_sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    private static final ConfigData config = new ConfigData();
+
+    private static final Timer timer1 = new Timer();
+    private static final Timer timer2 = new Timer();
+
+    private static ObservableList<String> items = FXCollections.observableArrayList();
+    private static ListView<String> listView = new ListView<>(items);
+
     public static void main(String[] args) {
+
         System.out.println("[Info] VRCVideoLogViewer Ver " + Function.Version + "起動");
 
         File file = new File("./config.yml");
@@ -34,6 +54,8 @@ public class Main {
 
         System.out.println("[Info] config.yml 存在チェック");
         if (!file.exists()){
+            System.out.println("[Info] config.yml 自動生成します");
+
             try {
                 FileWriter file1 = new FileWriter("./config.yml");
                 PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
@@ -45,42 +67,26 @@ public class Main {
             } catch (Exception e){
                 e.printStackTrace();
             }
-            System.out.println("config.ymlを設定してください。\nPlease configure the config.yml file.");
-            return;
         }
 
-
-        String temp_logFolderPass = null;
-        boolean temp_debugOutput = false;
-        boolean temp_oldLogCheck = false;
-        boolean temp_VideoPlayer = false;
-        boolean temp_ImageDownloader = false;
-        boolean temp_StringDownloader = false;
         try {
             final YamlMapping yamlMapping = Yaml.createYamlInput(new File("./config.yml")).readYamlMapping();
-            temp_logFolderPass = yamlMapping.string("logfolder");
-            temp_debugOutput = yamlMapping.bool("debugOutput");
-            temp_oldLogCheck = yamlMapping.bool("oldLogCheck");
-            temp_VideoPlayer = yamlMapping.bool("VideoPlayer");
-            temp_ImageDownloader = yamlMapping.bool("ImageDownloader");
-            temp_StringDownloader = yamlMapping.bool("StringDownloader");
+            config.setLogFolderPass(yamlMapping.string("logfolder"));
+            config.setDebugOutput(yamlMapping.bool("debugOutput"));
+            config.setOldLogCheck(yamlMapping.bool("oldLogCheck"));
+            config.setVideoPlayer(yamlMapping.bool("VideoPlayer"));
+            config.setImageDownloader(yamlMapping.bool("ImageDownloader"));
+            config.setStringDownloader(yamlMapping.bool("StringDownloader"));
         } catch (Exception e){
             // e.printStackTrace();
 
         }
 
-        final String logFolderPass = temp_logFolderPass;
-        final boolean debugOutput = temp_debugOutput;
-        final boolean oldLogCheck = temp_oldLogCheck;
-        final boolean VideoPlayer = temp_VideoPlayer;
-        final boolean ImageDownloader = temp_ImageDownloader;
-        final boolean StringDownloader = temp_StringDownloader;
-
-        if (debugOutput){
+        if (config.isDebugOutput()){
             System.out.println("[Info] フォルダチェック");
         }
-        if (logFolderPass != null){
-            file = new File(logFolderPass);
+        if (config.getLogFolderPass() != null){
+            file = new File(config.getLogFolderPass());
             if (!file.exists()){
                 System.out.println("フォルダが見つかりませんでした。\nFolder not found.");
                 return;
@@ -105,7 +111,7 @@ public class Main {
             return;
         }
 
-        if (debugOutput){
+        if (config.isDebugOutput()){
             System.out.println("[Info] ログファイルの並び替え");
         }
         if (logFileList.size() > 1){
@@ -152,55 +158,42 @@ public class Main {
 
             } catch (Exception e){
                 //e.printStackTrace();
-                if (debugOutput){
+                if (config.isDebugOutput()){
                     System.out.println("[Error] 並び替えに失敗");
                 }
             }
         }
 
-        final List<LogData> LogData = new ArrayList<>();
-
         final LogData lastLogData = new LogData();
         lastLogData.setLogDate(new Date());
 
-        if (oldLogCheck){
-            if (debugOutput){
+        if (config.isOldLogCheck()){
+            if (config.isDebugOutput()){
                 System.out.println("[Info] 抽出開始");
             }
 
             for (String s : logFileList) {
-                file = new File(logFolderPass + "\\" + s);
+                file = new File(config.getLogFolderPass() + "\\" + s);
 
                 String text = Function.getTextForFile(file);
                 try {
                     List<LogData> log = Function.getLogForURL(text);
                     for (LogData logData : log) {
-                        boolean isPrint = false;
-                        if (VideoPlayer && logData.getURLType().equals("Video")){
-                            System.out.println("["+log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")");
-                            isPrint = true;
-                        } else if (ImageDownloader && logData.getURLType().equals("Image")){
-                            System.out.println("["+log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")");
-                            isPrint = true;
-                        } else if (StringDownloader && logData.getURLType().equals("String")){
-                            System.out.println("["+log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")");
-                            isPrint = true;
-                        }
-                        if (isPrint && logData.getErrorMessage() != null){
-                            System.out.println("["+log_sdf.format(logData.getLogDate())+"] エラーメッセージ (ErrorMessage) : " + logData.getErrorMessage());
-                        }
-
                         lastLogData.setLogDate(logData.getLogDate());
                         lastLogData.setURL(logData.getURL());
                         lastLogData.setErrorMessage(logData.getErrorMessage());
                         lastLogData.setURLType(logData.getURLType());
 
-                        LogData.add(logData);
+                        //LogData.add(logData);
+                        items.add(("["+log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")"));
+                        listView.refresh();
+                        listView.scrollTo(items.size());
+
                     }
 
                 } catch (Exception e){
                     //e.printStackTrace();
-                    if (debugOutput){
+                    if (config.isDebugOutput()){
                         System.out.println("[Error] ログファイル読み込みに失敗");
                         e.printStackTrace();
                     }
@@ -209,21 +202,19 @@ public class Main {
         }
 
 
-        if (debugOutput){
+        if (config.isDebugOutput()){
             System.out.println(log_sdf.format(lastLogData.getLogDate()));
             System.out.println("[Info] リアルタイム取得開始します...");
         }
 
-        final String[] temp_lastLogFile = {logFolderPass + "\\" + logFileList.getLast()};
-        Timer timer1 = new Timer();
-        Timer timer2 = new Timer();
+        final String[] temp_lastLogFile = {config.getLogFolderPass() + "\\" + logFileList.getLast()};
 
         timer1.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 List<String> logFileList = new ArrayList<>();
                 try {
-                    File file = new File(logFolderPass);
+                    File file = new File(config.getLogFolderPass());
                     for (File f : file.listFiles()){
                         if (f.getName().startsWith("output_log_")){
                             logFileList.add(f.getName());
@@ -271,7 +262,7 @@ public class Main {
                         logFileList = temp;
                     }
 
-                    temp_lastLogFile[0] = logFolderPass + "\\" + logFileList.getLast();
+                    temp_lastLogFile[0] = config.getLogFolderPass() + "\\" + logFileList.getLast();
                 } catch (Exception e){
                     timer1.cancel();
                     timer2.cancel();
@@ -289,27 +280,16 @@ public class Main {
                     for (LogData logData : Function.getLogForURL(Function.getTextForFile(f))){
                         if (logData.getLogDate().getTime() > lastLogData.getLogDate().getTime()){
 
-                            boolean isPrint = false;
-                            if (VideoPlayer && logData.getURLType().equals("Video")){
-                                System.out.println("["+log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")");
-                                isPrint = true;
-                            } else if (ImageDownloader && logData.getURLType().equals("Image")){
-                                System.out.println("["+log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")");
-                                isPrint = true;
-                            } else if (StringDownloader && logData.getURLType().equals("String")){
-                                System.out.println("["+log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")");
-                                isPrint = true;
-                            }
-                            if (isPrint && logData.getErrorMessage() != null){
-                                System.out.println("["+log_sdf.format(logData.getLogDate())+"] エラーメッセージ (ErrorMessage) : " + logData.getErrorMessage());
-                            }
-
                             lastLogData.setLogDate(logData.getLogDate());
                             lastLogData.setURL(logData.getURL());
                             lastLogData.setErrorMessage(logData.getErrorMessage());
                             lastLogData.setURLType(logData.getURLType());
 
-                            LogData.add(logData);
+                            //LogData.add(logData);
+                            items.add(("["+log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")"));
+                            listView.refresh();
+                            listView.scrollTo(items.size());
+
                         }
                     }
                 } catch (Exception e){
@@ -319,7 +299,65 @@ public class Main {
             }
         }, 0L, 1000L);
 
+        try {
+            launch();
+        } catch (Exception e){
+            e.printStackTrace();
+            timer1.cancel();
+            timer2.cancel();
+        }
+
         //timer.cancel();
 
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        if (config.isDebugOutput()){
+            System.out.println("[Info] GUI組み立て中...");
+        }
+        AnchorPane root = new AnchorPane();
+        Label label = new Label("VRCVideoLogViewer");
+        label.setLayoutX(15);
+        label.setLayoutY(15);
+        label.setFont(new Font(24));
+        root.getChildren().add(label);
+
+
+        listView.setEditable(false);
+        listView.setPrefSize(1200, 600);
+        listView.setLayoutX(15);
+        listView.setLayoutY(55);
+        //listView.scrollTo(items.size() - 1);
+        root.getChildren().add(listView);
+
+        Scene scene = new Scene(root);
+        stage.setTitle("VRCVideoLogViewer Ver " + Function.Version);
+        stage.setWidth(1280);
+        stage.setHeight(720);
+        stage.setFullScreen(false);
+        stage.setMaximized(false);
+        stage.setResizable(false);
+
+
+        stage.setScene(scene);
+        if (config.isDebugOutput()){
+            System.out.println("[Info] GUI組み立て完了！");
+        }
+        if (config.isDebugOutput()){
+            System.out.println("[Info] GUI表示！");
+        }
+        stage.show();
+        Thread.ofVirtual().start(()->{
+            while (stage.isShowing()){
+                try {
+                    Thread.sleep(1000L);
+                } catch (Exception e){
+                    //e.printStackTrace();
+                }
+            }
+            timer1.cancel();
+            timer2.cancel();
+        });
     }
 }
