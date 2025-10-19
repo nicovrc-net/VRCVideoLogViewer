@@ -3,6 +3,7 @@ package net.nicovrc.dev;
 import com.amihaiemil.eoyaml.Yaml;
 import com.amihaiemil.eoyaml.YamlMapping;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.WeakEventHandler;
@@ -185,9 +186,11 @@ public class Main extends Application {
                         lastLogData.setURLType(logData.getURLType());
 
                         //LogData.add(logData);
-                        items.add(("["+log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")"));
-                        listView.refresh();
-                        listView.scrollTo(items.size());
+                        Platform.runLater(() -> {
+                            items.add(("["+log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")"));
+                            listView.refresh();
+                            listView.scrollTo(items.size());
+                        });
 
                     }
 
@@ -286,9 +289,11 @@ public class Main extends Application {
                             lastLogData.setURLType(logData.getURLType());
 
                             //LogData.add(logData);
-                            items.add(("["+log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")"));
-                            listView.refresh();
-                            listView.scrollTo(items.size());
+                            Platform.runLater(() -> {
+                                items.add(("["+log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")"));
+                                listView.refresh();
+                                listView.scrollTo(items.size());
+                            });
 
                         }
                     }
