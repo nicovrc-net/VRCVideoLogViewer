@@ -210,6 +210,7 @@ public class Main extends Application {
                     //e.printStackTrace();
                     if (config.isDebugOutput()){
                         System.out.println("[Error] ログファイル読み込みに失敗");
+                        System.out.println("filename : " + file.getName());
                         e.printStackTrace();
                     }
                 }

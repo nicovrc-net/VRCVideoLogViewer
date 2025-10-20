@@ -66,7 +66,10 @@ public class Function {
                 logData.getLast().setErrorMessage(video_error.group(7));
             }
             if (video_error2.find()){
-                logData.getLast().setErrorMessage(video_error2.group(7));
+                String group = video_error2.group(7);
+                if (group.startsWith("Error: ")){
+                    logData.getLast().setErrorMessage(group);
+                }
             }
 
             if (image_error.find()){
