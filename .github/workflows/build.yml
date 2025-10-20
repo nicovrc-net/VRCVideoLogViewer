@@ -93,7 +93,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: v${{ github.ref }}
           body: |
-            - 詳細画面追加
+            - 動画URLが一部取得できない問題の修正
           draft: false
           prerelease: true
 
