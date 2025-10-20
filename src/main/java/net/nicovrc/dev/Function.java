@@ -23,6 +23,7 @@ public class Function {
     private static Pattern matcher_StringLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[String Download\\] Attempting to load String from URL '(.+)'");
 
     private static Pattern matcher_VideoErrorLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Warning    -  \\[Video Playback\\] (.+)");
+    private static Pattern matcher_VideoErrorLog2 = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Error      -  \\[AVProVideo\\] (.+)");
     private static Pattern matcher_ImageErrorLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Image Download\\] A web request exception occurred while loading image from URL '(.+)'\\. Exception: (.+)");
     private static Pattern matcher_StringErrorLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[String Download\\] A web request exception occurred while loading string from URL '(.+)'\\. Exception: (.+)");
 
@@ -56,12 +57,16 @@ public class Function {
             Matcher string = matcher_StringLog.matcher(s);
 
             Matcher video_error = matcher_VideoErrorLog.matcher(s);
+            Matcher video_error2 = matcher_VideoErrorLog2.matcher(s);
             Matcher image_error = matcher_ImageErrorLog.matcher(s);
             Matcher string_error = matcher_StringErrorLog.matcher(s);
 
             LogData data = new LogData();
             if (video_error.find()){
                 logData.getLast().setErrorMessage(video_error.group(7));
+            }
+            if (video_error2.find()){
+                logData.getLast().setErrorMessage(video_error2.group(7));
             }
 
             if (image_error.find()){
