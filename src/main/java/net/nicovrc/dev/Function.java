@@ -18,6 +18,7 @@ public class Function {
     public static String HTTP_x_unity_version = "2022.3.22f1-DWR";
 
     private static Pattern matcher_VideoLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Video Playback\\] Attempting to resolve URL '(.+)'");
+    private static Pattern matcher_VideoLog2 = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Video Playback\\] Resolving URL '(.+)'");
     private static Pattern matcher_ImageLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Image Download\\] Attempting to load image from URL '(.+)'");
     private static Pattern matcher_StringLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[String Download\\] Attempting to load String from URL '(.+)'");
 
@@ -50,6 +51,7 @@ public class Function {
 
         for (String s : logText.split("\n")) {
             Matcher video = matcher_VideoLog.matcher(s);
+            Matcher video2 = matcher_VideoLog2.matcher(s);
             Matcher image = matcher_ImageLog.matcher(s);
             Matcher string = matcher_StringLog.matcher(s);
 
@@ -80,6 +82,16 @@ public class Function {
                 data.setURLType("Video");
                 logData.add(data);
             }
+
+            if (video2.find()){
+                String tempDate = video2.group(1)+"."+video2.group(2)+"."+video2.group(3)+" "+video2.group(4)+":"+video2.group(5)+":"+video2.group(6);
+                data.setLogDate(logDate.parse(tempDate));
+                data.setURL(video2.group(7));
+                data.setErrorMessage(null);
+                data.setURLType("Video");
+                logData.add(data);
+            }
+
             if (image.find()){
                 String tempDate = image.group(1)+"."+image.group(2)+"."+image.group(3)+" "+image.group(4)+":"+image.group(5)+":"+image.group(6);
                 data.setLogDate(logDate.parse(tempDate));
