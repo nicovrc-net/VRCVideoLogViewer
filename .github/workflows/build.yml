@@ -94,6 +94,7 @@ jobs:
           release_name: v${{ github.ref }}
           body: |
             - VRChatのログファイルのフォルダのパスを自動取得するように
+            - アップデート通知 追加
           draft: false
           prerelease: true
 
