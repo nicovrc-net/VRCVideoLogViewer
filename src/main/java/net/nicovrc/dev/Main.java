@@ -108,9 +108,18 @@ public class Main extends Application {
                 }
 
                 file = new File("C:\\Users\\"+ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
+                if (file.exists()){
+                    config.setLogFolderPass("C:\\Users\\"+ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
 
-                if (config.isDebugOutput()){
-                    System.out.println("[Info] ログフォルダ : " + "C:\\Users\\"+ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
+                    if (config.isDebugOutput()){
+                        System.out.println("[Info] 自動取得成功 : " + "C:\\Users\\"+ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
+                    }
+                } else {
+                    System.out.println("[Info] 自動取得失敗");
+
+                    timer1.cancel();
+                    timer2.cancel();
+                    return;
                 }
             }
         }
@@ -141,6 +150,8 @@ public class Main extends Application {
         }
         if (logFileList.isEmpty()){
             System.out.println("ログファイルが見つかりませんでした。\nLog file not found.");
+            timer1.cancel();
+            timer2.cancel();
             return;
         }
 
