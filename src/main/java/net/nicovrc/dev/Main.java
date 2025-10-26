@@ -2,6 +2,8 @@ package net.nicovrc.dev;
 
 import com.amihaiemil.eoyaml.Yaml;
 import com.amihaiemil.eoyaml.YamlMapping;
+import com.sun.security.auth.module.NTSystem;
+import com.sun.security.auth.module.UnixSystem;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -107,6 +109,24 @@ public class Main extends Application {
         } else {
             System.out.println("設定ファイルが正しく設定されていません。\nThe configuration file is not set up correctly.");
             return;
+        }
+
+        if (config.getLogFolderPass().isEmpty()){
+            NTSystem ntSystem = new NTSystem();
+            if (ntSystem.getName().isEmpty()){
+                UnixSystem unixSystem = new UnixSystem();
+
+            } else {
+                if (config.isDebugOutput()){
+                    System.out.println("[Info] ログフォルダの自動取得");
+                }
+
+                file = new File("C:\\Users\\"+ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
+
+                if (config.isDebugOutput()){
+                    System.out.println("[Info] ログフォルダ : " + "C:\\Users\\"+ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
+                }
+            }
         }
 
         List<String> logFileList = new ArrayList<>();

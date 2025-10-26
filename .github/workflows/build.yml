@@ -93,7 +93,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: v${{ github.ref }}
           body: |
-            - 詳細画面で動画の場合タイトルとサムネイルが取得できるように
+            - VRChatのログファイルのフォルダのパスを自動取得するように
           draft: false
           prerelease: true
 
