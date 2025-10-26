@@ -93,7 +93,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: v${{ github.ref }}
           body: |
-            - 動画のエラーが一部取得できない問題の修正
+            - 詳細画面で動画の場合タイトルとサムネイルが取得できるように
           draft: false
           prerelease: true
 

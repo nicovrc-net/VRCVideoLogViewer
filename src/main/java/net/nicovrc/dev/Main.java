@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
@@ -421,82 +422,115 @@ public class Main extends Application {
                     textArea.setWrapText(false);
                     root1.getChildren().add(textArea);
 
-                    if (data.getURLType().equals("Image")){
-                        Image fxImage = null;
-                        try (HttpClient client = HttpClient.newBuilder()
-                                .version(HttpClient.Version.HTTP_2)
-                                .followRedirects(HttpClient.Redirect.NORMAL)
-                                .connectTimeout(Duration.ofSeconds(5))
-                                .build()){
+                    switch (data.getURLType()) {
+                        case "Video" -> {
+                            //System.out.println("debug 0");
+                            VideoData videoData = Function.getVideoData(data.getURL());
+                            //System.out.println("debug 1");
+                            Image fxImage = videoData.getThumbnail() != null ? new Image(new ByteArrayInputStream(videoData.getThumbnail())) : null;
+                            //System.out.println("debug 2");
 
-                            HttpRequest request = HttpRequest.newBuilder()
-                                    .uri(new URI("https://i2i.nicovrc.net/?url="+data.getURL().replaceAll("https://i2i\\.nicovrc\\.net/\\?url=", "")))
-                                    //.uri(new URI("https://i2i.nicovrc.net/?url=https://nicovrc.net/VRChat_2024-08-16_03-59-02.141_3840x2160.png"))
-                                    .headers("User-Agent", Function.UserAgent)
-                                    .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                                    .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
-                                    .GET()
-                                    .build();
+                            Label label1_6 = new Label("タイトル");
+                            label1_6.setLayoutX(10);
+                            label1_6.setLayoutY(360);
+                            root1.getChildren().add(label1_6);
 
-                            HttpResponse<byte[]> send = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-                            fxImage = new Image(new ByteArrayInputStream(send.body()));
-                        } catch (Exception e){
-                            // e.printStackTrace();
+                            TextField field3 = new TextField();
+                            field3.setLayoutX(10);
+                            field3.setLayoutY(380);
+                            field3.setEditable(false);
+                            field3.setFocusTraversable(false);
+                            field3.setText(videoData.getVideoTitle());
+                            field3.setPrefWidth(700);
+                            root1.getChildren().add(field3);
+
+                            if (fxImage != null) {
+                                //System.out.println("debug 3");
+
+                                ImageView imageView = new ImageView(fxImage);
+                                imageView.setLayoutX(10);
+                                imageView.setLayoutY(420);
+                                imageView.setFitHeight(300);
+                                imageView.setPreserveRatio(true);
+                                root1.getChildren().add(imageView);
+                            }
+
                         }
+                        case "Image" -> {
+                            Image fxImage = null;
+                            try (HttpClient client = HttpClient.newBuilder()
+                                    .version(HttpClient.Version.HTTP_2)
+                                    .followRedirects(HttpClient.Redirect.NORMAL)
+                                    .connectTimeout(Duration.ofSeconds(5))
+                                    .build()) {
 
-                        if (fxImage == null){
-                            return;
+                                HttpRequest request = HttpRequest.newBuilder()
+                                        .uri(new URI("https://i2i.nicovrc.net/?url=" + data.getURL().replaceAll("https://i2i\\.nicovrc\\.net/\\?url=", "")))
+                                        //.uri(new URI("https://i2i.nicovrc.net/?url=https://nicovrc.net/VRChat_2024-08-16_03-59-02.141_3840x2160.png"))
+                                        .headers("User-Agent", Function.UserAgent)
+                                        .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                                        .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                                        .GET()
+                                        .build();
+
+                                HttpResponse<byte[]> send = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+                                fxImage = new Image(new ByteArrayInputStream(send.body()));
+                            } catch (Exception e) {
+                                // e.printStackTrace();
+                            }
+
+                            if (fxImage != null) {
+                                ImageView imageView = new ImageView(fxImage);
+                                imageView.setLayoutX(10);
+                                imageView.setLayoutY(360);
+                                imageView.setFitHeight(350);
+                                imageView.setPreserveRatio(true);
+                                root1.getChildren().add(imageView);
+                            }
+
                         }
+                        case "String" -> {
 
-                        ImageView imageView = new ImageView(fxImage);
-                        imageView.setLayoutX(10);
-                        imageView.setLayoutY(360);
-                        imageView.setFitHeight(350);
-                        imageView.setPreserveRatio(true);
-                        root1.getChildren().add(imageView);
+                            String str = null;
+
+                            try (HttpClient client = HttpClient.newBuilder()
+                                    .version(HttpClient.Version.HTTP_2)
+                                    .followRedirects(HttpClient.Redirect.NORMAL)
+                                    .connectTimeout(Duration.ofSeconds(5))
+                                    .build()) {
+
+                                HttpRequest request = HttpRequest.newBuilder()
+                                        .uri(new URI(data.getURL()))
+                                        //.uri(new URI("https://i2i.nicovrc.net/?url=https://nicovrc.net/VRChat_2024-08-16_03-59-02.141_3840x2160.png"))
+                                        .headers("User-Agent", Function.Unity_UserAgent)
+                                        .headers("Accept", "*/*")
+                                        .headers("x-unity-version", Function.HTTP_x_unity_version)
+                                        .GET()
+                                        .build();
+
+                                HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+                                str = send.body();
+
+                            } catch (Exception e) {
+                                // e.printStackTrace();
+                            }
+
+                            if (str != null) {
+
+                                TextArea textArea2 = new TextArea();
+                                textArea2.setLayoutX(10);
+                                textArea2.setLayoutY(360);
+                                textArea2.setText(str);
+                                textArea2.setPrefSize(700, 300);
+                                textArea2.setEditable(false);
+                                textArea2.setWrapText(false);
+                                root1.getChildren().add(textArea2);
+
+                            }
+                        }
                     }
 
-                    if (data.getURLType().equals("String")){
-
-                        String str = null;
-
-                        try (HttpClient client = HttpClient.newBuilder()
-                                .version(HttpClient.Version.HTTP_2)
-                                .followRedirects(HttpClient.Redirect.NORMAL)
-                                .connectTimeout(Duration.ofSeconds(5))
-                                .build()){
-
-                            HttpRequest request = HttpRequest.newBuilder()
-                                    .uri(new URI(data.getURL()))
-                                    //.uri(new URI("https://i2i.nicovrc.net/?url=https://nicovrc.net/VRChat_2024-08-16_03-59-02.141_3840x2160.png"))
-                                    .headers("User-Agent", Function.Unity_UserAgent)
-                                    .headers("Accept", "*/*")
-                                    .headers("x-unity-version", Function.HTTP_x_unity_version)
-                                    .GET()
-                                    .build();
-
-                            HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-                            str = send.body();
-
-                        } catch (Exception e){
-                            // e.printStackTrace();
-                        }
-
-                        if (str != null){
-
-                            TextArea textArea2 = new TextArea();
-                            textArea2.setLayoutX(10);
-                            textArea2.setLayoutY(360);
-                            textArea2.setText(str);
-                            textArea2.setPrefSize(700, 300);
-                            textArea2.setEditable(false);
-                            textArea2.setWrapText(false);
-                            root1.getChildren().add(textArea2);
-
-                        }
-                    }
-
-                    javafx.scene.control.Button button = new javafx.scene.control.Button("閉じる");
+                    Button button = new Button("閉じる");
                     button.setLayoutX(650);
                     button.setLayoutY(10);
                     button.setOnAction(e -> {
