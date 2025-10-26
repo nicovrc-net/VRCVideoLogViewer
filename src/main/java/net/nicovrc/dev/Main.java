@@ -97,20 +97,6 @@ public class Main extends Application {
 
         }
 
-        if (config.isDebugOutput()){
-            System.out.println("[Info] フォルダチェック");
-        }
-        if (config.getLogFolderPass() != null){
-            file = new File(config.getLogFolderPass());
-            if (!file.exists()){
-                System.out.println("フォルダが見つかりませんでした。\nFolder not found.");
-                return;
-            }
-        } else {
-            System.out.println("設定ファイルが正しく設定されていません。\nThe configuration file is not set up correctly.");
-            return;
-        }
-
         if (config.getLogFolderPass().isEmpty()){
             NTSystem ntSystem = new NTSystem();
             if (ntSystem.getName().isEmpty()){
@@ -127,6 +113,20 @@ public class Main extends Application {
                     System.out.println("[Info] ログフォルダ : " + "C:\\Users\\"+ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
                 }
             }
+        }
+
+        if (config.isDebugOutput()){
+            System.out.println("[Info] フォルダチェック");
+        }
+        if (config.getLogFolderPass() != null){
+            file = new File(config.getLogFolderPass());
+            if (!file.exists()){
+                System.out.println("フォルダが見つかりませんでした。\nFolder not found.");
+                return;
+            }
+        } else {
+            System.out.println("設定ファイルが正しく設定されていません。\nThe configuration file is not set up correctly.");
+            return;
         }
 
         List<String> logFileList = new ArrayList<>();
