@@ -6,3 +6,5 @@ VRChatのログから動画や画像、テキストの取得のURLを抜き出�
 - VRCVideoLogViewer.zipをダウンロード
 - ダウンロードしたVRCVideoLogViewer.zipを展開
 - 出てきたstartファイルをダブルクリックで起動
+
+## [変更履歴](CHANGELOG.md)
