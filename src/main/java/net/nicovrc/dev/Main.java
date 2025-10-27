@@ -31,6 +31,8 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main extends Application {
 
@@ -46,11 +48,24 @@ public class Main extends Application {
     private static ObservableList<String> items = FXCollections.observableArrayList();
     private static ListView<String> listView = new ListView<>(items);
 
+    private static final Pattern matcher_version = Pattern.compile("<id>tag:github\\.com,2008:Repository/(\\d+)/(.+)</id>");
+
+    private static final NTSystem ntSystem = new NTSystem();
+    private static String new_version = Function.Version;
+    private static boolean isUpdate = false;
+
     public static void main(String[] args) {
 
         System.out.println("[Info] VRCVideoLogViewer Ver " + Function.Version + "起動");
 
-        File file = new File("./config.yml");
+        File file = new File("./tools/openjdk-21.0.2_windows-x64_bin.zip");
+        if (file.exists()){
+            file.delete();
+        }
+        file = new File("./tools/openjfx-21.0.8_windows-x64_bin-sdk.zip");
+        if (file.exists()){
+            file.delete();
+        }
 
         final String configText = """
                 # VRChat ログフォルダパス (VRChat log folder path)
@@ -67,7 +82,106 @@ public class Main extends Application {
                 StringDownloader: true
                 """;
 
+        System.out.println("[Info] アップデート確認");
+        final boolean isWindowsBatchStart = new File("./tools").exists() && new File("./tools/jdk-21.0.2").exists();
+
+        try (HttpClient client = HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_2)
+                .followRedirects(HttpClient.Redirect.ALWAYS)
+                .connectTimeout(Duration.ofSeconds(5))
+                .build()) {
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(new URI("https://github.com/nicovrc-net/VRCVideoLogViewer/releases.atom"))
+                    .headers("User-Agent", Function.UserAgent)
+                    .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                    .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                    .GET()
+                    .build();
+            HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            //System.out.println(send.body());
+            Matcher matcher = matcher_version.matcher(send.body());
+            if (matcher.find()){
+                new_version = matcher.group(2);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            timer1.cancel();
+            timer2.cancel();
+
+            return;
+        }
+        try {
+
+            file = new File("./");
+            final String CurrentFolderPass = file.getCanonicalPath().replaceAll("\\\\", "/");
+
+            file = new File("./tools/VRCVideoLogViewer.zip");
+            if (file.exists()){
+                file.delete();
+            }
+            file = new File("./tools/VRCVideoLogViewer");
+            if (file.exists()){
+                for (File listFile : file.listFiles()) {
+                    listFile.delete();
+                }
+                file.delete();
+            }
+
+            isUpdate = !Function.Version.equals(new_version);
+
+            if (isUpdate){
+                System.out.println("[Info] アップデートが見つかりました。");
+                if (isWindowsBatchStart){
+                    File update_file = new File("./tools/update1.bat");
+                    if (update_file.exists()){
+                        update_file.delete();
+                    }
+                    update_file = new File("./tools/update2.bat");
+                    if (update_file.exists()){
+                        update_file.delete();
+                    }
+
+                    FileWriter file1 = new FileWriter("./tools/update1.bat");
+                    PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
+                    pw.print("start ./tools/update2.bat".replaceAll("\\./", CurrentFolderPass+"/"));
+                    pw.close();
+                    file1.close();
+                    pw = null;
+                    file1 = null;
+
+                    file1 = new FileWriter("./tools/update2.bat");
+                    pw = new PrintWriter(new BufferedWriter(file1));
+                    String str = """
+                        curl https://github.com/nicovrc-net/VRCVideoLogViewer/releases/download/#ver#/VRCVideoLogViewer.zip -L --output ./tools/VRCVideoLogViewer.zip
+                        tar -xf ./tools/VRCVideoLogViewer.zip -C ./tools\\
+                        del ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
+                        del ./start.bat
+                        move ./tools\\VRCVideoLogViewer-1.0-SNAPSHOT-all.jar ./
+                        move ./tools\\start.bat ./
+                        exit
+                        """;
+                    pw.print(str.replaceAll("#ver#", new_version).replaceAll("\\./", CurrentFolderPass.replaceAll("/", "\\\\\\\\")+"\\\\"));
+                    pw.close();
+                    file1.close();
+                    pw = null;
+                    file1 = null;
+                } else {
+
+                }
+            } else {
+                System.out.println("[Info] アップデートはありませんでした。 (現在: "+Function.Version+" 最新:"+new_version+")");
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            timer1.cancel();
+            timer2.cancel();
+            return;
+        }
+
         System.out.println("[Info] config.yml 存在チェック");
+        file = new File("./config.yml");
+
         if (!file.exists()){
             System.out.println("[Info] config.yml 自動生成します");
 
@@ -98,7 +212,7 @@ public class Main extends Application {
         }
 
         if (config.getLogFolderPass().isEmpty()){
-            NTSystem ntSystem = new NTSystem();
+
             if (ntSystem.getName().isEmpty()){
                 UnixSystem unixSystem = new UnixSystem();
 
@@ -569,7 +683,6 @@ public class Main extends Application {
                     });
                     root1.getChildren().add(button);
 
-
                     stage1.setScene(scene1);
                     stage1.show();
                 }
@@ -588,6 +701,82 @@ public class Main extends Application {
 
 
         stage.setScene(scene);
+
+        Stage stage1 = new Stage();
+        if (isUpdate){
+            // アップデート通知
+            stage1.setResizable(false);
+            stage1.setMaximized(false);
+            stage1.setFullScreen(false);
+            stage1.setTitle("アップデートのお知らせ");
+            stage1.setWidth(400);
+            stage1.setHeight(200);
+
+            AnchorPane root1 = new AnchorPane();
+            Scene scene1 = new Scene(root1);
+
+            Button button = new Button("閉じる");
+            button.setLayoutX(300);
+            button.setLayoutY(10);
+            button.setOnAction(e -> {
+                stage1.close();
+            });
+            root1.getChildren().add(button);
+
+            Label update_label1 = new Label("アップデートのお知らせ");
+            update_label1.setLayoutX(5);
+            update_label1.setLayoutY(5);
+            update_label1.setFont(new Font(16));
+            root1.getChildren().add(update_label1);
+
+            Label update_label2 = new Label("アップデートがあります。");
+            update_label2.setLayoutX(10);
+            update_label2.setLayoutY(40);
+            root1.getChildren().add(update_label2);
+
+            Label update_label3 = new Label("現在のバージョン : " + Function.Version);
+            update_label3.setLayoutX(10);
+            update_label3.setLayoutY(80);
+            root1.getChildren().add(update_label3);
+
+            Label update_label4 = new Label("最新のバージョン : " + new_version);
+            update_label4.setLayoutX(10);
+            update_label4.setLayoutY(100);
+            root1.getChildren().add(update_label4);
+
+            if (!ntSystem.getName().isEmpty()){
+                // Windowsの場合のアップデートバッチ用のボタン
+                Button update_button = new Button("アップデート");
+                update_button.setLayoutX(10);
+                update_button.setLayoutY(120);
+                update_button.setOnAction(e -> {
+                    try {
+                        final Runtime runtime = Runtime.getRuntime();
+                        final Process exec0 = runtime.exec(new String[]{"./tools/update1.bat"});
+                        Thread.ofVirtual().start(() -> {
+                            try {
+                                Thread.sleep(5000L);
+                            } catch (Exception ex) {
+                                //ex.printStackTrace();
+                            }
+
+                            if (exec0.isAlive()) {
+                                exec0.destroy();
+                            }
+                        });
+                        exec0.waitFor();
+                    } catch (Exception ex){
+                        // ex.printStackTrace();
+                    }
+                    stage1.close();
+                    stage.close();
+                });
+                root1.getChildren().add(update_button);
+            }
+
+            stage1.setScene(scene1);
+        }
+
         if (config.isDebugOutput()){
             System.out.println("[Info] GUI組み立て完了！");
         }
@@ -595,6 +784,9 @@ public class Main extends Application {
             System.out.println("[Info] GUI表示！");
         }
         stage.show();
+        if (isUpdate){
+            stage1.show();
+        }
         Thread.ofVirtual().start(()->{
             while (stage.isShowing()){
                 try {
