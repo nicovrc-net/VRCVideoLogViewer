@@ -513,12 +513,14 @@ public class Main extends Application {
                             return;
                         }
                         Stage stage1 = new Stage();
-                        stage1.setResizable(false);
-                        stage1.setMaximized(false);
-                        stage1.setFullScreen(false);
-                        stage1.setTitle("詳細");
-                        stage1.setWidth(800);
-                        stage1.setHeight(800);
+                        Platform.runLater(()->{
+                            stage1.setResizable(false);
+                            stage1.setMaximized(false);
+                            stage1.setFullScreen(false);
+                            stage1.setTitle("詳細");
+                            stage1.setWidth(800);
+                            stage1.setHeight(800);
+                        });
 
                         AnchorPane root1 = new AnchorPane();
                         Scene scene1 = new Scene(root1);
@@ -527,22 +529,30 @@ public class Main extends Application {
                         label1.setLayoutX(5);
                         label1.setLayoutY(5);
                         label1.setFont(new Font(16));
-                        root1.getChildren().add(label1);
+                        Platform.runLater(()->{
+                            root1.getChildren().add(label1);
+                        });
 
                         Label label1_2 = new Label("Date");
                         label1_2.setLayoutX(10);
                         label1_2.setLayoutY(40);
-                        root1.getChildren().add(label1_2);
+                        Platform.runLater(()->{
+                            root1.getChildren().add(label1_2);
+                        });
 
                         Label label1_2_1 = new Label(log_sdf.format(data.getLogDate()));
                         label1_2_1.setLayoutX(10);
                         label1_2_1.setLayoutY(60);
-                        root1.getChildren().add(label1_2_1);
+                        Platform.runLater(()->{
+                            root1.getChildren().add(label1_2_1);
+                        });
 
                         Label label1_3 = new Label("URL");
                         label1_3.setLayoutX(10);
                         label1_3.setLayoutY(80);
-                        root1.getChildren().add(label1_3);
+                        Platform.runLater(()->{
+                            root1.getChildren().add(label1_3);
+                        });
 
                         TextField field2 = new TextField();
                         field2.setLayoutX(10);
@@ -550,23 +560,29 @@ public class Main extends Application {
                         field2.setEditable(false);
                         field2.setFocusTraversable(false);
                         field2.setText(data.getURL());
-                        field2.setPrefWidth(700);
-                        root1.getChildren().add(field2);
+                        field2.setPrefWidth(700);Platform.runLater(()->{
+                            root1.getChildren().add(field2);
+                        });
 
                         Label label1_4 = new Label("種類");
                         label1_4.setLayoutX(10);
-                        label1_4.setLayoutY(130);
-                        root1.getChildren().add(label1_4);
+                        label1_4.setLayoutY(130);Platform.runLater(()->{
+                            root1.getChildren().add(label1_4);
+                        });
 
                         Label label1_4_1 = new Label(data.getURLType().equals("Video") ? "動画(Video)" : data.getURLType().equals("String") ? "テキスト(String)" : "画像(Image)");
                         label1_4_1.setLayoutX(10);
-                        label1_4_1.setLayoutY(150);
+                        label1_4_1.setLayoutY(150);Platform.runLater(()->{
+
+                        });
                         root1.getChildren().add(label1_4_1);
 
                         Label label1_5 = new Label("エラーメッセージ");
                         label1_5.setLayoutX(10);
                         label1_5.setLayoutY(170);
-                        root1.getChildren().add(label1_5);
+                        Platform.runLater(()->{
+                            root1.getChildren().add(label1_5);
+                        });
 
                         TextArea textArea = new TextArea();
                         textArea.setLayoutX(10);
@@ -575,7 +591,9 @@ public class Main extends Application {
                         textArea.setPrefSize(700, 150);
                         textArea.setEditable(false);
                         textArea.setWrapText(false);
-                        root1.getChildren().add(textArea);
+                        Platform.runLater(()->{
+                            root1.getChildren().add(textArea);
+                        });
 
                         switch (data.getURLType()) {
                             case "Video" -> {
@@ -597,7 +615,9 @@ public class Main extends Application {
                                 field3.setFocusTraversable(false);
                                 field3.setText(videoData.getVideoTitle());
                                 field3.setPrefWidth(700);
-                                root1.getChildren().add(field3);
+                                Platform.runLater(()->{
+                                    root1.getChildren().add(field3);
+                                });
 
                                 if (fxImage != null) {
                                     //System.out.println("debug 3");
@@ -607,7 +627,9 @@ public class Main extends Application {
                                     imageView.setLayoutY(420);
                                     imageView.setFitHeight(300);
                                     imageView.setPreserveRatio(true);
-                                    root1.getChildren().add(imageView);
+                                    Platform.runLater(()->{
+                                        root1.getChildren().add(imageView);
+                                    });
                                 }
 
                             }
@@ -640,7 +662,9 @@ public class Main extends Application {
                                     imageView.setLayoutY(360);
                                     imageView.setFitHeight(350);
                                     imageView.setPreserveRatio(true);
-                                    root1.getChildren().add(imageView);
+                                    Platform.runLater(()->{
+                                        root1.getChildren().add(imageView);
+                                    });
                                 }
 
                             }
@@ -679,8 +703,9 @@ public class Main extends Application {
                                     textArea2.setPrefSize(700, 300);
                                     textArea2.setEditable(false);
                                     textArea2.setWrapText(false);
-                                    root1.getChildren().add(textArea2);
-
+                                    Platform.runLater(()->{
+                                        root1.getChildren().add(textArea2);
+                                    });
                                 }
                             }
                         }
@@ -691,10 +716,12 @@ public class Main extends Application {
                         button.setOnAction(e -> {
                             stage1.close();
                         });
-                        root1.getChildren().add(button);
+                        Platform.runLater(()->{
+                            root1.getChildren().add(button);
+                            stage1.setScene(scene1);
+                            stage1.show();
+                        });
 
-                        stage1.setScene(scene1);
-                        Platform.runLater(stage1::show);
                     }
                 });
             }

@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 public class Function {
 
-    public static String Version = "0.5.1-beta.1";
+    public static String Version = "0.5.2-beta.1";
 
     public static String UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:144.0) Gecko/20100101 Firefox/144.0 VRCVideoLogViewer/"+Version;
     public static String Unity_UserAgent = "UnityPlayer/2022.3.22f1-DWR (UnityWebRequest/1.0, libcurl/8.5.0-DEV)";

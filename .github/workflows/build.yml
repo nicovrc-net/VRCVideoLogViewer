@@ -117,8 +117,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: v${{ github.ref }}
           body: |
-            - JavaFXの更新
-            - 詳細画面表示時に応答なしになる問題の修正
+            - 詳細画面が開けなくなっていたバグを修正
           draft: false
           prerelease: true
 
