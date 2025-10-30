@@ -504,6 +504,7 @@ public class Main extends Application {
         listView.setLayoutY(55);
         listView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
+                final Stage stage1 = new Stage();
                 Thread.ofVirtual().start(()->{
                     //System.out.println(listView.getItems().size() + " / " + value);
                     String selectedItem = listView.getSelectionModel().getSelectedItem();
@@ -512,7 +513,7 @@ public class Main extends Application {
                         if (data == null){
                             return;
                         }
-                        Stage stage1 = new Stage();
+
                         Platform.runLater(()->{
                             stage1.setResizable(false);
                             stage1.setMaximized(false);
