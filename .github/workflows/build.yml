@@ -93,8 +93,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: v${{ github.ref }}
           body: |
-            - VRChatのログファイルのフォルダのパスを自動取得するように
-            - アップデート通知/自動アップデート機能 追加
+            - 詳細画面表示時に応答なしになる問題の修正
           draft: false
           prerelease: true
 

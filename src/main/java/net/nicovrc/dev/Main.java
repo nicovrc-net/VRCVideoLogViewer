@@ -54,7 +54,8 @@ public class Main extends Application {
     private static String new_version = Function.Version;
     private static boolean isUpdate = false;
 
-    public static void main(String[] args) {
+    @Override
+    public void start(Stage stage) throws Exception {
 
         System.out.println("[Info] VRCVideoLogViewer Ver " + Function.Version + "起動");
 
@@ -108,7 +109,8 @@ public class Main extends Application {
             e.printStackTrace();
             timer1.cancel();
             timer2.cancel();
-
+            stage.close();
+            stop();
             return;
         }
         try {
@@ -176,6 +178,8 @@ public class Main extends Application {
             e.printStackTrace();
             timer1.cancel();
             timer2.cancel();
+            stage.close();
+            stop();
             return;
         }
 
@@ -230,10 +234,6 @@ public class Main extends Application {
                     }
                 } else {
                     System.out.println("[Info] 自動取得失敗");
-
-                    timer1.cancel();
-                    timer2.cancel();
-                    return;
                 }
             }
         }
@@ -245,10 +245,18 @@ public class Main extends Application {
             file = new File(config.getLogFolderPass());
             if (!file.exists()){
                 System.out.println("フォルダが見つかりませんでした。\nFolder not found.");
+                timer1.cancel();
+                timer2.cancel();
+                stage.close();
+                stop();
                 return;
             }
         } else {
             System.out.println("設定ファイルが正しく設定されていません。\nThe configuration file is not set up correctly.");
+            timer1.cancel();
+            timer2.cancel();
+            stage.close();
+            stop();
             return;
         }
 
@@ -266,6 +274,8 @@ public class Main extends Application {
             System.out.println("ログファイルが見つかりませんでした。\nLog file not found.");
             timer1.cancel();
             timer2.cancel();
+            stage.close();
+            stop();
             return;
         }
 
@@ -428,6 +438,12 @@ public class Main extends Application {
                 } catch (Exception e){
                     timer1.cancel();
                     timer2.cancel();
+                    try {
+                        stop();
+                        stage.close();
+                    } catch (Exception ex) {
+                        // ex.printStackTrace();
+                    }
                 }
             }
         }, 0L, 1000L);
@@ -460,24 +476,17 @@ public class Main extends Application {
                 } catch (Exception e){
                     timer1.cancel();
                     timer2.cancel();
+                    try {
+                        stop();
+                        stage.close();
+                    } catch (Exception ex) {
+                        // ex.printStackTrace();
+                    }
                 }
             }
         }, 0L, 1000L);
 
-        try {
-            launch();
-        } catch (Exception e){
-            e.printStackTrace();
-            timer1.cancel();
-            timer2.cancel();
-        }
 
-        //timer.cancel();
-
-    }
-
-    @Override
-    public void start(Stage stage) throws Exception {
         if (config.isDebugOutput()){
             System.out.println("[Info] GUI組み立て中...");
         }
@@ -495,197 +504,199 @@ public class Main extends Application {
         listView.setLayoutY(55);
         listView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-                //System.out.println(listView.getItems().size() + " / " + value);
-                String selectedItem = listView.getSelectionModel().getSelectedItem();
-                if (selectedItem != null) {
-                    LogData data = logDataList.get(selectedItem);
-                    if (data == null){
-                        return;
+                Thread.ofVirtual().start(()->{
+                    //System.out.println(listView.getItems().size() + " / " + value);
+                    String selectedItem = listView.getSelectionModel().getSelectedItem();
+                    if (selectedItem != null) {
+                        LogData data = logDataList.get(selectedItem);
+                        if (data == null){
+                            return;
+                        }
+                        Stage stage1 = new Stage();
+                        stage1.setResizable(false);
+                        stage1.setMaximized(false);
+                        stage1.setFullScreen(false);
+                        stage1.setTitle("詳細");
+                        stage1.setWidth(800);
+                        stage1.setHeight(800);
+
+                        AnchorPane root1 = new AnchorPane();
+                        Scene scene1 = new Scene(root1);
+
+                        Label label1 = new Label("詳細");
+                        label1.setLayoutX(5);
+                        label1.setLayoutY(5);
+                        label1.setFont(new Font(16));
+                        root1.getChildren().add(label1);
+
+                        Label label1_2 = new Label("Date");
+                        label1_2.setLayoutX(10);
+                        label1_2.setLayoutY(40);
+                        root1.getChildren().add(label1_2);
+
+                        Label label1_2_1 = new Label(log_sdf.format(data.getLogDate()));
+                        label1_2_1.setLayoutX(10);
+                        label1_2_1.setLayoutY(60);
+                        root1.getChildren().add(label1_2_1);
+
+                        Label label1_3 = new Label("URL");
+                        label1_3.setLayoutX(10);
+                        label1_3.setLayoutY(80);
+                        root1.getChildren().add(label1_3);
+
+                        TextField field2 = new TextField();
+                        field2.setLayoutX(10);
+                        field2.setLayoutY(100);
+                        field2.setEditable(false);
+                        field2.setFocusTraversable(false);
+                        field2.setText(data.getURL());
+                        field2.setPrefWidth(700);
+                        root1.getChildren().add(field2);
+
+                        Label label1_4 = new Label("種類");
+                        label1_4.setLayoutX(10);
+                        label1_4.setLayoutY(130);
+                        root1.getChildren().add(label1_4);
+
+                        Label label1_4_1 = new Label(data.getURLType().equals("Video") ? "動画(Video)" : data.getURLType().equals("String") ? "テキスト(String)" : "画像(Image)");
+                        label1_4_1.setLayoutX(10);
+                        label1_4_1.setLayoutY(150);
+                        root1.getChildren().add(label1_4_1);
+
+                        Label label1_5 = new Label("エラーメッセージ");
+                        label1_5.setLayoutX(10);
+                        label1_5.setLayoutY(170);
+                        root1.getChildren().add(label1_5);
+
+                        TextArea textArea = new TextArea();
+                        textArea.setLayoutX(10);
+                        textArea.setLayoutY(190);
+                        textArea.setText(data.getErrorMessage());
+                        textArea.setPrefSize(700, 150);
+                        textArea.setEditable(false);
+                        textArea.setWrapText(false);
+                        root1.getChildren().add(textArea);
+
+                        switch (data.getURLType()) {
+                            case "Video" -> {
+                                //System.out.println("debug 0");
+                                VideoData videoData = Function.getVideoData(data.getURL());
+                                //System.out.println("debug 1");
+                                Image fxImage = videoData.getThumbnail() != null ? new Image(new ByteArrayInputStream(videoData.getThumbnail())) : null;
+                                //System.out.println("debug 2");
+
+                                Label label1_6 = new Label("タイトル");
+                                label1_6.setLayoutX(10);
+                                label1_6.setLayoutY(360);
+                                root1.getChildren().add(label1_6);
+
+                                TextField field3 = new TextField();
+                                field3.setLayoutX(10);
+                                field3.setLayoutY(380);
+                                field3.setEditable(false);
+                                field3.setFocusTraversable(false);
+                                field3.setText(videoData.getVideoTitle());
+                                field3.setPrefWidth(700);
+                                root1.getChildren().add(field3);
+
+                                if (fxImage != null) {
+                                    //System.out.println("debug 3");
+
+                                    ImageView imageView = new ImageView(fxImage);
+                                    imageView.setLayoutX(10);
+                                    imageView.setLayoutY(420);
+                                    imageView.setFitHeight(300);
+                                    imageView.setPreserveRatio(true);
+                                    root1.getChildren().add(imageView);
+                                }
+
+                            }
+                            case "Image" -> {
+                                Image fxImage = null;
+                                try (HttpClient client = HttpClient.newBuilder()
+                                        .version(HttpClient.Version.HTTP_2)
+                                        .followRedirects(HttpClient.Redirect.NORMAL)
+                                        .connectTimeout(Duration.ofSeconds(5))
+                                        .build()) {
+
+                                    HttpRequest request = HttpRequest.newBuilder()
+                                            .uri(new URI("https://i2i.nicovrc.net/?url=" + data.getURL().replaceAll("https://i2i\\.nicovrc\\.net/\\?url=", "")))
+                                            //.uri(new URI("https://i2i.nicovrc.net/?url=https://nicovrc.net/VRChat_2024-08-16_03-59-02.141_3840x2160.png"))
+                                            .headers("User-Agent", Function.UserAgent)
+                                            .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                                            .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                                            .GET()
+                                            .build();
+
+                                    HttpResponse<byte[]> send = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+                                    fxImage = new Image(new ByteArrayInputStream(send.body()));
+                                } catch (Exception e) {
+                                    // e.printStackTrace();
+                                }
+
+                                if (fxImage != null) {
+                                    ImageView imageView = new ImageView(fxImage);
+                                    imageView.setLayoutX(10);
+                                    imageView.setLayoutY(360);
+                                    imageView.setFitHeight(350);
+                                    imageView.setPreserveRatio(true);
+                                    root1.getChildren().add(imageView);
+                                }
+
+                            }
+                            case "String" -> {
+
+                                String str = null;
+
+                                try (HttpClient client = HttpClient.newBuilder()
+                                        .version(HttpClient.Version.HTTP_2)
+                                        .followRedirects(HttpClient.Redirect.NORMAL)
+                                        .connectTimeout(Duration.ofSeconds(5))
+                                        .build()) {
+
+                                    HttpRequest request = HttpRequest.newBuilder()
+                                            .uri(new URI(data.getURL()))
+                                            //.uri(new URI("https://i2i.nicovrc.net/?url=https://nicovrc.net/VRChat_2024-08-16_03-59-02.141_3840x2160.png"))
+                                            .headers("User-Agent", Function.Unity_UserAgent)
+                                            .headers("Accept", "*/*")
+                                            .headers("x-unity-version", Function.HTTP_x_unity_version)
+                                            .GET()
+                                            .build();
+
+                                    HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+                                    str = send.body();
+
+                                } catch (Exception e) {
+                                    // e.printStackTrace();
+                                }
+
+                                if (str != null) {
+
+                                    TextArea textArea2 = new TextArea();
+                                    textArea2.setLayoutX(10);
+                                    textArea2.setLayoutY(360);
+                                    textArea2.setText(str);
+                                    textArea2.setPrefSize(700, 300);
+                                    textArea2.setEditable(false);
+                                    textArea2.setWrapText(false);
+                                    root1.getChildren().add(textArea2);
+
+                                }
+                            }
+                        }
+
+                        Button button = new Button("閉じる");
+                        button.setLayoutX(650);
+                        button.setLayoutY(10);
+                        button.setOnAction(e -> {
+                            stage1.close();
+                        });
+                        root1.getChildren().add(button);
+
+                        stage1.setScene(scene1);
+                        Platform.runLater(stage1::show);
                     }
-                    Stage stage1 = new Stage();
-                    stage1.setResizable(false);
-                    stage1.setMaximized(false);
-                    stage1.setFullScreen(false);
-                    stage1.setTitle("詳細");
-                    stage1.setWidth(800);
-                    stage1.setHeight(800);
-
-                    AnchorPane root1 = new AnchorPane();
-                    Scene scene1 = new Scene(root1);
-
-                    Label label1 = new Label("詳細");
-                    label1.setLayoutX(5);
-                    label1.setLayoutY(5);
-                    label1.setFont(new Font(16));
-                    root1.getChildren().add(label1);
-
-                    Label label1_2 = new Label("Date");
-                    label1_2.setLayoutX(10);
-                    label1_2.setLayoutY(40);
-                    root1.getChildren().add(label1_2);
-
-                    Label label1_2_1 = new Label(log_sdf.format(data.getLogDate()));
-                    label1_2_1.setLayoutX(10);
-                    label1_2_1.setLayoutY(60);
-                    root1.getChildren().add(label1_2_1);
-
-                    Label label1_3 = new Label("URL");
-                    label1_3.setLayoutX(10);
-                    label1_3.setLayoutY(80);
-                    root1.getChildren().add(label1_3);
-
-                    TextField field2 = new TextField();
-                    field2.setLayoutX(10);
-                    field2.setLayoutY(100);
-                    field2.setEditable(false);
-                    field2.setFocusTraversable(false);
-                    field2.setText(data.getURL());
-                    field2.setPrefWidth(700);
-                    root1.getChildren().add(field2);
-
-                    Label label1_4 = new Label("種類");
-                    label1_4.setLayoutX(10);
-                    label1_4.setLayoutY(130);
-                    root1.getChildren().add(label1_4);
-
-                    Label label1_4_1 = new Label(data.getURLType().equals("Video") ? "動画(Video)" : data.getURLType().equals("String") ? "テキスト(String)" : "画像(Image)");
-                    label1_4_1.setLayoutX(10);
-                    label1_4_1.setLayoutY(150);
-                    root1.getChildren().add(label1_4_1);
-
-                    Label label1_5 = new Label("エラーメッセージ");
-                    label1_5.setLayoutX(10);
-                    label1_5.setLayoutY(170);
-                    root1.getChildren().add(label1_5);
-
-                    TextArea textArea = new TextArea();
-                    textArea.setLayoutX(10);
-                    textArea.setLayoutY(190);
-                    textArea.setText(data.getErrorMessage());
-                    textArea.setPrefSize(700, 150);
-                    textArea.setEditable(false);
-                    textArea.setWrapText(false);
-                    root1.getChildren().add(textArea);
-
-                    switch (data.getURLType()) {
-                        case "Video" -> {
-                            //System.out.println("debug 0");
-                            VideoData videoData = Function.getVideoData(data.getURL());
-                            //System.out.println("debug 1");
-                            Image fxImage = videoData.getThumbnail() != null ? new Image(new ByteArrayInputStream(videoData.getThumbnail())) : null;
-                            //System.out.println("debug 2");
-
-                            Label label1_6 = new Label("タイトル");
-                            label1_6.setLayoutX(10);
-                            label1_6.setLayoutY(360);
-                            root1.getChildren().add(label1_6);
-
-                            TextField field3 = new TextField();
-                            field3.setLayoutX(10);
-                            field3.setLayoutY(380);
-                            field3.setEditable(false);
-                            field3.setFocusTraversable(false);
-                            field3.setText(videoData.getVideoTitle());
-                            field3.setPrefWidth(700);
-                            root1.getChildren().add(field3);
-
-                            if (fxImage != null) {
-                                //System.out.println("debug 3");
-
-                                ImageView imageView = new ImageView(fxImage);
-                                imageView.setLayoutX(10);
-                                imageView.setLayoutY(420);
-                                imageView.setFitHeight(300);
-                                imageView.setPreserveRatio(true);
-                                root1.getChildren().add(imageView);
-                            }
-
-                        }
-                        case "Image" -> {
-                            Image fxImage = null;
-                            try (HttpClient client = HttpClient.newBuilder()
-                                    .version(HttpClient.Version.HTTP_2)
-                                    .followRedirects(HttpClient.Redirect.NORMAL)
-                                    .connectTimeout(Duration.ofSeconds(5))
-                                    .build()) {
-
-                                HttpRequest request = HttpRequest.newBuilder()
-                                        .uri(new URI("https://i2i.nicovrc.net/?url=" + data.getURL().replaceAll("https://i2i\\.nicovrc\\.net/\\?url=", "")))
-                                        //.uri(new URI("https://i2i.nicovrc.net/?url=https://nicovrc.net/VRChat_2024-08-16_03-59-02.141_3840x2160.png"))
-                                        .headers("User-Agent", Function.UserAgent)
-                                        .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                                        .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
-                                        .GET()
-                                        .build();
-
-                                HttpResponse<byte[]> send = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-                                fxImage = new Image(new ByteArrayInputStream(send.body()));
-                            } catch (Exception e) {
-                                // e.printStackTrace();
-                            }
-
-                            if (fxImage != null) {
-                                ImageView imageView = new ImageView(fxImage);
-                                imageView.setLayoutX(10);
-                                imageView.setLayoutY(360);
-                                imageView.setFitHeight(350);
-                                imageView.setPreserveRatio(true);
-                                root1.getChildren().add(imageView);
-                            }
-
-                        }
-                        case "String" -> {
-
-                            String str = null;
-
-                            try (HttpClient client = HttpClient.newBuilder()
-                                    .version(HttpClient.Version.HTTP_2)
-                                    .followRedirects(HttpClient.Redirect.NORMAL)
-                                    .connectTimeout(Duration.ofSeconds(5))
-                                    .build()) {
-
-                                HttpRequest request = HttpRequest.newBuilder()
-                                        .uri(new URI(data.getURL()))
-                                        //.uri(new URI("https://i2i.nicovrc.net/?url=https://nicovrc.net/VRChat_2024-08-16_03-59-02.141_3840x2160.png"))
-                                        .headers("User-Agent", Function.Unity_UserAgent)
-                                        .headers("Accept", "*/*")
-                                        .headers("x-unity-version", Function.HTTP_x_unity_version)
-                                        .GET()
-                                        .build();
-
-                                HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-                                str = send.body();
-
-                            } catch (Exception e) {
-                                // e.printStackTrace();
-                            }
-
-                            if (str != null) {
-
-                                TextArea textArea2 = new TextArea();
-                                textArea2.setLayoutX(10);
-                                textArea2.setLayoutY(360);
-                                textArea2.setText(str);
-                                textArea2.setPrefSize(700, 300);
-                                textArea2.setEditable(false);
-                                textArea2.setWrapText(false);
-                                root1.getChildren().add(textArea2);
-
-                            }
-                        }
-                    }
-
-                    Button button = new Button("閉じる");
-                    button.setLayoutX(650);
-                    button.setLayoutY(10);
-                    button.setOnAction(e -> {
-                        stage1.close();
-                    });
-                    root1.getChildren().add(button);
-
-                    stage1.setScene(scene1);
-                    stage1.show();
-                }
+                });
             }
         });
         //listView.scrollTo(items.size() - 1);
@@ -797,6 +808,11 @@ public class Main extends Application {
             }
             timer1.cancel();
             timer2.cancel();
+            try {
+                stop();
+            } catch (Exception e) {
+                //e.printStackTrace();
+            }
         });
     }
 }
