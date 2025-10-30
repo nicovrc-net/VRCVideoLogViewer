@@ -78,9 +78,31 @@ jobs:
       - name: Create Release Package
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          wget https://r2.7mi.site/vrc/start_v0.2.x.bat
-          mv ./start_v0.2.x.bat start.bat
-          zip VRCVideoLogViewer.zip VRCVideoLogViewer-1.0-SNAPSHOT-all.jar start.bat
+          wget https://r2.7mi.site/vrc/start_v0.6.x.bat
+          wget https://r2.7mi.site/vrc/start_v0.6.x_forLinux.sh
+          mv ./start_v0.6.x.bat start.bat
+          mv ./start_v0.6.x_forLinux.sh start_forLinux.sh
+          zip VRCVideoLogViewer.zip VRCVideoLogViewer-1.0-SNAPSHOT-all.jar start.bat start_forLinux.sh
+        shell: bash
+
+      - name: Linux Bash Setup Test
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          chmod +x ./start_forLinux.sh
+          screen -UAmdS test ./start_forLinux.sh
+          sleep 5s
+          if [ -d ./tools ]; then
+             echo "Check JDK"
+             if [ -d ./tools/jdk-21.0.2 ]; then
+                echo "Check JavaFX"
+                if [ -d ./tools/javafx-sdk-21.0.9 ]; then
+                   echo "OK"
+                else
+                   exit 1
+          else
+             exit 1
+          fi
+
         shell: bash
 
       - name: Create Release
@@ -93,6 +115,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: v${{ github.ref }}
           body: |
+            - JavaFXの更新
             - 詳細画面表示時に応答なしになる問題の修正
           draft: false
           prerelease: true

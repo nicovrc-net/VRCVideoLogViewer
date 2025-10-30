@@ -63,7 +63,7 @@ public class Main extends Application {
         if (file.exists()){
             file.delete();
         }
-        file = new File("./tools/openjfx-21.0.8_windows-x64_bin-sdk.zip");
+        file = new File("./tools/openjfx-21.0.9_windows-x64_bin-sdk.zip");
         if (file.exists()){
             file.delete();
         }
