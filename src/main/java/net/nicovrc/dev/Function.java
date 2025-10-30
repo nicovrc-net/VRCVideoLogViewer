@@ -178,45 +178,52 @@ public class Function {
                     .build();
 
             HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-            JsonElement json = new Gson().fromJson(send.body(), JsonElement.class);
+            try {
+                JsonElement json = new Gson().fromJson(send.body(), JsonElement.class);
 
-            if (!json.isJsonObject() || json.getAsJsonObject().has("ErrorMessage")){
+                if (!json.isJsonObject() || json.getAsJsonObject().has("ErrorMessage")){
+                    data.setVideoTitle("取得失敗");
+                    data.setThumbnail(null);
+                    //System.out.println("[Debug] 取得失敗");
+                    return data;
+                }
+
+                if (json.getAsJsonObject().has("Title")){
+                    data.setVideoTitle(json.getAsJsonObject().get("Title").getAsString());
+                }
+
+                if (tempUrl.startsWith("https://www.youtube.com") || tempUrl.startsWith("https://www.nicovideo.jp")){
+
+                    request = HttpRequest.newBuilder()
+                            .uri(new URI("https://i2i.nicovrc.net/?url="+tempUrl))
+                            .headers("User-Agent", Function.UserAgent)
+                            .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                            .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                            .GET()
+                            .build();
+
+                    HttpResponse<byte[]> send2 = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+                    data.setThumbnail(send2.body());
+
+                } else if (json.getAsJsonObject().has("Thumbnail") || json.getAsJsonObject().has("thumbnail")) {
+
+                    request = HttpRequest.newBuilder()
+                            .uri(new URI(json.getAsJsonObject().has("Thumbnail") ? json.getAsJsonObject().get("Thumbnail").getAsString() : json.getAsJsonObject().get("thumbnail").getAsString()))
+                            .headers("User-Agent", Function.UserAgent)
+                            .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                            .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                            .GET()
+                            .build();
+
+                    HttpResponse<byte[]> send2 = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+                    data.setThumbnail(send2.body());
+
+                }
+            } catch (Exception e){
                 data.setVideoTitle("取得失敗");
                 data.setThumbnail(null);
                 //System.out.println("[Debug] 取得失敗");
                 return data;
-            }
-
-            if (json.getAsJsonObject().has("Title")){
-                data.setVideoTitle(json.getAsJsonObject().get("Title").getAsString());
-            }
-
-            if (tempUrl.startsWith("https://www.youtube.com") || tempUrl.startsWith("https://www.nicovideo.jp")){
-
-                request = HttpRequest.newBuilder()
-                        .uri(new URI("https://i2i.nicovrc.net/?url="+tempUrl))
-                        .headers("User-Agent", Function.UserAgent)
-                        .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                        .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
-                        .GET()
-                        .build();
-
-                HttpResponse<byte[]> send2 = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-                data.setThumbnail(send2.body());
-
-            } else if (json.getAsJsonObject().has("Thumbnail") || json.getAsJsonObject().has("thumbnail")) {
-
-                request = HttpRequest.newBuilder()
-                        .uri(new URI(json.getAsJsonObject().has("Thumbnail") ? json.getAsJsonObject().get("Thumbnail").getAsString() : json.getAsJsonObject().get("thumbnail").getAsString()))
-                        .headers("User-Agent", Function.UserAgent)
-                        .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                        .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
-                        .GET()
-                        .build();
-
-                HttpResponse<byte[]> send2 = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-                data.setThumbnail(send2.body());
-
             }
 
         } catch (Exception e){
