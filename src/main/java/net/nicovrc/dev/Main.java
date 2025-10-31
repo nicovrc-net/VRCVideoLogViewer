@@ -623,7 +623,7 @@ public class Main extends Application {
                                         .build()) {
 
                                     HttpRequest request = HttpRequest.newBuilder()
-                                            .uri(new URI("https://i2i.nicovrc.net/?url=" + data.getURL().replaceAll("https://i2i\\.nicovrc\\.net/\\?url=", "")))
+                                            .uri(new URI(data.getURL()))
                                             //.uri(new URI("https://i2i.nicovrc.net/?url=https://nicovrc.net/VRChat_2024-08-16_03-59-02.141_3840x2160.png"))
                                             .headers("User-Agent", Function.UserAgent)
                                             .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
@@ -632,7 +632,13 @@ public class Main extends Application {
                                             .build();
 
                                     HttpResponse<byte[]> send = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-                                    fxImage = new Image(new ByteArrayInputStream(send.body()));
+
+                                    byte[] input = send.body();
+                                    if (send.headers().firstValue("content-type").isPresent() && send.headers().firstValue("content-type").get().endsWith("webp")){
+                                        input = Function.Webp2PngConverter(input);
+                                    }
+
+                                    fxImage = new Image(new ByteArrayInputStream(input));
                                 } catch (Exception e) {
                                     // e.printStackTrace();
                                 }
