@@ -39,6 +39,20 @@ public class Main extends Application {
     private static SimpleDateFormat file_sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
     private static SimpleDateFormat log_sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    private static final String configText = """
+                # VRChat ログフォルダパス (VRChat log folder path)
+                logfolder: ''
+                # デバッグログを表示するか (Enable debug log display?)
+                debugOutput: true
+                # 過去のログから取得して表示するか (Display data from previous logs?)
+                oldLogCheck: true
+                # 動画プレーヤーのログを表示するか (Enable video player log display?)
+                VideoPlayer: true
+                # ImageDownloaderのログを表示するか (Enable ImageDownloader log display?)
+                ImageDownloader: true
+                # StringDownloaderのログを表示するか (Enable StringDownloader log display?)
+                StringDownloader: true
+                """;
     private static final ConfigData config = new ConfigData();
 
     private static final Timer timer1 = new Timer();
@@ -67,21 +81,6 @@ public class Main extends Application {
         if (file.exists()){
             file.delete();
         }
-
-        final String configText = """
-                # VRChat ログフォルダパス (VRChat log folder path)
-                logfolder: ''
-                # デバッグログを表示するか (Enable debug log display?)
-                debugOutput: true
-                # 過去のログから取得して表示するか (Display data from previous logs?)
-                oldLogCheck: true
-                # 動画プレーヤーのログを表示するか (Enable video player log display?)
-                VideoPlayer: true
-                # ImageDownloaderのログを表示するか (Enable ImageDownloader log display?)
-                ImageDownloader: true
-                # StringDownloaderのログを表示するか (Enable StringDownloader log display?)
-                StringDownloader: true
-                """;
 
         System.out.println("[Info] アップデート確認");
         final boolean isWindowsBatchStart = new File("./tools").exists() && new File("./tools/jdk-21.0.2").exists();
@@ -134,7 +133,7 @@ public class Main extends Application {
 
             if (isUpdate){
                 System.out.println("[Info] アップデートが見つかりました。");
-                if (isWindowsBatchStart){
+                if (isWindowsBatchStart || !ntSystem.getName().isEmpty()){
                     File update_file = new File("./tools/update1.bat");
                     if (update_file.exists()){
                         update_file.delete();
@@ -168,8 +167,6 @@ public class Main extends Application {
                     file1.close();
                     pw = null;
                     file1 = null;
-                } else {
-
                 }
             } else {
                 System.out.println("[Info] アップデートはありませんでした。 (現在: "+Function.Version+" 最新:"+new_version+")");
