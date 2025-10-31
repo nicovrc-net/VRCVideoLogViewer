@@ -2,8 +2,6 @@ package net.nicovrc.dev;
 
 import com.amihaiemil.eoyaml.Yaml;
 import com.amihaiemil.eoyaml.YamlMapping;
-import com.sun.security.auth.module.NTSystem;
-import com.sun.security.auth.module.UnixSystem;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -36,8 +34,8 @@ import java.util.regex.Pattern;
 
 public class Main extends Application {
 
-    private static SimpleDateFormat file_sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-    private static SimpleDateFormat log_sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat file_sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+    private static final SimpleDateFormat log_sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private static final String configText = """
                 # VRChat ログフォルダパス (VRChat log folder path)
@@ -58,20 +56,19 @@ public class Main extends Application {
     private static final Timer timer1 = new Timer();
     private static final Timer timer2 = new Timer();
 
-    private static HashMap<String, LogData> logDataList = new HashMap<>();
-    private static ObservableList<String> items = FXCollections.observableArrayList();
-    private static ListView<String> listView = new ListView<>(items);
+    private static final HashMap<String, LogData> logDataList = new HashMap<>();
+    private static final ObservableList<String> items = FXCollections.observableArrayList();
+    private static final ListView<String> listView = new ListView<>(items);
 
     private static final Pattern matcher_version = Pattern.compile("<id>tag:github\\.com,2008:Repository/(\\d+)/(.+)</id>");
 
-    private static final NTSystem ntSystem = new NTSystem();
     private static String new_version = Function.Version;
-    private static boolean isUpdate = false;
 
     @Override
     public void start(Stage stage) throws Exception {
 
         System.out.println("[Info] VRCVideoLogViewer Ver " + Function.Version + "起動");
+        final boolean isWindowsBatchStart = new File("./tools").exists() && new File("./tools/jdk-21.0.2").exists();
 
         File file = new File("./tools/openjdk-21.0.2_windows-x64_bin.zip");
         if (file.exists()){
@@ -82,8 +79,12 @@ public class Main extends Application {
             file.delete();
         }
 
+        if (!Function.ntSystem.getName().isEmpty()){
+            file = new File("./tools/ImageMagick-7.1.2-8-portable-Q16-x64.7z");
+            file.delete();
+        }
+
         System.out.println("[Info] アップデート確認");
-        final boolean isWindowsBatchStart = new File("./tools").exists() && new File("./tools/jdk-21.0.2").exists();
 
         try (HttpClient client = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_2)
@@ -112,6 +113,8 @@ public class Main extends Application {
             stop();
             return;
         }
+
+        boolean isUpdate;
         try {
 
             file = new File("./");
@@ -133,7 +136,7 @@ public class Main extends Application {
 
             if (isUpdate){
                 System.out.println("[Info] アップデートが見つかりました。");
-                if (isWindowsBatchStart || !ntSystem.getName().isEmpty()){
+                if (isWindowsBatchStart || !Function.ntSystem.getName().isEmpty()){
                     File update_file = new File("./tools/update1.bat");
                     if (update_file.exists()){
                         update_file.delete();
@@ -214,20 +217,20 @@ public class Main extends Application {
 
         if (config.getLogFolderPass().isEmpty()){
 
-            if (ntSystem.getName().isEmpty()){
-                UnixSystem unixSystem = new UnixSystem();
+            if (Function.ntSystem.getName().isEmpty()){
+                //UnixSystem unixSystem = new UnixSystem();
 
             } else {
                 if (config.isDebugOutput()){
                     System.out.println("[Info] ログフォルダの自動取得");
                 }
 
-                file = new File("C:\\Users\\"+ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
+                file = new File("C:\\Users\\"+Function.ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
                 if (file.exists()){
-                    config.setLogFolderPass("C:\\Users\\"+ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
+                    config.setLogFolderPass("C:\\Users\\"+Function.ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
 
                     if (config.isDebugOutput()){
-                        System.out.println("[Info] 自動取得成功 : " + "C:\\Users\\"+ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
+                        System.out.println("[Info] 自動取得成功 : " + "C:\\Users\\"+Function.ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
                     }
                 } else {
                     System.out.println("[Info] 自動取得失敗");
@@ -295,8 +298,8 @@ public class Main extends Application {
                 }
 
                 boolean isMove = true;
-                String te1 = "";
-                long te2 = -1;
+                String te1;
+                long te2;
 
                 while (isMove){
                     isMove = false;
@@ -404,8 +407,8 @@ public class Main extends Application {
                         }
 
                         boolean isMove = true;
-                        String te1 = "";
-                        long te2 = -1;
+                        String te1;
+                        long te2;
 
                         while (isMove){
                             isMove = false;
@@ -527,30 +530,22 @@ public class Main extends Application {
                         label1.setLayoutX(5);
                         label1.setLayoutY(5);
                         label1.setFont(new Font(16));
-                        Platform.runLater(()->{
-                            root1.getChildren().add(label1);
-                        });
+                        Platform.runLater(()-> root1.getChildren().add(label1));
 
                         Label label1_2 = new Label("Date");
                         label1_2.setLayoutX(10);
                         label1_2.setLayoutY(40);
-                        Platform.runLater(()->{
-                            root1.getChildren().add(label1_2);
-                        });
+                        Platform.runLater(()-> root1.getChildren().add(label1_2));
 
                         Label label1_2_1 = new Label(log_sdf.format(data.getLogDate()));
                         label1_2_1.setLayoutX(10);
                         label1_2_1.setLayoutY(60);
-                        Platform.runLater(()->{
-                            root1.getChildren().add(label1_2_1);
-                        });
+                        Platform.runLater(()-> root1.getChildren().add(label1_2_1));
 
                         Label label1_3 = new Label("URL");
                         label1_3.setLayoutX(10);
                         label1_3.setLayoutY(80);
-                        Platform.runLater(()->{
-                            root1.getChildren().add(label1_3);
-                        });
+                        Platform.runLater(()-> root1.getChildren().add(label1_3));
 
                         TextField field2 = new TextField();
                         field2.setLayoutX(10);
@@ -558,15 +553,11 @@ public class Main extends Application {
                         field2.setEditable(false);
                         field2.setFocusTraversable(false);
                         field2.setText(data.getURL());
-                        field2.setPrefWidth(700);Platform.runLater(()->{
-                            root1.getChildren().add(field2);
-                        });
+                        field2.setPrefWidth(700);Platform.runLater(()-> root1.getChildren().add(field2));
 
                         Label label1_4 = new Label("種類");
                         label1_4.setLayoutX(10);
-                        label1_4.setLayoutY(130);Platform.runLater(()->{
-                            root1.getChildren().add(label1_4);
-                        });
+                        label1_4.setLayoutY(130);Platform.runLater(()-> root1.getChildren().add(label1_4));
 
                         Label label1_4_1 = new Label(data.getURLType().equals("Video") ? "動画(Video)" : data.getURLType().equals("String") ? "テキスト(String)" : "画像(Image)");
                         label1_4_1.setLayoutX(10);
@@ -578,9 +569,7 @@ public class Main extends Application {
                         Label label1_5 = new Label("エラーメッセージ");
                         label1_5.setLayoutX(10);
                         label1_5.setLayoutY(170);
-                        Platform.runLater(()->{
-                            root1.getChildren().add(label1_5);
-                        });
+                        Platform.runLater(()-> root1.getChildren().add(label1_5));
 
                         TextArea textArea = new TextArea();
                         textArea.setLayoutX(10);
@@ -589,9 +578,7 @@ public class Main extends Application {
                         textArea.setPrefSize(700, 150);
                         textArea.setEditable(false);
                         textArea.setWrapText(false);
-                        Platform.runLater(()->{
-                            root1.getChildren().add(textArea);
-                        });
+                        Platform.runLater(()-> root1.getChildren().add(textArea));
 
                         switch (data.getURLType()) {
                             case "Video" -> {
@@ -613,9 +600,7 @@ public class Main extends Application {
                                 field3.setFocusTraversable(false);
                                 field3.setText(videoData.getVideoTitle());
                                 field3.setPrefWidth(700);
-                                Platform.runLater(()->{
-                                    root1.getChildren().add(field3);
-                                });
+                                Platform.runLater(()-> root1.getChildren().add(field3));
 
                                 if (fxImage != null) {
                                     //System.out.println("debug 3");
@@ -625,9 +610,7 @@ public class Main extends Application {
                                     imageView.setLayoutY(420);
                                     imageView.setFitHeight(300);
                                     imageView.setPreserveRatio(true);
-                                    Platform.runLater(()->{
-                                        root1.getChildren().add(imageView);
-                                    });
+                                    Platform.runLater(()-> root1.getChildren().add(imageView));
                                 }
 
                             }
@@ -660,9 +643,7 @@ public class Main extends Application {
                                     imageView.setLayoutY(360);
                                     imageView.setFitHeight(350);
                                     imageView.setPreserveRatio(true);
-                                    Platform.runLater(()->{
-                                        root1.getChildren().add(imageView);
-                                    });
+                                    Platform.runLater(()-> root1.getChildren().add(imageView));
                                 }
 
                             }
@@ -701,9 +682,7 @@ public class Main extends Application {
                                     textArea2.setPrefSize(700, 300);
                                     textArea2.setEditable(false);
                                     textArea2.setWrapText(false);
-                                    Platform.runLater(()->{
-                                        root1.getChildren().add(textArea2);
-                                    });
+                                    Platform.runLater(()-> root1.getChildren().add(textArea2));
                                 }
                             }
                         }
@@ -711,9 +690,7 @@ public class Main extends Application {
                         Button button = new Button("閉じる");
                         button.setLayoutX(650);
                         button.setLayoutY(10);
-                        button.setOnAction(e -> {
-                            stage1.close();
-                        });
+                        button.setOnAction(e -> stage1.close());
                         Platform.runLater(()->{
                             root1.getChildren().add(button);
                             stage1.setScene(scene1);
@@ -754,9 +731,7 @@ public class Main extends Application {
             Button button = new Button("閉じる");
             button.setLayoutX(300);
             button.setLayoutY(10);
-            button.setOnAction(e -> {
-                stage1.close();
-            });
+            button.setOnAction(e -> stage1.close());
             root1.getChildren().add(button);
 
             Label update_label1 = new Label("アップデートのお知らせ");
@@ -780,7 +755,7 @@ public class Main extends Application {
             update_label4.setLayoutY(100);
             root1.getChildren().add(update_label4);
 
-            if (!ntSystem.getName().isEmpty()){
+            if (!Function.ntSystem.getName().isEmpty()){
                 // Windowsの場合のアップデートバッチ用のボタン
                 Button update_button = new Button("アップデート");
                 update_button.setLayoutX(10);

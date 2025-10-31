@@ -2,6 +2,7 @@ package net.nicovrc.dev;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.sun.security.auth.module.NTSystem;
 
 import java.io.*;
 import java.net.URI;
@@ -11,38 +12,39 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Function {
 
-    public static String Version = "0.5.2-beta.1";
+    public static final String Version = "0.6.0-beta.1";
 
-    public static String UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:144.0) Gecko/20100101 Firefox/144.0 VRCVideoLogViewer/"+Version;
-    public static String Unity_UserAgent = "UnityPlayer/2022.3.22f1-DWR (UnityWebRequest/1.0, libcurl/8.5.0-DEV)";
-    public static String HTTP_x_unity_version = "2022.3.22f1-DWR";
+    public static final String UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:144.0) Gecko/20100101 Firefox/144.0 VRCVideoLogViewer/"+Version;
+    public static final String Unity_UserAgent = "UnityPlayer/2022.3.22f1-DWR (UnityWebRequest/1.0, libcurl/8.5.0-DEV)";
+    public static final String HTTP_x_unity_version = "2022.3.22f1-DWR";
 
-    private static Pattern matcher_VideoLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Video Playback\\] Attempting to resolve URL '(.+)'");
-    private static Pattern matcher_VideoLog2 = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Video Playback\\] Resolving URL '(.+)'");
-    private static Pattern matcher_ImageLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Image Download\\] Attempting to load image from URL '(.+)'");
-    private static Pattern matcher_StringLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[String Download\\] Attempting to load String from URL '(.+)'");
+    public static final NTSystem ntSystem = new NTSystem();
+    public static final Runtime runtime = Runtime.getRuntime();
 
-    private static Pattern matcher_VideoErrorLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Warning    -  \\[Video Playback\\] (.+)");
-    private static Pattern matcher_VideoErrorLog2 = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Error      -  \\[AVProVideo\\] (.+)");
-    private static Pattern matcher_ImageErrorLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Image Download\\] A web request exception occurred while loading image from URL '(.+)'\\. Exception: (.+)");
-    private static Pattern matcher_StringErrorLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[String Download\\] A web request exception occurred while loading string from URL '(.+)'\\. Exception: (.+)");
+    private static final Pattern matcher_VideoLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Video Playback\\] Attempting to resolve URL '(.+)'");
+    private static final Pattern matcher_VideoLog2 = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Video Playback\\] Resolving URL '(.+)'");
+    private static final Pattern matcher_ImageLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Image Download\\] Attempting to load image from URL '(.+)'");
+    private static final Pattern matcher_StringLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[String Download\\] Attempting to load String from URL '(.+)'");
 
-    private static SimpleDateFormat logDate = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+    private static final Pattern matcher_VideoErrorLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Warning    -  \\[Video Playback\\] (.+)");
+    private static final Pattern matcher_VideoErrorLog2 = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Error      -  \\[AVProVideo\\] (.+)");
+    private static final Pattern matcher_ImageErrorLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Image Download\\] A web request exception occurred while loading image from URL '(.+)'\\. Exception: (.+)");
+    private static final Pattern matcher_StringErrorLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[String Download\\] A web request exception occurred while loading string from URL '(.+)'\\. Exception: (.+)");
+
+    private static final SimpleDateFormat logDate = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 
 
     public static String getTextForFile(File file){
         String logText = null;
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));){
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))){
             String str;
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             while ((str = reader.readLine()) != null) {
                 sb.append(str).append("\n");
             }
@@ -192,7 +194,7 @@ public class Function {
                     data.setVideoTitle(json.getAsJsonObject().get("Title").getAsString());
                 }
 
-                if (tempUrl.startsWith("https://www.youtube.com") || tempUrl.startsWith("https://www.nicovideo.jp")){
+                if (tempUrl.startsWith("https://www.youtube.com")){
 
                     request = HttpRequest.newBuilder()
                             .uri(new URI("https://i2i.nicovrc.net/?url="+tempUrl))
@@ -216,7 +218,12 @@ public class Function {
                             .build();
 
                     HttpResponse<byte[]> send2 = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-                    data.setThumbnail(send2.body());
+
+                    if (send2.headers().firstValue("content-type").isPresent() && send2.headers().firstValue("content-type").get().endsWith("webp")){
+                        data.setThumbnail(Webp2PngConverter(send2.body()));
+                    } else {
+                        data.setThumbnail(send2.body());
+                    }
 
                 }
             } catch (Exception e){
@@ -234,6 +241,42 @@ public class Function {
 
         //System.out.println("[Debug] 取得成功");
         return data;
+    }
+
+    public static byte[] Webp2PngConverter(byte[] input) throws Exception {
+
+        File file = new File("./temp");
+        if (!file.exists()){
+            file.mkdir();
+        }
+
+        String filename = new Date().getTime()+"_"+ UUID.randomUUID().toString().split("-")[0];
+        FileOutputStream stream = new FileOutputStream("./temp/"+filename+".webp");
+        stream.write(input);
+        stream.close();
+        stream = null;
+
+        final Process exec0;
+        if (!ntSystem.getName().isEmpty()){
+            exec0 = runtime.exec(new String[]{".\\tools\\ImageMagick-7.1.2-8-portable-Q16-x64\\magick.exe", "./temp/"+filename+".webp", "./temp/"+filename+".png"});
+        } else {
+            exec0 = runtime.exec(new String[]{""});
+        }
+        Thread.ofVirtual().start(()->{
+            try {
+                Thread.sleep(5000L);
+                exec0.destroy();
+            } catch (Exception e){
+                // e.printStackTrace();
+            }
+        });
+        exec0.waitFor();
+
+        FileInputStream inputStream = new FileInputStream("");
+        byte[] output = inputStream.readAllBytes();
+        inputStream.close();
+
+        return output;
     }
 
     private static String replaceURL(String url){
