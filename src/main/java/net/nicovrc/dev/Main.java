@@ -338,18 +338,6 @@ public class Main {
         if (Function.config.isDebugOutput()){
             System.out.println("[Info] ログファイルの並び替え");
         }
-        if (Function.logFileList.size() > 1){
-            try {
-                Function.logFileList = Function.ListSort(Function.logFileList);
-            } catch (Exception e){
-                //e.printStackTrace();
-                if (Function.config.isDebugOutput()){
-                    System.out.println("[Error] 並び替えに失敗");
-                }
-            }
-        }
-
-        Function.temp_lastLogFile[0] = Function.config.getLogFolderPass() + "\\" + Function.logFileList.getLast();
 
         Function.timer1.scheduleAtFixedRate(new TimerTask() {
             @Override
