@@ -117,7 +117,9 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: v${{ github.ref }}
           body: |
-            - 詳細画面が開けなくなっていたバグを修正
+            - ログフォルダ自動取得の改善
+            - 画面から設定をできるように
+            - (Windowsの場合) OS起動時に起動するかVRChatが起動したときに自動起動できるように
           draft: false
           prerelease: true
 
