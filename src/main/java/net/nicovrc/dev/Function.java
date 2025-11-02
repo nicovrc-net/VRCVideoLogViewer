@@ -526,7 +526,7 @@ public class Function {
             try {
                 FileWriter file1 = new FileWriter(file);
                 PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-                pw.print(batText);
+                pw.print(batText.replaceAll("#path#", path));
                 pw.close();
                 file1.close();
                 pw = null;
@@ -535,6 +535,25 @@ public class Function {
                 // e.printStackTrace();
             }
 
+        } else {
+            File file = new File("C:\\Users\\" + ntSystem.getName() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
+            if (!file.exists()){
+                String AppData = System.getenv().get("APPDATA");
+                file = new File(AppData+"\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
+            }
+            if (!file.exists()){
+                return;
+            }
+
+            try {
+                file = new File(file.getCanonicalPath()+"\\vrcvideologviewer.bat");
+            } catch (IOException e) {
+                //e.printStackTrace();
+            }
+
+            if (file.exists()){
+                file.delete();
+            }
         }
 
     }

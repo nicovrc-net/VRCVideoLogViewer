@@ -287,7 +287,7 @@ public class GUI extends Application {
                     data.setVideoPlayer(setting_checkbox3.isSelected());
                     data.setImageDownloader(setting_checkbox4.isSelected());
                     data.setStringDownloader(setting_checkbox5.isSelected());
-                    data.setAutoStaring(setting_checkbox6.isSelected());
+                    data.setAutoStaring(!setting_checkbox6.isSelected());
                     data.setAutoStaringMode(setting_checkbox7.isSelected() ? "Windows" : setting_checkbox8.isSelected() ? "VRChat" : "");
 
                     Function.SettingConfig(data);
