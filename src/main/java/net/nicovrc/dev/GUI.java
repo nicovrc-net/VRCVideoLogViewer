@@ -144,10 +144,16 @@ public class GUI extends Application {
                     setting_stage.setHeight(800);
                 });
 
-                Label setting_label1 = new Label("※再起動するまで設定は反映されません。");
+                Label setting_label1 = new Label("※再起動するまで一部設定は反映されません。");
                 setting_label1.setLayoutX(5);
                 setting_label1.setLayoutY(5);
                 setting_root.getChildren().add(setting_label1);
+
+                Button setting_button1 = new Button("設定反映");
+                setting_button1.setLayoutX(700);
+                setting_button1.setLayoutY(5);
+                setting_button1.setOnAction(ev -> setting_stage.close());
+                setting_root.getChildren().add(setting_button1);
 
                 Label setting_label2 = new Label("VRChatログフォルダ (通常は変更する必要はありません)");
                 setting_label2.setLayoutX(5);
