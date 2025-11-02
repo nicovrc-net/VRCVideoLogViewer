@@ -496,8 +496,8 @@ public class Function {
             }
 
             String batText = """
-                    cd #path#
-                    start java -jar ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar --start-Windows
+                    cd /d #path#
+                    start #path#/tools/jdk-21.0.2/bin/javaw.exe -jar ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar --start-Windows
                     """;
 
             // C:\Users\xxx\AppData\Roaming

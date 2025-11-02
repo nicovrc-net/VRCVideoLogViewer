@@ -42,13 +42,27 @@ public class Main {
                 }
 
                 if (!isAutoStaring){
+                    System.out.println("debug : 自動起動オフ");
                     return;
                 }
 
                 if (AutoStaringMode.equals("Windows")){
+                    //System.out.println("debug : 自動起動 : Windows");
                     try {
                         final Runtime runtime = Runtime.getRuntime();
-                        final Process exec0 = runtime.exec(new String[]{"./auto-start.bat"});
+                        if (new File("./auto-start.bat").exists()){
+                            new File("./auto-start.bat").delete();
+                        }
+
+                        FileWriter file1 = new FileWriter("./auto-start.bat");
+                        PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
+                        pw.print("start .\\start.bat");
+                        pw.close();
+                        file1.close();
+                        pw = null;
+                        file1 = null;
+
+                        final Process exec0 = runtime.exec(new String[]{".\\auto-start.bat"});
                         Thread.ofVirtual().start(() -> {
                             try {
                                 Thread.sleep(5000L);
@@ -61,6 +75,7 @@ public class Main {
                             }
                         });
                         exec0.waitFor();
+                        new File("./auto-start.bat").delete();
                     } catch (Exception e){
                         // e.printStackTrace();
                     }
@@ -69,15 +84,10 @@ public class Main {
 
                 if (AutoStaringMode.equals("VRChat")){
                     try {
-
+                        //System.out.println("debug : 自動起動 : VRChat");
                         ConfigData config = new ConfigData();
                         if (new File("./config.yml").exists()){
                             final YamlMapping yamlMapping = Yaml.createYamlInput(new File("./config.yml")).readYamlMapping();
-                            try {
-                                config.setLang(yamlMapping.string("lang"));
-                            } catch (Exception e){
-                                config.setLang("ja");
-                            }
                             config.setLogFolderPass(yamlMapping.string("logfolder"));
                         }
                         List<String> list = Function.ListSort(Function.getFileList(config.getLogFolderPass()));
@@ -85,62 +95,62 @@ public class Main {
 
                         while (last.equals(Function.ListSort(Function.getFileList(config.getLogFolderPass())).getLast())){
                             try {
+                                //System.out.println(last);
+                                //System.out.println(Function.ListSort(Function.getFileList(config.getLogFolderPass())).getLast());
                                 Thread.sleep(1000L);
                             } catch (Exception ex) {
                                 //ex.printStackTrace();
-                            }
-                        }
-
-                        try {
-                            final Runtime runtime = Runtime.getRuntime();
-                            final Process exec0 = runtime.exec(new String[]{"./auto-start.bat"});
-                            Thread.ofVirtual().start(() -> {
-                                try {
-                                    Thread.sleep(5000L);
-                                } catch (Exception ex) {
-                                    //ex.printStackTrace();
-                                }
-
-                                if (exec0.isAlive()) {
-                                    exec0.destroy();
-                                }
-                            });
-                            exec0.waitFor();
-
-                            File file = new File("C:\\Users\\" + Function.ntSystem.getName() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
-                            if (!file.exists()){
-                                String AppData = System.getenv().get("APPDATA");
-                                file = new File(AppData+"\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
-                            }
-                            if (!file.exists()){
                                 return;
                             }
-                            final Process exec1 = runtime.exec(new String[]{"start", file.getCanonicalPath()+"\\vrcvideologviewer.bat"});
-                            Thread.ofVirtual().start(() -> {
-                                try {
-                                    Thread.sleep(5000L);
-                                } catch (Exception ex) {
-                                    //ex.printStackTrace();
-                                }
+                        }
+                        config = null;
 
-                                if (exec1.isAlive()) {
-                                    exec1.destroy();
-                                }
-                            });
-                            exec1.waitFor();
-
+                        //System.out.println("debug");
+                        File file = new File("C:\\Users\\" + Function.ntSystem.getName() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
+                        if (!file.exists()){
+                            String AppData = System.getenv().get("APPDATA");
+                            file = new File(AppData+"\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
+                        }
+                        if (!file.exists()){
                             return;
+                        }
+                        //System.out.println("debug2");
 
-                        } catch (Exception e){
-                            // e.printStackTrace();
+                        if (new File("./auto-start.bat").exists()){
+                            new File("./auto-start.bat").delete();
                         }
 
+                        FileWriter file1 = new FileWriter("./auto-start.bat");
+                        PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
+                        pw.print("start .\\start.bat\r\ncd /d \""+file.getCanonicalPath().replaceAll("\\\\", "/").replaceAll("/", "\\\\")+"\"\r\nstart .\\vrcvideologviewer.bat");
+                        pw.close();
+                        file1.close();
+                        pw = null;
+                        file1 = null;
+
+                        final Runtime runtime = Runtime.getRuntime();
+                        final Process exec0 = runtime.exec(new String[]{".\\auto-start.bat"});
+                        Thread.ofVirtual().start(() -> {
+                            try {
+                                Thread.sleep(5000L);
+                            } catch (Exception ex) {
+                                //ex.printStackTrace();
+                            }
+
+                            if (exec0.isAlive()) {
+                                exec0.destroy();
+                            }
+                        });
+                        exec0.waitFor();
+                        runtime.exit(0);
+
+                        new File("./auto-start.bat").delete();
 
                     } catch (Exception e){
                         //e.printStackTrace();
                     }
                 }
-
+                return;
             }
             return;
         }
