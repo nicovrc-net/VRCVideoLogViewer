@@ -45,7 +45,7 @@ public class Main {
                     return;
                 }
 
-                if (AutoStaringMode.equals("Start-Windows")){
+                if (AutoStaringMode.equals("Windows")){
                     try {
                         final Runtime runtime = Runtime.getRuntime();
                         final Process exec0 = runtime.exec(new String[]{"./auto-start.bat"});
@@ -67,7 +67,7 @@ public class Main {
                     return;
                 }
 
-                if (AutoStaringMode.equals("Start-VRChat")){
+                if (AutoStaringMode.equals("VRChat")){
                     try {
 
                         ConfigData config = new ConfigData();

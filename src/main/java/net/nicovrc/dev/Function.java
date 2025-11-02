@@ -464,7 +464,7 @@ public class Function {
                 """;
 
         configText = configText.replaceAll("#lang#", config.getLang());
-        configText = configText.replaceAll("#logfolder#", config.getLogFolderPass());
+        configText = configText.replaceAll("#logfolder#", config.getLogFolderPass().replaceAll("\\\\", "/"));
         configText = configText.replaceAll("#debug#", (config.isDebugOutput()+"").toLowerCase(Locale.ROOT));
         configText = configText.replaceAll("#oldcheck#", (config.isOldLogCheck()+"").toLowerCase(Locale.ROOT));
         configText = configText.replaceAll("#videoplayer#", (config.isVideoPlayer()+"").toLowerCase(Locale.ROOT));
@@ -490,7 +490,7 @@ public class Function {
         if (config.isAutoStaring()){
             String path = "";
             try {
-                path = new File("./").getCanonicalPath();
+                path = new File("./").getCanonicalPath().replaceAll("\\\\", "/");
             } catch (IOException e) {
                 //e.printStackTrace();
             }
@@ -546,7 +546,7 @@ public class Function {
             }
 
             try {
-                file = new File(file.getCanonicalPath()+"\\vrcvideologviewer.bat");
+                file = new File(file.getCanonicalPath().replaceAll("\\\\", "/")+"\\vrcvideologviewer.bat");
             } catch (IOException e) {
                 //e.printStackTrace();
             }
