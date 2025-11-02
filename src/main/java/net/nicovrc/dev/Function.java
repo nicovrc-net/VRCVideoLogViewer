@@ -61,8 +61,6 @@ public class Function {
     public static final String[] temp_lastLogFile = {null};
 
     public static final HashMap<String, LogData> logDataList = new HashMap<>();
-    public static final ObservableList<String> items = FXCollections.observableArrayList();
-    public static ListView<String> listView = null;
 
     public static String new_version = Function.Version;
 
