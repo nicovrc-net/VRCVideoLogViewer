@@ -27,6 +27,8 @@ public class Function {
     public static final NTSystem ntSystem = new NTSystem();
     public static final Runtime runtime = Runtime.getRuntime();
 
+    private static final SimpleDateFormat file_sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+
     private static final Pattern matcher_VideoLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Video Playback\\] Attempting to resolve URL '(.+)'");
     private static final Pattern matcher_VideoLog2 = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Video Playback\\] Resolving URL '(.+)'");
     private static final Pattern matcher_ImageLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Image Download\\] Attempting to load image from URL '(.+)'");
@@ -54,6 +56,59 @@ public class Function {
         }
 
         return logText;
+    }
+
+    public static List<String> getFileList(String FolderPass) throws Exception {
+        List<String> logFileList = new ArrayList<>();
+        File file = new File(FolderPass);
+        for (File f : file.listFiles()) {
+            if (f.getName().startsWith("output_log_")) {
+                logFileList.add(f.getName());
+            }
+        }
+
+        return logFileList;
+    }
+
+    public static List<String> ListSort(List<String> list) throws Exception {
+        List<String> temp = new ArrayList<>();
+
+        String[] temp1 = new String[list.size()];
+        long[] temp2 = new long[list.size()];
+        int i = 0;
+        for (String s : list) {
+            Date date = file_sdf.parse(s.replaceAll("output_log_", "").replaceAll("\\.txt", ""));
+            temp1[i] = s;
+            temp2[i] = date.getTime();
+            i++;
+        }
+
+        boolean isMove = true;
+        String te1;
+        long te2;
+
+        while (isMove){
+            isMove = false;
+            for (i = 0; i < temp2.length; i++){
+                if (i + 1 < temp2.length){
+                    if (temp2[i] >= temp2[i + 1]){
+                        isMove = true;
+                        te1 = temp1[i];
+                        te2 = temp2[i];
+
+                        temp1[i] = temp1[i + 1];
+                        temp2[i] = temp2[i + 1];
+                        temp1[i + 1] = te1;
+                        temp2[i + 1] = te2;
+                    }
+                }
+            }
+        }
+
+        for (i = 0; i < temp1.length; i++){
+            temp.add(temp1[i]);
+        }
+        return temp;
     }
 
     public static List<LogData> getLogForURL(String logText) throws Exception{

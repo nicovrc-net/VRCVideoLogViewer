@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 
 public class GUI extends Application {
 
-    private static final SimpleDateFormat file_sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
     private static final SimpleDateFormat log_sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private static final String configText = """
@@ -260,16 +259,7 @@ public class GUI extends Application {
             return;
         }
 
-        List<String> logFileList = new ArrayList<>();
-        try {
-            for (File f : file.listFiles()){
-                if (f.getName().startsWith("output_log_")){
-                    logFileList.add(f.getName());
-                }
-            }
-        } catch (Exception e){
-            // e.printStackTrace();
-        }
+        List<String> logFileList = Function.getFileList(config.getLogFolderPass());
         if (logFileList.isEmpty()){
             System.out.println("ログファイルが見つかりませんでした。\nLog file not found.");
             timer1.cancel();
@@ -284,46 +274,7 @@ public class GUI extends Application {
         }
         if (logFileList.size() > 1){
             try {
-
-                List<String> temp = new ArrayList<>();
-
-                String[] temp1 = new String[logFileList.size()];
-                long[] temp2 = new long[logFileList.size()];
-                int i = 0;
-                for (String s : logFileList) {
-                    Date date = file_sdf.parse(s.replaceAll("output_log_", "").replaceAll("\\.txt", ""));
-                    temp1[i] = s;
-                    temp2[i] = date.getTime();
-                    i++;
-                }
-
-                boolean isMove = true;
-                String te1;
-                long te2;
-
-                while (isMove){
-                    isMove = false;
-                    for (i = 0; i < temp2.length; i++){
-                        if (i + 1 < temp2.length){
-                            if (temp2[i] >= temp2[i + 1]){
-                                isMove = true;
-                                te1 = temp1[i];
-                                te2 = temp2[i];
-
-                                temp1[i] = temp1[i + 1];
-                                temp2[i] = temp2[i + 1];
-                                temp1[i + 1] = te1;
-                                temp2[i + 1] = te2;
-                            }
-                        }
-                    }
-                }
-
-                for (i = 0; i < temp1.length; i++){
-                    temp.add(temp1[i]);
-                }
-                logFileList = temp;
-
+                logFileList = Function.ListSort(logFileList);
             } catch (Exception e){
                 //e.printStackTrace();
                 if (config.isDebugOutput()){
@@ -373,7 +324,6 @@ public class GUI extends Application {
             }
         }
 
-
         if (config.isDebugOutput()){
             System.out.println(log_sdf.format(lastLogData.getLogDate()));
             System.out.println("[Info] リアルタイム取得開始します...");
@@ -384,54 +334,10 @@ public class GUI extends Application {
         timer1.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                List<String> logFileList = new ArrayList<>();
                 try {
-                    File file = new File(config.getLogFolderPass());
-                    for (File f : file.listFiles()){
-                        if (f.getName().startsWith("output_log_")){
-                            logFileList.add(f.getName());
-                        }
-                    }
-
+                    List<String> logFileList = Function.getFileList(config.getLogFolderPass());
                     if (logFileList.size() > 1){
-                        List<String> temp = new ArrayList<>();
-
-                        String[] temp1 = new String[logFileList.size()];
-                        long[] temp2 = new long[logFileList.size()];
-                        int i = 0;
-                        for (String s : logFileList) {
-                            Date date = file_sdf.parse(s.replaceAll("output_log_", "").replaceAll("\\.txt", ""));
-                            temp1[i] = s;
-                            temp2[i] = date.getTime();
-                            i++;
-                        }
-
-                        boolean isMove = true;
-                        String te1;
-                        long te2;
-
-                        while (isMove){
-                            isMove = false;
-                            for (i = 0; i < temp2.length; i++){
-                                if (i + 1 < temp2.length){
-                                    if (temp2[i] >= temp2[i + 1]){
-                                        isMove = true;
-                                        te1 = temp1[i];
-                                        te2 = temp2[i];
-
-                                        temp1[i] = temp1[i + 1];
-                                        temp2[i] = temp2[i + 1];
-                                        temp1[i + 1] = te1;
-                                        temp2[i + 1] = te2;
-                                    }
-                                }
-                            }
-                        }
-
-                        for (i = 0; i < temp1.length; i++){
-                            temp.add(temp1[i]);
-                        }
-                        logFileList = temp;
+                        logFileList = Function.ListSort(logFileList);
                     }
 
                     temp_lastLogFile[0] = config.getLogFolderPass() + "\\" + logFileList.getLast();

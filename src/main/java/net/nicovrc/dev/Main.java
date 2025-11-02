@@ -60,7 +60,7 @@ public class Main {
                 }
 
                 if (AutoStaringMode.equals("Start-VRChat")){
-                    List<String> logFileList = new ArrayList<>();
+                    List<String> logFileList = null;
                     try {
 
                         ConfigData config = new ConfigData();
@@ -73,105 +73,17 @@ public class Main {
                             config.setImageDownloader(yamlMapping.bool("ImageDownloader"));
                             config.setStringDownloader(yamlMapping.bool("StringDownloader"));
                         }
-                        File file = new File(config.getLogFolderPass());
-                        for (File f : file.listFiles()) {
-                            if (f.getName().startsWith("output_log_")) {
-                                logFileList.add(f.getName());
-                            }
-                        }
+                        logFileList = Function.getFileList(config.getLogFolderPass());
 
                         if (logFileList.size() > 1) {
-                            List<String> temp = new ArrayList<>();
-
-                            String[] temp1 = new String[logFileList.size()];
-                            long[] temp2 = new long[logFileList.size()];
-                            int i = 0;
-                            for (String s : logFileList) {
-                                Date date = file_sdf.parse(s.replaceAll("output_log_", "").replaceAll("\\.txt", ""));
-                                temp1[i] = s;
-                                temp2[i] = date.getTime();
-                                i++;
-                            }
-
-                            boolean isMove = true;
-                            String te1;
-                            long te2;
-
-                            while (isMove) {
-                                isMove = false;
-                                for (i = 0; i < temp2.length; i++) {
-                                    if (i + 1 < temp2.length) {
-                                        if (temp2[i] >= temp2[i + 1]) {
-                                            isMove = true;
-                                            te1 = temp1[i];
-                                            te2 = temp2[i];
-
-                                            temp1[i] = temp1[i + 1];
-                                            temp2[i] = temp2[i + 1];
-                                            temp1[i + 1] = te1;
-                                            temp2[i + 1] = te2;
-                                        }
-                                    }
-                                }
-                            }
-
-                            for (i = 0; i < temp1.length; i++) {
-                                temp.add(temp1[i]);
-                            }
-                            logFileList = temp;
+                            logFileList = Function.ListSort(logFileList);
                         }
 
                         String tempLast = logFileList.getLast();
 
                         while (tempLast.equals(logFileList.getLast())){
                             logFileList.clear();
-
-                            for (File f : file.listFiles()) {
-                                if (f.getName().startsWith("output_log_")) {
-                                    logFileList.add(f.getName());
-                                }
-                            }
-
-                            if (logFileList.size() > 1) {
-                                List<String> temp = new ArrayList<>();
-
-                                String[] temp1 = new String[logFileList.size()];
-                                long[] temp2 = new long[logFileList.size()];
-                                int i = 0;
-                                for (String s : logFileList) {
-                                    Date date = file_sdf.parse(s.replaceAll("output_log_", "").replaceAll("\\.txt", ""));
-                                    temp1[i] = s;
-                                    temp2[i] = date.getTime();
-                                    i++;
-                                }
-
-                                boolean isMove = true;
-                                String te1;
-                                long te2;
-
-                                while (isMove) {
-                                    isMove = false;
-                                    for (i = 0; i < temp2.length; i++) {
-                                        if (i + 1 < temp2.length) {
-                                            if (temp2[i] >= temp2[i + 1]) {
-                                                isMove = true;
-                                                te1 = temp1[i];
-                                                te2 = temp2[i];
-
-                                                temp1[i] = temp1[i + 1];
-                                                temp2[i] = temp2[i + 1];
-                                                temp1[i + 1] = te1;
-                                                temp2[i + 1] = te2;
-                                            }
-                                        }
-                                    }
-                                }
-
-                                for (i = 0; i < temp1.length; i++) {
-                                    temp.add(temp1[i]);
-                                }
-                                logFileList = temp;
-                            }
+                            logFileList = Function.getFileList(config.getLogFolderPass());
                         }
 
                         try {
