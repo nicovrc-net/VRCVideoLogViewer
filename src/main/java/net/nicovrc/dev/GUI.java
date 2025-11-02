@@ -534,22 +534,22 @@ public class GUI extends Application {
                         label1.setLayoutX(5);
                         label1.setLayoutY(5);
                         label1.setFont(new Font(16));
-                        Platform.runLater(()-> root1.getChildren().add(label1));
+                        root1.getChildren().add(label1);
 
                         Label label1_2 = new Label("Date");
                         label1_2.setLayoutX(10);
                         label1_2.setLayoutY(40);
-                        Platform.runLater(()-> root1.getChildren().add(label1_2));
+                        root1.getChildren().add(label1_2);
 
                         Label label1_2_1 = new Label(log_sdf.format(data.getLogDate()));
                         label1_2_1.setLayoutX(10);
                         label1_2_1.setLayoutY(60);
-                        Platform.runLater(()-> root1.getChildren().add(label1_2_1));
+                        root1.getChildren().add(label1_2_1);
 
                         Label label1_3 = new Label("URL");
                         label1_3.setLayoutX(10);
                         label1_3.setLayoutY(80);
-                        Platform.runLater(()-> root1.getChildren().add(label1_3));
+                        root1.getChildren().add(label1_3);
 
                         TextField field2 = new TextField();
                         field2.setLayoutX(10);
@@ -557,23 +557,24 @@ public class GUI extends Application {
                         field2.setEditable(false);
                         field2.setFocusTraversable(false);
                         field2.setText(data.getURL());
-                        field2.setPrefWidth(700);Platform.runLater(()-> root1.getChildren().add(field2));
+                        field2.setPrefWidth(700);
+                        root1.getChildren().add(field2);
+                        //Platform.runLater(()-> );
 
                         Label label1_4 = new Label("種類");
                         label1_4.setLayoutX(10);
-                        label1_4.setLayoutY(130);Platform.runLater(()-> root1.getChildren().add(label1_4));
+                        label1_4.setLayoutY(130);
+                        root1.getChildren().add(label1_4);
 
                         Label label1_4_1 = new Label(data.getURLType().equals("Video") ? "動画(Video)" : data.getURLType().equals("String") ? "テキスト(String)" : "画像(Image)");
                         label1_4_1.setLayoutX(10);
-                        label1_4_1.setLayoutY(150);Platform.runLater(()->{
-
-                        });
+                        label1_4_1.setLayoutY(150);
                         root1.getChildren().add(label1_4_1);
 
                         Label label1_5 = new Label("エラーメッセージ");
                         label1_5.setLayoutX(10);
                         label1_5.setLayoutY(170);
-                        Platform.runLater(()-> root1.getChildren().add(label1_5));
+                        root1.getChildren().add(label1_5);
 
                         TextArea textArea = new TextArea();
                         textArea.setLayoutX(10);
@@ -582,8 +583,24 @@ public class GUI extends Application {
                         textArea.setPrefSize(700, 150);
                         textArea.setEditable(false);
                         textArea.setWrapText(false);
-                        Platform.runLater(()-> root1.getChildren().add(textArea));
+                        //Platform.runLater(()-> );
+                        root1.getChildren().add(textArea);
 
+                        Button button = new Button("閉じる");
+                        button.setLayoutX(650);
+                        button.setLayoutY(10);
+                        button.setOnAction(e -> stage1.close());
+                        root1.getChildren().add(button);
+
+                        Label label1_6 = new Label("Now Loading...");
+                        label1_6.setLayoutX(10);
+                        label1_6.setLayoutY(360);
+                        root1.getChildren().add(label1_6);
+
+                        Platform.runLater(()->{
+                            stage1.setScene(scene1);
+                            stage1.show();
+                        });
                         switch (data.getURLType()) {
                             case "Video" -> {
                                 //System.out.println("debug 0");
@@ -592,10 +609,7 @@ public class GUI extends Application {
                                 Image fxImage = videoData.getThumbnail() != null ? new Image(new ByteArrayInputStream(videoData.getThumbnail())) : null;
                                 //System.out.println("debug 2");
 
-                                Label label1_6 = new Label("タイトル");
-                                label1_6.setLayoutX(10);
-                                label1_6.setLayoutY(360);
-                                root1.getChildren().add(label1_6);
+                                label1_6.setText("タイトル");
 
                                 TextField field3 = new TextField();
                                 field3.setLayoutX(10);
@@ -604,7 +618,7 @@ public class GUI extends Application {
                                 field3.setFocusTraversable(false);
                                 field3.setText(videoData.getVideoTitle());
                                 field3.setPrefWidth(700);
-                                Platform.runLater(()-> root1.getChildren().add(field3));
+                                Platform.runLater(()->root1.getChildren().add(field3));
 
                                 if (fxImage != null) {
                                     //System.out.println("debug 3");
@@ -614,7 +628,7 @@ public class GUI extends Application {
                                     imageView.setLayoutY(420);
                                     imageView.setFitHeight(300);
                                     imageView.setPreserveRatio(true);
-                                    Platform.runLater(()-> root1.getChildren().add(imageView));
+                                    Platform.runLater(()->root1.getChildren().add(imageView));
                                 }
 
                             }
@@ -647,13 +661,15 @@ public class GUI extends Application {
                                     // e.printStackTrace();
                                 }
 
+                                Platform.runLater(()->root1.getChildren().remove(label1_6));
                                 if (fxImage != null) {
+
                                     ImageView imageView = new ImageView(fxImage);
                                     imageView.setLayoutX(10);
                                     imageView.setLayoutY(360);
                                     imageView.setFitHeight(350);
                                     imageView.setPreserveRatio(true);
-                                    Platform.runLater(()-> root1.getChildren().add(imageView));
+                                    Platform.runLater(()->root1.getChildren().add(imageView));
                                 }
 
                             }
@@ -683,6 +699,7 @@ public class GUI extends Application {
                                     // e.printStackTrace();
                                 }
 
+                                Platform.runLater(()->root1.getChildren().remove(label1_6));
                                 if (str != null) {
 
                                     TextArea textArea2 = new TextArea();
@@ -696,17 +713,6 @@ public class GUI extends Application {
                                 }
                             }
                         }
-
-                        Button button = new Button("閉じる");
-                        button.setLayoutX(650);
-                        button.setLayoutY(10);
-                        button.setOnAction(e -> stage1.close());
-                        Platform.runLater(()->{
-                            root1.getChildren().add(button);
-                            stage1.setScene(scene1);
-                            stage1.show();
-                        });
-
                     }
                 });
             }
