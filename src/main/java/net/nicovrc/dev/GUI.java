@@ -44,8 +44,7 @@ public class GUI extends Application {
         label.setFont(new Font(24));
         root.getChildren().add(label);
 
-
-
+        Function.listView = new ListView<>(Function.items);
         Function.listView.setEditable(false);
         Function.listView.setPrefSize(1200, 600);
         Function.listView.setLayoutX(15);
@@ -263,6 +262,85 @@ public class GUI extends Application {
         });
         //listView.scrollTo(items.size() - 1);
         root.getChildren().add(Function.listView);
+
+        final LogData lastLogData = new LogData();
+        lastLogData.setLogDate(new Date());
+
+        if (Function.config.isOldLogCheck()){
+            if (Function.config.isDebugOutput()){
+                System.out.println("[Info] 抽出開始");
+            }
+
+            for (String s : Function.logFileList) {
+                File file = new File(Function.config.getLogFolderPass() + "\\" + s);
+
+                String text = Function.getTextForFile(file);
+                try {
+                    List<LogData> log = Function.getLogForURL(text);
+                    for (LogData logData : log) {
+                        lastLogData.setLogDate(logData.getLogDate());
+                        lastLogData.setURL(logData.getURL());
+                        lastLogData.setErrorMessage(logData.getErrorMessage());
+                        lastLogData.setURLType(logData.getURLType());
+
+                        //LogData.add(logData);
+                        final String str = "["+Function.log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")";
+                        Function.logDataList.put(str, logData);
+                        Platform.runLater(() -> {
+                            Function.items.add(str);
+                            Function.listView.refresh();
+                            Function.listView.scrollTo(Function.items.size());
+                        });
+                    }
+
+                } catch (Exception e){
+                    //e.printStackTrace();
+                    if (Function.config.isDebugOutput()){
+                        System.out.println("[Error] ログファイル読み込みに失敗");
+                        System.out.println("filename : " + file.getName());
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        if (Function.config.isDebugOutput()){
+            System.out.println(Function.log_sdf.format(lastLogData.getLogDate()));
+            System.out.println("[Info] リアルタイム取得開始します...");
+        }
+
+        Function.timer2.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                final String lastLogFile = Function.temp_lastLogFile[0];
+
+                try {
+                    File f = new File(lastLogFile);
+                    for (LogData logData : Function.getLogForURL(Function.getTextForFile(f))){
+                        String s = "[" + Function.log_sdf.format(logData.getLogDate()) + "] " + logData.getURL() + " (" + logData.getURLType() + ")";
+                        if (logData.getLogDate().getTime() >= lastLogData.getLogDate().getTime() && Function.logDataList.get(s) == null){
+
+                            lastLogData.setLogDate(logData.getLogDate());
+                            lastLogData.setURL(logData.getURL());
+                            lastLogData.setErrorMessage(logData.getErrorMessage());
+                            lastLogData.setURLType(logData.getURLType());
+
+                            Function.logDataList.put(s, logData);
+                            Platform.runLater(() -> {
+                                Function.items.add(s);
+                                Function.listView.refresh();
+                                Function.listView.scrollTo(Function.items.size());
+                            });
+
+                        }
+                    }
+                } catch (Exception e){
+                    Function.timer1.cancel();
+                    Function.timer2.cancel();
+                    Function.isTimerRun = false;
+                }
+            }
+        }, 0L, 1000L);
 
         Scene scene = new Scene(root);
         stage.setTitle("VRCVideoLogViewer Ver " + Function.Version);

@@ -57,9 +57,12 @@ public class Function {
 
     public static final Pattern matcher_version = Pattern.compile("<id>tag:github\\.com,2008:Repository/(\\d+)/(.+)</id>");
 
+    public static List<String> logFileList = null;
+    public static final String[] temp_lastLogFile = {null};
+
     public static final HashMap<String, LogData> logDataList = new HashMap<>();
     public static final ObservableList<String> items = FXCollections.observableArrayList();
-    public static final ListView<String> listView = new ListView<>(items);
+    public static ListView<String> listView = null;
 
     public static String new_version = Function.Version;
 

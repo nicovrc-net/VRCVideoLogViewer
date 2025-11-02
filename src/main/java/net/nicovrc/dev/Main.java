@@ -311,13 +311,13 @@ public class Main {
             return;
         }
 
-        List<String> logFileList = null;
+
         try {
-            logFileList = Function.getFileList(Function.config.getLogFolderPass());
+            Function.logFileList = Function.getFileList(Function.config.getLogFolderPass());
         } catch (Exception e){
             // e.printStackTrace();
         }
-        if (logFileList.isEmpty()){
+        if (Function.logFileList.isEmpty()){
             System.out.println("ログファイルが見つかりませんでした。\nLog file not found.");
             Function.timer1.cancel();
             Function.timer2.cancel();
@@ -327,9 +327,9 @@ public class Main {
         if (Function.config.isDebugOutput()){
             System.out.println("[Info] ログファイルの並び替え");
         }
-        if (logFileList.size() > 1){
+        if (Function.logFileList.size() > 1){
             try {
-                logFileList = Function.ListSort(logFileList);
+                Function.logFileList = Function.ListSort(Function.logFileList);
             } catch (Exception e){
                 //e.printStackTrace();
                 if (Function.config.isDebugOutput()){
@@ -338,53 +338,7 @@ public class Main {
             }
         }
 
-        final LogData lastLogData = new LogData();
-        lastLogData.setLogDate(new Date());
-
-        if (Function.config.isOldLogCheck()){
-            if (Function.config.isDebugOutput()){
-                System.out.println("[Info] 抽出開始");
-            }
-
-            for (String s : logFileList) {
-                file = new File(Function.config.getLogFolderPass() + "\\" + s);
-
-                String text = Function.getTextForFile(file);
-                try {
-                    List<LogData> log = Function.getLogForURL(text);
-                    for (LogData logData : log) {
-                        lastLogData.setLogDate(logData.getLogDate());
-                        lastLogData.setURL(logData.getURL());
-                        lastLogData.setErrorMessage(logData.getErrorMessage());
-                        lastLogData.setURLType(logData.getURLType());
-
-                        //LogData.add(logData);
-                        Function.logDataList.put(("["+Function.log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")"), logData);
-                        Platform.runLater(() -> {
-                            Function.items.add(("["+Function.log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")"));
-                            Function.listView.refresh();
-                            Function.listView.scrollTo(Function.items.size());
-                        });
-
-                    }
-
-                } catch (Exception e){
-                    //e.printStackTrace();
-                    if (Function.config.isDebugOutput()){
-                        System.out.println("[Error] ログファイル読み込みに失敗");
-                        System.out.println("filename : " + file.getName());
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-        if (Function.config.isDebugOutput()){
-            System.out.println(Function.log_sdf.format(lastLogData.getLogDate()));
-            System.out.println("[Info] リアルタイム取得開始します...");
-        }
-
-        final String[] temp_lastLogFile = {Function.config.getLogFolderPass() + "\\" + logFileList.getLast()};
+        Function.temp_lastLogFile[0] = Function.config.getLogFolderPass() + "\\" + Function.logFileList.getLast();
 
         Function.timer1.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -395,40 +349,7 @@ public class Main {
                         logFileList = Function.ListSort(logFileList);
                     }
 
-                    temp_lastLogFile[0] = Function.config.getLogFolderPass() + "\\" + logFileList.getLast();
-                } catch (Exception e){
-                    Function.timer1.cancel();
-                    Function.timer2.cancel();
-                    Function.isTimerRun = false;
-                }
-            }
-        }, 0L, 1000L);
-
-        Function.timer2.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                final String lastLogFile = temp_lastLogFile[0];
-
-                try {
-                    File f = new File(lastLogFile);
-                    for (LogData logData : Function.getLogForURL(Function.getTextForFile(f))){
-                        String s = "[" + Function.log_sdf.format(logData.getLogDate()) + "] " + logData.getURL() + " (" + logData.getURLType() + ")";
-                        if (logData.getLogDate().getTime() >= lastLogData.getLogDate().getTime() && Function.logDataList.get(s) == null){
-
-                            lastLogData.setLogDate(logData.getLogDate());
-                            lastLogData.setURL(logData.getURL());
-                            lastLogData.setErrorMessage(logData.getErrorMessage());
-                            lastLogData.setURLType(logData.getURLType());
-
-                            Function.logDataList.put(s, logData);
-                            Platform.runLater(() -> {
-                                Function.items.add(s);
-                                Function.listView.refresh();
-                                Function.listView.scrollTo(Function.items.size());
-                            });
-
-                        }
-                    }
+                    Function.temp_lastLogFile[0] = Function.config.getLogFolderPass() + "\\" + logFileList.getLast();
                 } catch (Exception e){
                     Function.timer1.cancel();
                     Function.timer2.cancel();
