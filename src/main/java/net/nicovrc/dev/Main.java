@@ -107,7 +107,15 @@ public class Main {
                             });
                             exec0.waitFor();
 
-                            final Process exec1 = runtime.exec(new String[]{"./startup.bat"});
+                            File file = new File("C:\\Users\\" + Function.ntSystem.getName() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
+                            if (!file.exists()){
+                                String AppData = System.getenv().get("APPDATA");
+                                file = new File(AppData+"\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
+                            }
+                            if (!file.exists()){
+                                return;
+                            }
+                            final Process exec1 = runtime.exec("start ", new String[]{file.getCanonicalPath()+"\\vrcvideologviewer.bat"});
                             Thread.ofVirtual().start(() -> {
                                 try {
                                     Thread.sleep(5000L);
