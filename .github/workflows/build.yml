@@ -90,19 +90,24 @@ jobs:
         run: |
           chmod +x ./start_forLinux.sh
           screen -UAmdS test ./start_forLinux.sh
-          sleep 5s
+          sleep 15s
           if [ -d ./tools ]; then
-             echo "Check JDK"
-             if [ -d ./tools/jdk-21.0.2 ]; then
-                echo "Check JavaFX"
-                if [ -d ./tools/javafx-sdk-21.0.9 ]; then
-                   echo "OK"
+            echo "Tools Folder OK"
+            if [ -d ./tools/jdk-21.0.2 ]; then
+              echo "OpenJDK OK"
+              if [ -d ./tools/javafx-sdk-21.0.9 ]; then
+                echo "JavaFX OK"
+                if [ -d ./tools/ImageMagick ]; then
+                  echo "ImageMagick OK"
                 else
-                   exit 1
+                  exit 1
                 fi
-             fi
+              else
+                exit 1
+              fi
+            fi
           else
-             exit 1
+            exit 1
           fi
 
         shell: bash
