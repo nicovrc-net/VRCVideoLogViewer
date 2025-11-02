@@ -233,7 +233,7 @@ public class GUI extends Application {
                                 Image fxImage = videoData.getThumbnail() != null ? new Image(new ByteArrayInputStream(videoData.getThumbnail())) : null;
                                 //System.out.println("debug 2");
 
-                                label1_6.setText("タイトル");
+                                Platform.runLater(()->label1_6.setText("タイトル"));
 
                                 TextField field3 = new TextField();
                                 field3.setLayoutX(10);
