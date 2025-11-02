@@ -301,6 +301,8 @@ public class Main {
             Function.config.setVideoPlayer(yamlMapping.bool("VideoPlayer"));
             Function.config.setImageDownloader(yamlMapping.bool("ImageDownloader"));
             Function.config.setStringDownloader(yamlMapping.bool("StringDownloader"));
+            Function.config.setAutoStaring(yamlMapping.bool("isAutoStaring"));
+            Function.config.setAutoStaringMode(yamlMapping.string("AutoStaringMode"));
         } catch (Exception e){
             // e.printStackTrace();
 
