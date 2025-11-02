@@ -3,6 +3,9 @@ package net.nicovrc.dev;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.sun.security.auth.module.NTSystem;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
 
 import java.io.*;
 import java.net.URI;
@@ -24,10 +27,43 @@ public class Function {
     public static final String Unity_UserAgent = "UnityPlayer/2022.3.22f1-DWR (UnityWebRequest/1.0, libcurl/8.5.0-DEV)";
     public static final String HTTP_x_unity_version = "2022.3.22f1-DWR";
 
+    public static final String configText = """
+                # VRChat ログフォルダパス (VRChat log folder path)
+                logfolder: ''
+                # デバッグログを表示するか (Enable debug log display?)
+                debugOutput: true
+                # 過去のログから取得して表示するか (Display data from previous logs?)
+                oldLogCheck: true
+                # 動画プレーヤーのログを表示するか (Enable video player log display?)
+                VideoPlayer: true
+                # ImageDownloaderのログを表示するか (Enable ImageDownloader log display?)
+                ImageDownloader: true
+                # StringDownloaderのログを表示するか (Enable StringDownloader log display?)
+                StringDownloader: true
+                """;
+
+    public static final ConfigData config = new ConfigData();
+
+    public static final Timer timer1 = new Timer();
+    public static final Timer timer2 = new Timer();
+
+    public static boolean isUpdate = false;
+
     public static final NTSystem ntSystem = new NTSystem();
     public static final Runtime runtime = Runtime.getRuntime();
 
-    private static final SimpleDateFormat file_sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+    public static final SimpleDateFormat file_sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+    public static final SimpleDateFormat log_sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    public static final Pattern matcher_version = Pattern.compile("<id>tag:github\\.com,2008:Repository/(\\d+)/(.+)</id>");
+
+    public static final HashMap<String, LogData> logDataList = new HashMap<>();
+    public static final ObservableList<String> items = FXCollections.observableArrayList();
+    public static final ListView<String> listView = new ListView<>(items);
+
+    public static String new_version = Function.Version;
+
+    public static boolean isTimerRun = true;
 
     private static final Pattern matcher_VideoLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Video Playback\\] Attempting to resolve URL '(.+)'");
     private static final Pattern matcher_VideoLog2 = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Video Playback\\] Resolving URL '(.+)'");
