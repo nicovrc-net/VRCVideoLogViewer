@@ -4,6 +4,7 @@ import com.amihaiemil.eoyaml.Yaml;
 import com.amihaiemil.eoyaml.YamlMapping;
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import net.nicovrc.dev.data.ConfigData;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,7 +16,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -27,9 +27,9 @@ public class Main {
             if (args[0].equals("--start-Windows")){
                 boolean isAutoStaring = false;
                 String AutoStaringMode = "";
-                if (new File("./config-windows.yml").exists()){
+                if (new File("./config.yml").exists()){
                     try {
-                        final YamlMapping yamlMapping = Yaml.createYamlInput(new File("./config-windows.yml")).readYamlMapping();
+                        final YamlMapping yamlMapping = Yaml.createYamlInput(new File("./config.yml")).readYamlMapping();
                         isAutoStaring = yamlMapping.bool("isAutoStaring");
                         AutoStaringMode = yamlMapping.string("AutoStaringMode");
                     } catch (Exception e){
@@ -68,30 +68,27 @@ public class Main {
                 }
 
                 if (AutoStaringMode.equals("Start-VRChat")){
-                    List<String> logFileList = null;
                     try {
 
                         ConfigData config = new ConfigData();
                         if (new File("./config.yml").exists()){
                             final YamlMapping yamlMapping = Yaml.createYamlInput(new File("./config.yml")).readYamlMapping();
+                            try {
+                                config.setLang(yamlMapping.string("lang"));
+                            } catch (Exception e){
+                                config.setLang("ja");
+                            }
                             config.setLogFolderPass(yamlMapping.string("logfolder"));
-                            config.setDebugOutput(yamlMapping.bool("debugOutput"));
-                            config.setOldLogCheck(yamlMapping.bool("oldLogCheck"));
-                            config.setVideoPlayer(yamlMapping.bool("VideoPlayer"));
-                            config.setImageDownloader(yamlMapping.bool("ImageDownloader"));
-                            config.setStringDownloader(yamlMapping.bool("StringDownloader"));
                         }
-                        logFileList = Function.getFileList(config.getLogFolderPass());
+                        List<String> list = Function.ListSort(Function.getFileList(config.getLogFolderPass()));
+                        final String last = list.getLast();
 
-                        if (logFileList.size() > 1) {
-                            logFileList = Function.ListSort(logFileList);
-                        }
-
-                        String tempLast = logFileList.getLast();
-
-                        while (tempLast.equals(logFileList.getLast())){
-                            logFileList.clear();
-                            logFileList = Function.getFileList(config.getLogFolderPass());
+                        while (last.equals(Function.ListSort(Function.getFileList(config.getLogFolderPass())).getLast())){
+                            try {
+                                Thread.sleep(1000L);
+                            } catch (Exception ex) {
+                                //ex.printStackTrace();
+                            }
                         }
 
                         try {
@@ -109,11 +106,27 @@ public class Main {
                                 }
                             });
                             exec0.waitFor();
+
+                            final Process exec1 = runtime.exec(new String[]{"./startup.bat"});
+                            Thread.ofVirtual().start(() -> {
+                                try {
+                                    Thread.sleep(5000L);
+                                } catch (Exception ex) {
+                                    //ex.printStackTrace();
+                                }
+
+                                if (exec1.isAlive()) {
+                                    exec1.destroy();
+                                }
+                            });
+                            exec1.waitFor();
+
+                            return;
+
                         } catch (Exception e){
                             // e.printStackTrace();
                         }
 
-                        return;
 
                     } catch (Exception e){
                         //e.printStackTrace();
@@ -259,6 +272,11 @@ public class Main {
 
         try {
             final YamlMapping yamlMapping = Yaml.createYamlInput(new File("./config.yml")).readYamlMapping();
+            try {
+                Function.config.setLang(yamlMapping.string("lang"));
+            } catch (Exception e){
+                Function.config.setLang("ja");
+            }
             Function.config.setLogFolderPass(yamlMapping.string("logfolder"));
             Function.config.setDebugOutput(yamlMapping.bool("debugOutput"));
             Function.config.setOldLogCheck(yamlMapping.bool("oldLogCheck"));

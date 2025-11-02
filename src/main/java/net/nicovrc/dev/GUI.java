@@ -11,6 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import net.nicovrc.dev.data.ConfigData;
 
 import java.io.*;
 import java.net.URI;
@@ -126,13 +127,182 @@ public class GUI extends Application {
         label.setFont(new Font(24));
         root.getChildren().add(label);
 
+        Button button = new Button("設定");
+        button.setLayoutX(260);
+        button.setLayoutY(20);
+        button.setOnAction(e->{
+            final Stage setting_stage = new Stage();
+            Thread.ofVirtual().start(()->{
+                AnchorPane setting_root = new AnchorPane();
+                Scene setting_scene = new Scene(setting_root);
+                Platform.runLater(()->{
+                    setting_stage.setResizable(false);
+                    setting_stage.setMaximized(false);
+                    setting_stage.setFullScreen(false);
+                    setting_stage.setTitle("設定");
+                    setting_stage.setWidth(800);
+                    setting_stage.setHeight(800);
+                });
+
+                Label setting_label1 = new Label("※再起動するまで設定は反映されません。");
+                setting_label1.setLayoutX(5);
+                setting_label1.setLayoutY(5);
+                setting_root.getChildren().add(setting_label1);
+
+                Label setting_label2 = new Label("VRChatログフォルダ (通常は変更する必要はありません)");
+                setting_label2.setLayoutX(5);
+                setting_label2.setLayoutY(25);
+                setting_root.getChildren().add(setting_label2);
+
+                TextField setting_field1 = new TextField();
+                setting_field1.setLayoutX(5);
+                setting_field1.setLayoutY(45);
+                setting_field1.setEditable(false);
+                setting_field1.setFocusTraversable(false);
+                setting_field1.setText(Function.config.getLogFolderPass());
+                setting_field1.setPrefWidth(700);
+                setting_root.getChildren().add(setting_field1);
+
+                CheckBox setting_checkbox1 = new CheckBox();
+                setting_checkbox1.setLayoutX(5);
+                setting_checkbox1.setLayoutY(75);
+                setting_checkbox1.setSelected(Function.config.isDebugOutput());
+                setting_root.getChildren().add(setting_checkbox1);
+
+                Label setting_label3 = new Label("デバッグログを表示");
+                setting_label3.setLayoutX(25);
+                setting_label3.setLayoutY(75);
+                setting_root.getChildren().add(setting_label3);
+
+                CheckBox setting_checkbox2 = new CheckBox();
+                setting_checkbox2.setLayoutX(5);
+                setting_checkbox2.setLayoutY(95);
+                setting_checkbox2.setSelected(Function.config.isOldLogCheck());
+                setting_root.getChildren().add(setting_checkbox2);
+
+                Label setting_label4 = new Label("過去のログを取得");
+                setting_label4.setLayoutX(25);
+                setting_label4.setLayoutY(95);
+                setting_root.getChildren().add(setting_label4);
+
+                CheckBox setting_checkbox3 = new CheckBox();
+                setting_checkbox3.setLayoutX(5);
+                setting_checkbox3.setLayoutY(115);
+                setting_checkbox3.setSelected(Function.config.isVideoPlayer());
+                setting_root.getChildren().add(setting_checkbox3);
+
+                Label setting_label5 = new Label("動画プレーヤーのログを表示");
+                setting_label5.setLayoutX(25);
+                setting_label5.setLayoutY(115);
+                setting_root.getChildren().add(setting_label5);
+
+                CheckBox setting_checkbox4 = new CheckBox();
+                setting_checkbox4.setLayoutX(5);
+                setting_checkbox4.setLayoutY(135);
+                setting_checkbox4.setSelected(Function.config.isImageDownloader());
+                setting_root.getChildren().add(setting_checkbox4);
+
+                Label setting_label6 = new Label("ImageDownloaderのログを表示");
+                setting_label6.setLayoutX(25);
+                setting_label6.setLayoutY(135);
+                setting_root.getChildren().add(setting_label6);
+
+                CheckBox setting_checkbox5 = new CheckBox();
+                setting_checkbox5.setLayoutX(5);
+                setting_checkbox5.setLayoutY(155);
+                setting_checkbox5.setSelected(Function.config.isStringDownloader());
+                setting_root.getChildren().add(setting_checkbox5);
+
+                Label setting_label7 = new Label("StringDownloaderのログを表示");
+                setting_label7.setLayoutX(25);
+                setting_label7.setLayoutY(155);
+                setting_root.getChildren().add(setting_label7);
+
+                Label setting_label8 = new Label("自動起動タイミング");
+                setting_label8.setLayoutX(5);
+                setting_label8.setLayoutY(175);
+                setting_root.getChildren().add(setting_label8);
+
+                CheckBox setting_checkbox6 = new CheckBox();
+                CheckBox setting_checkbox7 = new CheckBox();
+                CheckBox setting_checkbox8 = new CheckBox();
+                setting_checkbox6.setLayoutX(5);
+                setting_checkbox6.setLayoutY(195);
+                setting_checkbox6.setSelected(!Function.config.isAutoStaring());
+                setting_checkbox6.setOnAction(ev->{
+                    if (setting_checkbox6.isSelected()){
+                        setting_checkbox7.setSelected(false);
+                        setting_checkbox8.setSelected(false);
+                        setting_checkbox7.setDisable(true);
+                        setting_checkbox8.setDisable(true);
+                    } else {
+                        setting_checkbox7.setDisable(false);
+                        setting_checkbox8.setDisable(false);
+                    }
+                });
+                setting_root.getChildren().add(setting_checkbox6);
+
+                Label setting_label9 = new Label("自動起動しない");
+                setting_label9.setLayoutX(25);
+                setting_label9.setLayoutY(195);
+                setting_root.getChildren().add(setting_label9);
+
+                setting_checkbox7.setLayoutX(5);
+                setting_checkbox7.setLayoutY(215);
+                setting_checkbox7.setSelected(Function.config.isAutoStaring() && Function.config.getAutoStaringMode().equals("Windows"));
+                setting_checkbox7.setOnAction(ev->{
+                    setting_checkbox8.setSelected(false);
+                });
+                setting_checkbox7.setDisable(!Function.config.isAutoStaring());
+                setting_root.getChildren().add(setting_checkbox7);
+
+                Label setting_label10 = new Label("Windows起動時");
+                setting_label10.setLayoutX(25);
+                setting_label10.setLayoutY(215);
+                setting_root.getChildren().add(setting_label10);
+
+                setting_checkbox8.setLayoutX(5);
+                setting_checkbox8.setLayoutY(235);
+                setting_checkbox8.setSelected(Function.config.isAutoStaring() && Function.config.getAutoStaringMode().equals("VRChat"));
+                setting_checkbox8.setOnAction(ev->{
+                    setting_checkbox7.setSelected(false);
+                });
+                setting_checkbox8.setDisable(!Function.config.isAutoStaring());
+                setting_root.getChildren().add(setting_checkbox8);
+
+                Label setting_label11 = new Label("VRChat起動時");
+                setting_label11.setLayoutX(25);
+                setting_label11.setLayoutY(235);
+                setting_root.getChildren().add(setting_label11);
+
+                Platform.runLater(()->{
+                    setting_stage.setScene(setting_scene);
+                    setting_stage.showAndWait();
+
+                    ConfigData data = new ConfigData();
+                    data.setLang("ja");
+                    data.setLogFolderPass(setting_field1.getText());
+                    data.setDebugOutput(setting_checkbox1.isSelected());
+                    data.setOldLogCheck(setting_checkbox2.isSelected());
+                    data.setVideoPlayer(setting_checkbox3.isSelected());
+                    data.setImageDownloader(setting_checkbox4.isSelected());
+                    data.setStringDownloader(setting_checkbox5.isSelected());
+                    data.setAutoStaring(setting_checkbox6.isSelected());
+                    data.setAutoStaringMode(setting_checkbox7.isSelected() ? "Windows" : setting_checkbox8.isSelected() ? "VRChat" : "");
+
+                    Function.SettingConfig(data);
+                });
+            });
+        });
+        root.getChildren().add(button);
+
         listView.setEditable(false);
         listView.setPrefSize(1200, 600);
         listView.setLayoutX(15);
         listView.setLayoutY(55);
         listView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-                final Stage stage1 = new Stage();
+                final Stage detail_stage = new Stage();
                 Thread.ofVirtual().start(()->{
                     //System.out.println(listView.getItems().size() + " / " + value);
                     String selectedItem = listView.getSelectionModel().getSelectedItem();
@@ -143,87 +313,87 @@ public class GUI extends Application {
                         }
 
                         Platform.runLater(()->{
-                            stage1.setResizable(false);
-                            stage1.setMaximized(false);
-                            stage1.setFullScreen(false);
-                            stage1.setTitle("詳細");
-                            stage1.setWidth(800);
-                            stage1.setHeight(800);
+                            detail_stage.setResizable(false);
+                            detail_stage.setMaximized(false);
+                            detail_stage.setFullScreen(false);
+                            detail_stage.setTitle("詳細");
+                            detail_stage.setWidth(800);
+                            detail_stage.setHeight(800);
                         });
 
-                        AnchorPane root1 = new AnchorPane();
-                        Scene scene1 = new Scene(root1);
+                        AnchorPane detail_root = new AnchorPane();
+                        Scene detail_scene = new Scene(detail_root);
 
-                        Label label1 = new Label("詳細");
-                        label1.setLayoutX(5);
-                        label1.setLayoutY(5);
-                        label1.setFont(new Font(16));
-                        root1.getChildren().add(label1);
+                        Label detail_label1 = new Label("詳細");
+                        detail_label1.setLayoutX(5);
+                        detail_label1.setLayoutY(5);
+                        detail_label1.setFont(new Font(16));
+                        detail_root.getChildren().add(detail_label1);
 
-                        Label label1_2 = new Label("Date");
-                        label1_2.setLayoutX(10);
-                        label1_2.setLayoutY(40);
-                        root1.getChildren().add(label1_2);
+                        Label detail_label1_2 = new Label("Date");
+                        detail_label1_2.setLayoutX(10);
+                        detail_label1_2.setLayoutY(40);
+                        detail_root.getChildren().add(detail_label1_2);
 
-                        Label label1_2_1 = new Label(Function.log_sdf.format(data.getLogDate()));
-                        label1_2_1.setLayoutX(10);
-                        label1_2_1.setLayoutY(60);
-                        root1.getChildren().add(label1_2_1);
+                        Label detail_label1_2_1 = new Label(Function.log_sdf.format(data.getLogDate()));
+                        detail_label1_2_1.setLayoutX(10);
+                        detail_label1_2_1.setLayoutY(60);
+                        detail_root.getChildren().add(detail_label1_2_1);
 
-                        Label label1_3 = new Label("URL");
-                        label1_3.setLayoutX(10);
-                        label1_3.setLayoutY(80);
-                        root1.getChildren().add(label1_3);
+                        Label detail_label1_3 = new Label("URL");
+                        detail_label1_3.setLayoutX(10);
+                        detail_label1_3.setLayoutY(80);
+                        detail_root.getChildren().add(detail_label1_3);
 
-                        TextField field2 = new TextField();
-                        field2.setLayoutX(10);
-                        field2.setLayoutY(100);
-                        field2.setEditable(false);
-                        field2.setFocusTraversable(false);
-                        field2.setText(data.getURL());
-                        field2.setPrefWidth(700);
-                        root1.getChildren().add(field2);
+                        TextField detail_field = new TextField();
+                        detail_field.setLayoutX(10);
+                        detail_field.setLayoutY(100);
+                        detail_field.setEditable(false);
+                        detail_field.setFocusTraversable(false);
+                        detail_field.setText(data.getURL());
+                        detail_field.setPrefWidth(700);
+                        detail_root.getChildren().add(detail_field);
                         //Platform.runLater(()-> );
 
-                        Label label1_4 = new Label("種類");
-                        label1_4.setLayoutX(10);
-                        label1_4.setLayoutY(130);
-                        root1.getChildren().add(label1_4);
+                        Label detail_label1_4 = new Label("種類");
+                        detail_label1_4.setLayoutX(10);
+                        detail_label1_4.setLayoutY(130);
+                        detail_root.getChildren().add(detail_label1_4);
 
-                        Label label1_4_1 = new Label(data.getURLType().equals("Video") ? "動画(Video)" : data.getURLType().equals("String") ? "テキスト(String)" : "画像(Image)");
-                        label1_4_1.setLayoutX(10);
-                        label1_4_1.setLayoutY(150);
-                        root1.getChildren().add(label1_4_1);
+                        Label detail_label1_4_1 = new Label(data.getURLType().equals("Video") ? "動画(Video)" : data.getURLType().equals("String") ? "テキスト(String)" : "画像(Image)");
+                        detail_label1_4_1.setLayoutX(10);
+                        detail_label1_4_1.setLayoutY(150);
+                        detail_root.getChildren().add(detail_label1_4_1);
 
-                        Label label1_5 = new Label("エラーメッセージ");
-                        label1_5.setLayoutX(10);
-                        label1_5.setLayoutY(170);
-                        root1.getChildren().add(label1_5);
+                        Label detail_label1_5 = new Label("エラーメッセージ");
+                        detail_label1_5.setLayoutX(10);
+                        detail_label1_5.setLayoutY(170);
+                        detail_root.getChildren().add(detail_label1_5);
 
-                        TextArea textArea = new TextArea();
-                        textArea.setLayoutX(10);
-                        textArea.setLayoutY(190);
-                        textArea.setText(data.getErrorMessage());
-                        textArea.setPrefSize(700, 150);
-                        textArea.setEditable(false);
-                        textArea.setWrapText(false);
+                        TextArea detail_textArea = new TextArea();
+                        detail_textArea.setLayoutX(10);
+                        detail_textArea.setLayoutY(190);
+                        detail_textArea.setText(data.getErrorMessage());
+                        detail_textArea.setPrefSize(700, 150);
+                        detail_textArea.setEditable(false);
+                        detail_textArea.setWrapText(false);
                         //Platform.runLater(()-> );
-                        root1.getChildren().add(textArea);
+                        detail_root.getChildren().add(detail_textArea);
 
-                        Button button = new Button("閉じる");
-                        button.setLayoutX(650);
-                        button.setLayoutY(10);
-                        button.setOnAction(e -> stage1.close());
-                        root1.getChildren().add(button);
+                        Button detail_button = new Button("閉じる");
+                        detail_button.setLayoutX(650);
+                        detail_button.setLayoutY(10);
+                        detail_button.setOnAction(e -> detail_stage.close());
+                        detail_root.getChildren().add(detail_button);
 
-                        Label label1_6 = new Label("Now Loading...");
-                        label1_6.setLayoutX(10);
-                        label1_6.setLayoutY(360);
-                        root1.getChildren().add(label1_6);
+                        Label detail_label1_6 = new Label("Now Loading...");
+                        detail_label1_6.setLayoutX(10);
+                        detail_label1_6.setLayoutY(360);
+                        detail_root.getChildren().add(detail_label1_6);
 
                         Platform.runLater(()->{
-                            stage1.setScene(scene1);
-                            stage1.show();
+                            detail_stage.setScene(detail_scene);
+                            detail_stage.show();
                         });
                         switch (data.getURLType()) {
                             case "Video" -> {
@@ -233,26 +403,26 @@ public class GUI extends Application {
                                 Image fxImage = videoData.getThumbnail() != null ? new Image(new ByteArrayInputStream(videoData.getThumbnail())) : null;
                                 //System.out.println("debug 2");
 
-                                Platform.runLater(()->label1_6.setText("タイトル"));
+                                Platform.runLater(()->detail_label1_6.setText("タイトル"));
 
-                                TextField field3 = new TextField();
-                                field3.setLayoutX(10);
-                                field3.setLayoutY(380);
-                                field3.setEditable(false);
-                                field3.setFocusTraversable(false);
-                                field3.setText(videoData.getVideoTitle());
-                                field3.setPrefWidth(700);
-                                Platform.runLater(()->root1.getChildren().add(field3));
+                                TextField detail_field2 = new TextField();
+                                detail_field2.setLayoutX(10);
+                                detail_field2.setLayoutY(380);
+                                detail_field2.setEditable(false);
+                                detail_field2.setFocusTraversable(false);
+                                detail_field2.setText(videoData.getVideoTitle());
+                                detail_field2.setPrefWidth(700);
+                                Platform.runLater(()->detail_root.getChildren().add(detail_field2));
 
                                 if (fxImage != null) {
                                     //System.out.println("debug 3");
 
-                                    ImageView imageView = new ImageView(fxImage);
-                                    imageView.setLayoutX(10);
-                                    imageView.setLayoutY(420);
-                                    imageView.setFitHeight(300);
-                                    imageView.setPreserveRatio(true);
-                                    Platform.runLater(()->root1.getChildren().add(imageView));
+                                    ImageView detail_imageView = new ImageView(fxImage);
+                                    detail_imageView.setLayoutX(10);
+                                    detail_imageView.setLayoutY(420);
+                                    detail_imageView.setFitHeight(300);
+                                    detail_imageView.setPreserveRatio(true);
+                                    Platform.runLater(()->detail_root.getChildren().add(detail_imageView));
                                 }
 
                             }
@@ -285,15 +455,15 @@ public class GUI extends Application {
                                     // e.printStackTrace();
                                 }
 
-                                Platform.runLater(()->root1.getChildren().remove(label1_6));
+                                Platform.runLater(()->detail_root.getChildren().remove(detail_label1_6));
                                 if (fxImage != null) {
 
-                                    ImageView imageView = new ImageView(fxImage);
-                                    imageView.setLayoutX(10);
-                                    imageView.setLayoutY(360);
-                                    imageView.setFitHeight(350);
-                                    imageView.setPreserveRatio(true);
-                                    Platform.runLater(()->root1.getChildren().add(imageView));
+                                    ImageView detail_imageView = new ImageView(fxImage);
+                                    detail_imageView.setLayoutX(10);
+                                    detail_imageView.setLayoutY(360);
+                                    detail_imageView.setFitHeight(350);
+                                    detail_imageView.setPreserveRatio(true);
+                                    Platform.runLater(()->detail_root.getChildren().add(detail_imageView));
                                 }
 
                             }
@@ -323,17 +493,17 @@ public class GUI extends Application {
                                     // e.printStackTrace();
                                 }
 
-                                Platform.runLater(()->root1.getChildren().remove(label1_6));
+                                Platform.runLater(()->detail_root.getChildren().remove(detail_label1_6));
                                 if (str != null) {
 
-                                    TextArea textArea2 = new TextArea();
-                                    textArea2.setLayoutX(10);
-                                    textArea2.setLayoutY(360);
-                                    textArea2.setText(str);
-                                    textArea2.setPrefSize(700, 300);
-                                    textArea2.setEditable(false);
-                                    textArea2.setWrapText(false);
-                                    Platform.runLater(()-> root1.getChildren().add(textArea2));
+                                    TextArea detail_textArea2 = new TextArea();
+                                    detail_textArea2.setLayoutX(10);
+                                    detail_textArea2.setLayoutY(360);
+                                    detail_textArea2.setText(str);
+                                    detail_textArea2.setPrefSize(700, 300);
+                                    detail_textArea2.setEditable(false);
+                                    detail_textArea2.setWrapText(false);
+                                    Platform.runLater(()-> detail_root.getChildren().add(detail_textArea2));
                                 }
                             }
                         }
@@ -355,52 +525,52 @@ public class GUI extends Application {
 
         stage.setScene(scene);
 
-        Stage stage1 = new Stage();
+        Stage update_stage = new Stage();
         if (Function.isUpdate){
             // アップデート通知
-            stage1.setResizable(false);
-            stage1.setMaximized(false);
-            stage1.setFullScreen(false);
-            stage1.setTitle("アップデートのお知らせ");
-            stage1.setWidth(400);
-            stage1.setHeight(200);
+            update_stage.setResizable(false);
+            update_stage.setMaximized(false);
+            update_stage.setFullScreen(false);
+            update_stage.setTitle("アップデートのお知らせ");
+            update_stage.setWidth(400);
+            update_stage.setHeight(200);
 
-            AnchorPane root1 = new AnchorPane();
-            Scene scene1 = new Scene(root1);
+            AnchorPane update_root = new AnchorPane();
+            Scene update_scene = new Scene(update_root);
 
-            Button button = new Button("閉じる");
-            button.setLayoutX(300);
-            button.setLayoutY(10);
-            button.setOnAction(e -> stage1.close());
-            root1.getChildren().add(button);
+            Button update_button1 = new Button("閉じる");
+            update_button1.setLayoutX(300);
+            update_button1.setLayoutY(10);
+            update_button1.setOnAction(e -> update_stage.close());
+            update_root.getChildren().add(update_button1);
 
             Label update_label1 = new Label("アップデートのお知らせ");
             update_label1.setLayoutX(5);
             update_label1.setLayoutY(5);
             update_label1.setFont(new Font(16));
-            root1.getChildren().add(update_label1);
+            update_root.getChildren().add(update_label1);
 
             Label update_label2 = new Label("アップデートがあります。");
             update_label2.setLayoutX(10);
             update_label2.setLayoutY(40);
-            root1.getChildren().add(update_label2);
+            update_root.getChildren().add(update_label2);
 
             Label update_label3 = new Label("現在のバージョン : " + Function.Version);
             update_label3.setLayoutX(10);
             update_label3.setLayoutY(80);
-            root1.getChildren().add(update_label3);
+            update_root.getChildren().add(update_label3);
 
             Label update_label4 = new Label("最新のバージョン : " + Function.new_version);
             update_label4.setLayoutX(10);
             update_label4.setLayoutY(100);
-            root1.getChildren().add(update_label4);
+            update_root.getChildren().add(update_label4);
 
             if (!Function.ntSystem.getName().isEmpty()){
                 // Windowsの場合のアップデートバッチ用のボタン
-                Button update_button = new Button("アップデート");
-                update_button.setLayoutX(10);
-                update_button.setLayoutY(120);
-                update_button.setOnAction(e -> {
+                Button update_button2 = new Button("アップデート");
+                update_button2.setLayoutX(10);
+                update_button2.setLayoutY(120);
+                update_button2.setOnAction(e -> {
                     try {
                         final Runtime runtime = Runtime.getRuntime();
                         final Process exec0 = runtime.exec(new String[]{"./tools/update1.bat"});
@@ -419,13 +589,13 @@ public class GUI extends Application {
                     } catch (Exception ex){
                         // ex.printStackTrace();
                     }
-                    stage1.close();
+                    update_stage.close();
                     stage.close();
                 });
-                root1.getChildren().add(update_button);
+                update_root.getChildren().add(update_button2);
             }
 
-            stage1.setScene(scene1);
+            update_stage.setScene(update_scene);
         }
 
         if (Function.config.isDebugOutput()){
@@ -436,7 +606,7 @@ public class GUI extends Application {
         }
         stage.show();
         if (Function.isUpdate){
-            stage1.show();
+            update_stage.show();
         }
         Thread.ofVirtual().start(()->{
             while (stage.isShowing() && Function.isTimerRun){

@@ -3,9 +3,7 @@ package net.nicovrc.dev;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.sun.security.auth.module.NTSystem;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ListView;
+import net.nicovrc.dev.data.ConfigData;
 
 import java.io.*;
 import java.net.URI;
@@ -28,6 +26,8 @@ public class Function {
     public static final String HTTP_x_unity_version = "2022.3.22f1-DWR";
 
     public static final String configText = """
+                # 言語設定 (Language Settings)
+                lang: 'ja'
                 # VRChat ログフォルダパス (VRChat log folder path)
                 logfolder: ''
                 # デバッグログを表示するか (Enable debug log display?)
@@ -40,6 +40,10 @@ public class Function {
                 ImageDownloader: true
                 # StringDownloaderのログを表示するか (Enable StringDownloader log display?)
                 StringDownloader: true
+                # 自動起動するか (Windowsのみ) (Enable auto-start (Windows only))
+                isAutoStaring: false
+                # 自動起動タイミング (Windowsのみ) (Auto-start timing (Windows only))
+                AutoStaringMode: ''
                 """;
 
     public static final ConfigData config = new ConfigData();
@@ -146,6 +150,10 @@ public class Function {
             temp.add(temp1[i]);
         }
         return temp;
+    }
+
+    public static int getFileListCount(String FolderPass) throws Exception {
+        return getFileList(FolderPass).size();
     }
 
     public static List<LogData> getLogForURL(String logText) throws Exception{
@@ -352,7 +360,7 @@ public class Function {
         if (!ntSystem.getName().isEmpty()){
             exec0 = runtime.exec(new String[]{".\\tools\\ImageMagick-7.1.2-8-portable-Q16-x64\\magick.exe", "./temp/"+filename+".webp", "./temp/"+filename+".png"});
         } else {
-            exec0 = runtime.exec(new String[]{""});
+            exec0 = runtime.exec(new String[]{"./tools/ImageMagick/magick", "./temp/"+filename+".webp", "./temp/"+filename+".png"});
         }
         Thread.ofVirtual().start(()->{
             try {
@@ -429,6 +437,105 @@ public class Function {
         tmp = tmp.replaceAll("http://suzumebachi\\.xyz:1323/tmsk/", "https://nico.ms/");
 
         return tmp;
+
+    }
+
+    public static void SettingConfig(ConfigData config){
+
+        String configText = """
+                # 言語設定 (Language Settings)
+                lang: '#lang#'
+                # VRChat ログフォルダパス (VRChat log folder path)
+                logfolder: '#logfolder#'
+                # デバッグログを表示するか (Enable debug log display?)
+                debugOutput: #debug#
+                # 過去のログから取得して表示するか (Display data from previous logs?)
+                oldLogCheck: #oldcheck#
+                # 動画プレーヤーのログを表示するか (Enable video player log display?)
+                VideoPlayer: #videoplayer#
+                # ImageDownloaderのログを表示するか (Enable ImageDownloader log display?)
+                ImageDownloader: #image#
+                # StringDownloaderのログを表示するか (Enable StringDownloader log display?)
+                StringDownloader: #string#
+                # 自動起動するか (Windowsのみ) (Enable auto-start (Windows only))
+                isAutoStaring: #autoflag#
+                # 自動起動タイミング (Windowsのみ) (Auto-start timing (Windows only))
+                AutoStaringMode: '#autotiming#'
+                """;
+
+        configText = configText.replaceAll("#lang#", config.getLang());
+        configText = configText.replaceAll("#logfolder#", config.getLogFolderPass());
+        configText = configText.replaceAll("#debug#", (config.isDebugOutput()+"").toLowerCase(Locale.ROOT));
+        configText = configText.replaceAll("#oldcheck#", (config.isOldLogCheck()+"").toLowerCase(Locale.ROOT));
+        configText = configText.replaceAll("#videoplayer#", (config.isVideoPlayer()+"").toLowerCase(Locale.ROOT));
+        configText = configText.replaceAll("#image#", (config.isImageDownloader()+"").toLowerCase(Locale.ROOT));
+        configText = configText.replaceAll("#string#", (config.isStringDownloader()+"").toLowerCase(Locale.ROOT));
+        configText = configText.replaceAll("#autoflag#", (config.isAutoStaring()+"").toLowerCase(Locale.ROOT));
+        configText = configText.replaceAll("#autotiming#", config.getAutoStaringMode());
+
+        try {
+            new File("./config.yml").delete();
+
+            FileWriter file1 = new FileWriter("./config.yml");
+            PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
+            pw.print(configText);
+            pw.close();
+            file1.close();
+            pw = null;
+            file1 = null;
+        } catch (Exception e){
+            //e.printStackTrace();
+        }
+
+        if (config.isAutoStaring()){
+            String path = "";
+            try {
+                path = new File("./").getCanonicalPath();
+            } catch (IOException e) {
+                //e.printStackTrace();
+            }
+
+            String batText = """
+                    cd #path#
+                    start java -jar ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar --start-Windows
+                    """;
+
+            // C:\Users\xxx\AppData\Roaming
+            // C:\Users\xxx\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+
+            File file = new File("C:\\Users\\" + ntSystem.getName() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
+            if (!file.exists()){
+                String AppData = System.getenv().get("APPDATA");
+                file = new File(AppData+"\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
+            }
+
+            if (!file.exists()){
+                return;
+            }
+
+            try {
+                file = new File(file.getCanonicalPath()+"\\vrcvideologviewer.bat");
+            } catch (IOException e) {
+                //e.printStackTrace();
+            }
+
+            if (file.exists()){
+                file.delete();
+            }
+
+            try {
+                FileWriter file1 = new FileWriter(file);
+                PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
+                pw.print(batText);
+                pw.close();
+                file1.close();
+                pw = null;
+                file1 = null;
+            } catch (Exception e){
+                // e.printStackTrace();
+            }
+
+        }
 
     }
 
