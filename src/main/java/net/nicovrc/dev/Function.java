@@ -473,6 +473,16 @@ public class Function {
         configText = configText.replaceAll("#autoflag#", (config.isAutoStaring()+"").toLowerCase(Locale.ROOT));
         configText = configText.replaceAll("#autotiming#", config.getAutoStaringMode());
 
+        Function.config.setLang(config.getLang());
+        Function.config.setLogFolderPass(config.getLogFolderPass());
+        Function.config.setDebugOutput(config.isDebugOutput());
+        Function.config.setOldLogCheck(config.isOldLogCheck());
+        Function.config.setVideoPlayer(config.isVideoPlayer());
+        Function.config.setImageDownloader(config.isImageDownloader());
+        Function.config.setStringDownloader(config.isStringDownloader());
+        Function.config.setAutoStaring(config.isAutoStaring());
+        Function.config.setAutoStaringMode(config.getAutoStaringMode());
+
         try {
             new File("./config.yml").delete();
 

@@ -249,7 +249,7 @@ public class GUI extends Application {
 
                 setting_checkbox7.setLayoutX(5);
                 setting_checkbox7.setLayoutY(215);
-                setting_checkbox7.setSelected(Function.config.isAutoStaring() && Function.config.getAutoStaringMode().equals("Windows"));
+                setting_checkbox7.setSelected(Function.config.getAutoStaringMode().equals("Windows"));
                 setting_checkbox7.setOnAction(ev->{
                     setting_checkbox8.setSelected(false);
                 });
@@ -263,7 +263,7 @@ public class GUI extends Application {
 
                 setting_checkbox8.setLayoutX(5);
                 setting_checkbox8.setLayoutY(235);
-                setting_checkbox8.setSelected(Function.config.isAutoStaring() && Function.config.getAutoStaringMode().equals("VRChat"));
+                setting_checkbox8.setSelected(Function.config.getAutoStaringMode().equals("VRChat"));
                 setting_checkbox8.setOnAction(ev->{
                     setting_checkbox7.setSelected(false);
                 });
