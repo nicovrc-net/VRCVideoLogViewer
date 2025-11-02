@@ -115,7 +115,7 @@ public class Main {
                             if (!file.exists()){
                                 return;
                             }
-                            final Process exec1 = runtime.exec("start ", new String[]{file.getCanonicalPath()+"\\vrcvideologviewer.bat"});
+                            final Process exec1 = runtime.exec(new String[]{"start", file.getCanonicalPath()+"\\vrcvideologviewer.bat"});
                             Thread.ofVirtual().start(() -> {
                                 try {
                                     Thread.sleep(5000L);
