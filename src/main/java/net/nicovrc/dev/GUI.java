@@ -439,7 +439,7 @@ public class GUI extends Application {
             stage1.show();
         }
         Thread.ofVirtual().start(()->{
-            while (stage.isShowing() || Function.isTimerRun){
+            while (stage.isShowing() && Function.isTimerRun){
                 try {
                     Thread.sleep(1000L);
                 } catch (Exception e){
