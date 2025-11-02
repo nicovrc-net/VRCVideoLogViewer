@@ -276,20 +276,31 @@ public class Main {
                 //UnixSystem unixSystem = new UnixSystem();
 
             } else {
-                if (Function.config.isDebugOutput()){
-                    System.out.println("[Info] ログフォルダの自動取得");
-                }
-
-                file = new File("C:\\Users\\"+Function.ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
-                if (file.exists()){
-                    Function.config.setLogFolderPass("C:\\Users\\"+Function.ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
-
+                try {
                     if (Function.config.isDebugOutput()){
-                        System.out.println("[Info] 自動取得成功 : " + "C:\\Users\\"+Function.ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
+                        System.out.println("[Info] ログフォルダの自動取得");
                     }
-                } else {
-                    System.out.println("[Info] 自動取得失敗");
+                    String LocalAppData = System.getenv().get("LOCALAPPDATA");
+                    file = new File("C:\\Users\\"+Function.ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
+                    //file = new File(LocalAppData+"Low\\VRChat\\VRChat");
+                    if (file.exists()) {
+                        Function.config.setLogFolderPass(file.getCanonicalPath());
+
+                        if (Function.config.isDebugOutput()) {
+                            System.out.println("[Info] 自動取得成功 : " + file.getCanonicalPath());
+                        }
+                    } else if (new File(LocalAppData+"Low\\VRChat\\VRChat").exists()){
+                        file = new File(LocalAppData+"Low\\VRChat\\VRChat");
+
+                        Function.config.setLogFolderPass(file.getCanonicalPath());
+                        System.out.println("[Info] 自動取得成功 : " + file.getCanonicalPath());
+                    } else {
+                        System.out.println("[Info] 自動取得失敗");
+                    }
+                } catch (Exception e) {
+                    //e.printStackTrace();
                 }
+
             }
         }
 
