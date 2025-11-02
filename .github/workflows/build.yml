@@ -120,6 +120,7 @@ jobs:
             - ログフォルダ自動取得の改善
             - 画面から設定をできるように
             - (Windowsの場合) OS起動時に起動するかVRChatが起動したときに自動起動できるように
+            - 詳細画面が開くまでの速度改善
           draft: false
           prerelease: true
 
