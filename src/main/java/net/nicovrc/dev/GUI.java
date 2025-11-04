@@ -386,7 +386,7 @@ public class GUI extends Application {
                                         exec0.waitFor();
                                         new File("./temp.bat").delete();
                                     } else if (Function.unixSystem != null) {
-                                        ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "xdg-open", data.getURL());
+                                        ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "xdg-open "+data.getURL());
                                         Process process = pb.start();
                                         process.waitFor();
                                         System.out.println(process.exitValue());
