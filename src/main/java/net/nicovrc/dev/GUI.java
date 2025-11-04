@@ -401,9 +401,9 @@ public class GUI extends Application {
                                         exec0.waitFor();
                                     }
                                     if (Function.ntSystem != null) {
-                                        new File("./temp.bat").delete();
+                                        //new File("./temp.bat").delete();
                                     } else if (Function.unixSystem != null){
-                                        new File("./temp.sh").delete();
+                                        //new File("./temp.sh").delete();
                                     }
                                 } catch (Exception ex){
                                     // ex.printStackTrace();
