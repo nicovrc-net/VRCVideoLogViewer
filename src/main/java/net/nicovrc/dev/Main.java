@@ -243,7 +243,7 @@ public class Main {
             }
         }
 
-        System.out.println("[Info] "+Function.langData.get("start-message").replaceAll("#ver#", Function.Version));
+        System.out.println("[Info] "+Function.langData.get("start-message").replaceAll("#version#", Function.Version));
         final boolean isWindowsBatchStart = Function.ntSystem != null;
 
         file = new File("./tools/openjdk-21.0.2_windows-x64_bin.zip");
