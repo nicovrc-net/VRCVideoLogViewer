@@ -389,6 +389,7 @@ public class GUI extends Application {
                                         ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "xdg-open", data.getURL());
                                         Process process = pb.start();
                                         process.waitFor();
+                                        System.out.println(process.exitValue());
                                     }
                                 } catch (Exception ex){
                                     ex.printStackTrace();
