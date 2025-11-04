@@ -127,10 +127,10 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: v${{ github.ref }}
           body: |
-            - Linux環境で動作しない問題修正
-            - 詳細画面 開くボタン追加
+            - 正式版リリース
+            - 多言語対応 (現在は日本語と英語のみ)
           draft: false
-          prerelease: true
+          prerelease: false
 
       - name: Upload JarFile
         if: startsWith(github.ref, 'refs/tags/')
