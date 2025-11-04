@@ -133,172 +133,176 @@ public class GUI extends Application {
         button.setOnAction(e->{
             final Stage setting_stage = new Stage();
             Thread.ofVirtual().start(()->{
-                AnchorPane setting_root = new AnchorPane();
-                Scene setting_scene = new Scene(setting_root);
-                Platform.runLater(()->{
-                    setting_stage.setResizable(false);
-                    setting_stage.setMaximized(false);
-                    setting_stage.setFullScreen(false);
-                    setting_stage.setTitle("設定");
-                    setting_stage.setWidth(800);
-                    setting_stage.setHeight(800);
-                });
-
-                Label setting_label1 = new Label("※再起動するまで一部設定は反映されません。");
-                setting_label1.setLayoutX(5);
-                setting_label1.setLayoutY(5);
-                setting_root.getChildren().add(setting_label1);
-
-                Button setting_button1 = new Button("設定反映");
-                setting_button1.setLayoutX(700);
-                setting_button1.setLayoutY(5);
-                setting_button1.setOnAction(ev -> setting_stage.close());
-                setting_root.getChildren().add(setting_button1);
-
-                Label setting_label2 = new Label("VRChatログフォルダ (通常は変更する必要はありません)");
-                setting_label2.setLayoutX(5);
-                setting_label2.setLayoutY(25);
-                setting_root.getChildren().add(setting_label2);
-
-                TextField setting_field1 = new TextField();
-                setting_field1.setLayoutX(5);
-                setting_field1.setLayoutY(45);
-                setting_field1.setEditable(false);
-                setting_field1.setFocusTraversable(false);
-                setting_field1.setText(Function.config.getLogFolderPass());
-                setting_field1.setPrefWidth(700);
-                setting_root.getChildren().add(setting_field1);
-
-                CheckBox setting_checkbox1 = new CheckBox();
-                setting_checkbox1.setLayoutX(5);
-                setting_checkbox1.setLayoutY(75);
-                setting_checkbox1.setSelected(Function.config.isDebugOutput());
-                setting_root.getChildren().add(setting_checkbox1);
-
-                Label setting_label3 = new Label("デバッグログを表示");
-                setting_label3.setLayoutX(25);
-                setting_label3.setLayoutY(75);
-                setting_root.getChildren().add(setting_label3);
-
-                CheckBox setting_checkbox2 = new CheckBox();
-                setting_checkbox2.setLayoutX(5);
-                setting_checkbox2.setLayoutY(95);
-                setting_checkbox2.setSelected(Function.config.isOldLogCheck());
-                setting_root.getChildren().add(setting_checkbox2);
-
-                Label setting_label4 = new Label("過去のログを取得");
-                setting_label4.setLayoutX(25);
-                setting_label4.setLayoutY(95);
-                setting_root.getChildren().add(setting_label4);
-
-                CheckBox setting_checkbox3 = new CheckBox();
-                setting_checkbox3.setLayoutX(5);
-                setting_checkbox3.setLayoutY(115);
-                setting_checkbox3.setSelected(Function.config.isVideoPlayer());
-                setting_root.getChildren().add(setting_checkbox3);
-
-                Label setting_label5 = new Label("動画プレーヤーのログを表示");
-                setting_label5.setLayoutX(25);
-                setting_label5.setLayoutY(115);
-                setting_root.getChildren().add(setting_label5);
-
-                CheckBox setting_checkbox4 = new CheckBox();
-                setting_checkbox4.setLayoutX(5);
-                setting_checkbox4.setLayoutY(135);
-                setting_checkbox4.setSelected(Function.config.isImageDownloader());
-                setting_root.getChildren().add(setting_checkbox4);
-
-                Label setting_label6 = new Label("ImageDownloaderのログを表示");
-                setting_label6.setLayoutX(25);
-                setting_label6.setLayoutY(135);
-                setting_root.getChildren().add(setting_label6);
-
-                CheckBox setting_checkbox5 = new CheckBox();
-                setting_checkbox5.setLayoutX(5);
-                setting_checkbox5.setLayoutY(155);
-                setting_checkbox5.setSelected(Function.config.isStringDownloader());
-                setting_root.getChildren().add(setting_checkbox5);
-
-                Label setting_label7 = new Label("StringDownloaderのログを表示");
-                setting_label7.setLayoutX(25);
-                setting_label7.setLayoutY(155);
-                setting_root.getChildren().add(setting_label7);
-
-                if (Function.ntSystem != null){
-                    Label setting_label8 = new Label("自動起動タイミング");
-                    setting_label8.setLayoutX(5);
-                    setting_label8.setLayoutY(175);
-                    setting_root.getChildren().add(setting_label8);
-
-                    CheckBox setting_checkbox6 = new CheckBox();
-                    CheckBox setting_checkbox7 = new CheckBox();
-                    CheckBox setting_checkbox8 = new CheckBox();
-                    setting_checkbox6.setLayoutX(5);
-                    setting_checkbox6.setLayoutY(195);
-                    setting_checkbox6.setSelected(!Function.config.isAutoStaring());
-                    setting_checkbox6.setOnAction(ev->{
-                        if (setting_checkbox6.isSelected()){
-                            setting_checkbox7.setSelected(false);
-                            setting_checkbox8.setSelected(false);
-                            setting_checkbox7.setDisable(true);
-                            setting_checkbox8.setDisable(true);
-                        } else {
-                            setting_checkbox7.setDisable(false);
-                            setting_checkbox8.setDisable(false);
-                        }
-                    });
-                    setting_root.getChildren().add(setting_checkbox6);
-
-                    Label setting_label9 = new Label("自動起動しない");
-                    setting_label9.setLayoutX(25);
-                    setting_label9.setLayoutY(195);
-                    setting_root.getChildren().add(setting_label9);
-
-                    setting_checkbox7.setLayoutX(5);
-                    setting_checkbox7.setLayoutY(215);
-                    setting_checkbox7.setSelected(Function.config.getAutoStaringMode().equals("Windows"));
-                    setting_checkbox7.setOnAction(ev->{
-                        setting_checkbox8.setSelected(false);
-                    });
-                    setting_checkbox7.setDisable(!Function.config.isAutoStaring());
-                    setting_root.getChildren().add(setting_checkbox7);
-
-                    Label setting_label10 = new Label("Windows起動時");
-                    setting_label10.setLayoutX(25);
-                    setting_label10.setLayoutY(215);
-                    setting_root.getChildren().add(setting_label10);
-
-                    setting_checkbox8.setLayoutX(5);
-                    setting_checkbox8.setLayoutY(235);
-                    setting_checkbox8.setSelected(Function.config.getAutoStaringMode().equals("VRChat"));
-                    setting_checkbox8.setOnAction(ev->{
-                        setting_checkbox7.setSelected(false);
-                    });
-                    setting_checkbox8.setDisable(!Function.config.isAutoStaring());
-                    setting_root.getChildren().add(setting_checkbox8);
-
-                    Label setting_label11 = new Label("VRChat起動時");
-                    setting_label11.setLayoutX(25);
-                    setting_label11.setLayoutY(235);
-                    setting_root.getChildren().add(setting_label11);
-
+                try {
+                    AnchorPane setting_root = new AnchorPane();
+                    Scene setting_scene = new Scene(setting_root);
                     Platform.runLater(()->{
-                        setting_stage.setScene(setting_scene);
-                        setting_stage.showAndWait();
-
-                        ConfigData data = new ConfigData();
-                        data.setLang("ja");
-                        data.setLogFolderPass(setting_field1.getText());
-                        data.setDebugOutput(setting_checkbox1.isSelected());
-                        data.setOldLogCheck(setting_checkbox2.isSelected());
-                        data.setVideoPlayer(setting_checkbox3.isSelected());
-                        data.setImageDownloader(setting_checkbox4.isSelected());
-                        data.setStringDownloader(setting_checkbox5.isSelected());
-                        data.setAutoStaring(!setting_checkbox6.isSelected());
-                        data.setAutoStaringMode(setting_checkbox7.isSelected() ? "Windows" : setting_checkbox8.isSelected() ? "VRChat" : "");
-
-                        Function.SettingConfig(data);
+                        setting_stage.setResizable(false);
+                        setting_stage.setMaximized(false);
+                        setting_stage.setFullScreen(false);
+                        setting_stage.setTitle("設定");
+                        setting_stage.setWidth(800);
+                        setting_stage.setHeight(800);
                     });
+
+                    Label setting_label1 = new Label("※再起動するまで一部設定は反映されません。");
+                    setting_label1.setLayoutX(5);
+                    setting_label1.setLayoutY(5);
+                    setting_root.getChildren().add(setting_label1);
+
+                    Button setting_button1 = new Button("設定反映");
+                    setting_button1.setLayoutX(700);
+                    setting_button1.setLayoutY(5);
+                    setting_button1.setOnAction(ev -> setting_stage.close());
+                    setting_root.getChildren().add(setting_button1);
+
+                    Label setting_label2 = new Label("VRChatログフォルダ (通常は変更する必要はありません)");
+                    setting_label2.setLayoutX(5);
+                    setting_label2.setLayoutY(25);
+                    setting_root.getChildren().add(setting_label2);
+
+                    TextField setting_field1 = new TextField();
+                    setting_field1.setLayoutX(5);
+                    setting_field1.setLayoutY(45);
+                    setting_field1.setEditable(false);
+                    setting_field1.setFocusTraversable(false);
+                    setting_field1.setText(Function.config.getLogFolderPass());
+                    setting_field1.setPrefWidth(700);
+                    setting_root.getChildren().add(setting_field1);
+
+                    CheckBox setting_checkbox1 = new CheckBox();
+                    setting_checkbox1.setLayoutX(5);
+                    setting_checkbox1.setLayoutY(75);
+                    setting_checkbox1.setSelected(Function.config.isDebugOutput());
+                    setting_root.getChildren().add(setting_checkbox1);
+
+                    Label setting_label3 = new Label("デバッグログを表示");
+                    setting_label3.setLayoutX(25);
+                    setting_label3.setLayoutY(75);
+                    setting_root.getChildren().add(setting_label3);
+
+                    CheckBox setting_checkbox2 = new CheckBox();
+                    setting_checkbox2.setLayoutX(5);
+                    setting_checkbox2.setLayoutY(95);
+                    setting_checkbox2.setSelected(Function.config.isOldLogCheck());
+                    setting_root.getChildren().add(setting_checkbox2);
+
+                    Label setting_label4 = new Label("過去のログを取得");
+                    setting_label4.setLayoutX(25);
+                    setting_label4.setLayoutY(95);
+                    setting_root.getChildren().add(setting_label4);
+
+                    CheckBox setting_checkbox3 = new CheckBox();
+                    setting_checkbox3.setLayoutX(5);
+                    setting_checkbox3.setLayoutY(115);
+                    setting_checkbox3.setSelected(Function.config.isVideoPlayer());
+                    setting_root.getChildren().add(setting_checkbox3);
+
+                    Label setting_label5 = new Label("動画プレーヤーのログを表示");
+                    setting_label5.setLayoutX(25);
+                    setting_label5.setLayoutY(115);
+                    setting_root.getChildren().add(setting_label5);
+
+                    CheckBox setting_checkbox4 = new CheckBox();
+                    setting_checkbox4.setLayoutX(5);
+                    setting_checkbox4.setLayoutY(135);
+                    setting_checkbox4.setSelected(Function.config.isImageDownloader());
+                    setting_root.getChildren().add(setting_checkbox4);
+
+                    Label setting_label6 = new Label("ImageDownloaderのログを表示");
+                    setting_label6.setLayoutX(25);
+                    setting_label6.setLayoutY(135);
+                    setting_root.getChildren().add(setting_label6);
+
+                    CheckBox setting_checkbox5 = new CheckBox();
+                    setting_checkbox5.setLayoutX(5);
+                    setting_checkbox5.setLayoutY(155);
+                    setting_checkbox5.setSelected(Function.config.isStringDownloader());
+                    setting_root.getChildren().add(setting_checkbox5);
+
+                    Label setting_label7 = new Label("StringDownloaderのログを表示");
+                    setting_label7.setLayoutX(25);
+                    setting_label7.setLayoutY(155);
+                    setting_root.getChildren().add(setting_label7);
+
+                    if (Function.ntSystem != null){
+                        Label setting_label8 = new Label("自動起動タイミング");
+                        setting_label8.setLayoutX(5);
+                        setting_label8.setLayoutY(175);
+                        setting_root.getChildren().add(setting_label8);
+
+                        CheckBox setting_checkbox6 = new CheckBox();
+                        CheckBox setting_checkbox7 = new CheckBox();
+                        CheckBox setting_checkbox8 = new CheckBox();
+                        setting_checkbox6.setLayoutX(5);
+                        setting_checkbox6.setLayoutY(195);
+                        setting_checkbox6.setSelected(!Function.config.isAutoStaring());
+                        setting_checkbox6.setOnAction(ev->{
+                            if (setting_checkbox6.isSelected()){
+                                setting_checkbox7.setSelected(false);
+                                setting_checkbox8.setSelected(false);
+                                setting_checkbox7.setDisable(true);
+                                setting_checkbox8.setDisable(true);
+                            } else {
+                                setting_checkbox7.setDisable(false);
+                                setting_checkbox8.setDisable(false);
+                            }
+                        });
+                        setting_root.getChildren().add(setting_checkbox6);
+
+                        Label setting_label9 = new Label("自動起動しない");
+                        setting_label9.setLayoutX(25);
+                        setting_label9.setLayoutY(195);
+                        setting_root.getChildren().add(setting_label9);
+
+                        setting_checkbox7.setLayoutX(5);
+                        setting_checkbox7.setLayoutY(215);
+                        setting_checkbox7.setSelected(Function.config.getAutoStaringMode().equals("Windows"));
+                        setting_checkbox7.setOnAction(ev->{
+                            setting_checkbox8.setSelected(false);
+                        });
+                        setting_checkbox7.setDisable(!Function.config.isAutoStaring());
+                        setting_root.getChildren().add(setting_checkbox7);
+
+                        Label setting_label10 = new Label("Windows起動時");
+                        setting_label10.setLayoutX(25);
+                        setting_label10.setLayoutY(215);
+                        setting_root.getChildren().add(setting_label10);
+
+                        setting_checkbox8.setLayoutX(5);
+                        setting_checkbox8.setLayoutY(235);
+                        setting_checkbox8.setSelected(Function.config.getAutoStaringMode().equals("VRChat"));
+                        setting_checkbox8.setOnAction(ev->{
+                            setting_checkbox7.setSelected(false);
+                        });
+                        setting_checkbox8.setDisable(!Function.config.isAutoStaring());
+                        setting_root.getChildren().add(setting_checkbox8);
+
+                        Label setting_label11 = new Label("VRChat起動時");
+                        setting_label11.setLayoutX(25);
+                        setting_label11.setLayoutY(235);
+                        setting_root.getChildren().add(setting_label11);
+
+                        Platform.runLater(()->{
+                            setting_stage.setScene(setting_scene);
+                            setting_stage.showAndWait();
+
+                            ConfigData data = new ConfigData();
+                            data.setLang("ja");
+                            data.setLogFolderPass(setting_field1.getText());
+                            data.setDebugOutput(setting_checkbox1.isSelected());
+                            data.setOldLogCheck(setting_checkbox2.isSelected());
+                            data.setVideoPlayer(setting_checkbox3.isSelected());
+                            data.setImageDownloader(setting_checkbox4.isSelected());
+                            data.setStringDownloader(setting_checkbox5.isSelected());
+                            data.setAutoStaring(!setting_checkbox6.isSelected());
+                            data.setAutoStaringMode(setting_checkbox7.isSelected() ? "Windows" : setting_checkbox8.isSelected() ? "VRChat" : "");
+
+                            Function.SettingConfig(data);
+                        });
+                    }
+                } catch (Exception ex){
+                    ex.printStackTrace();
                 }
             });
 
