@@ -44,7 +44,7 @@ public class GUI extends Application {
 
         if (Function.config.isOldLogCheck()){
             if (Function.config.isDebugOutput()){
-                System.out.println("[Info] 抽出開始");
+                System.out.println("[Info] "+Function.langData.get("log-extraction"));
             }
 
             for (String s : Function.logFileList) {
@@ -70,7 +70,7 @@ public class GUI extends Application {
                 } catch (Exception e){
                     //e.printStackTrace();
                     if (Function.config.isDebugOutput()){
-                        System.out.println("[Error] ログファイル読み込みに失敗");
+                        System.out.println("[Error] "+Function.langData.get("log-read-fail"));
                         System.out.println("filename : " + file.getName());
                         e.printStackTrace();
                     }
@@ -80,7 +80,7 @@ public class GUI extends Application {
 
         if (Function.config.isDebugOutput()){
             //System.out.println(Function.log_sdf.format(lastLogData.getLogDate()));
-            System.out.println("[Info] リアルタイム取得開始します...");
+            System.out.println("[Info] "+Function.langData.get("log-realtime-read"));
         }
 
         Function.timer2.scheduleAtFixedRate(new TimerTask() {
@@ -118,7 +118,7 @@ public class GUI extends Application {
 
 
         if (Function.config.isDebugOutput()){
-            System.out.println("[Info] GUI組み立て中...");
+            System.out.println("[Info] "+Function.langData.get("gui-create"));
         }
         AnchorPane root = new AnchorPane();
         Label label = new Label("VRCVideoLogViewer");
@@ -127,7 +127,7 @@ public class GUI extends Application {
         label.setFont(new Font(24));
         root.getChildren().add(label);
 
-        Button button = new Button("設定");
+        Button button = new Button(Function.langData.get("setting"));
         button.setLayoutX(Function.ntSystem != null ? 260 : 300);
         button.setLayoutY(20);
         button.setOnAction(e->{
@@ -145,18 +145,18 @@ public class GUI extends Application {
                         setting_stage.setHeight(800);
                     });
 
-                    Label setting_label1 = new Label("※再起動するまで一部設定は反映されません。");
+                    Label setting_label1 = new Label(Function.langData.get("setting-message"));
                     setting_label1.setLayoutX(5);
                     setting_label1.setLayoutY(5);
                     setting_root.getChildren().add(setting_label1);
 
-                    Button setting_button1 = new Button("設定反映");
+                    Button setting_button1 = new Button(Function.langData.get("setting-reflection"));
                     setting_button1.setLayoutX(700);
                     setting_button1.setLayoutY(5);
                     setting_button1.setOnAction(ev -> setting_stage.close());
                     setting_root.getChildren().add(setting_button1);
 
-                    Label setting_label2 = new Label("VRChatログフォルダ (通常は変更する必要はありません)");
+                    Label setting_label2 = new Label(Function.langData.get("setting-vrchat-logfolder"));
                     setting_label2.setLayoutX(5);
                     setting_label2.setLayoutY(25);
                     setting_root.getChildren().add(setting_label2);
@@ -176,7 +176,7 @@ public class GUI extends Application {
                     setting_checkbox1.setSelected(Function.config.isDebugOutput());
                     setting_root.getChildren().add(setting_checkbox1);
 
-                    Label setting_label3 = new Label("デバッグログを表示");
+                    Label setting_label3 = new Label(Function.langData.get("setting-debug-print"));
                     setting_label3.setLayoutX(25);
                     setting_label3.setLayoutY(75);
                     setting_root.getChildren().add(setting_label3);
@@ -187,7 +187,7 @@ public class GUI extends Application {
                     setting_checkbox2.setSelected(Function.config.isOldLogCheck());
                     setting_root.getChildren().add(setting_checkbox2);
 
-                    Label setting_label4 = new Label("過去のログを取得");
+                    Label setting_label4 = new Label(Function.langData.get("setting-previous-log-get"));
                     setting_label4.setLayoutX(25);
                     setting_label4.setLayoutY(95);
                     setting_root.getChildren().add(setting_label4);
@@ -198,7 +198,7 @@ public class GUI extends Application {
                     setting_checkbox3.setSelected(Function.config.isVideoPlayer());
                     setting_root.getChildren().add(setting_checkbox3);
 
-                    Label setting_label5 = new Label("動画プレーヤーのログを表示");
+                    Label setting_label5 = new Label(Function.langData.get("setting-videoplayer"));
                     setting_label5.setLayoutX(25);
                     setting_label5.setLayoutY(115);
                     setting_root.getChildren().add(setting_label5);
@@ -209,7 +209,7 @@ public class GUI extends Application {
                     setting_checkbox4.setSelected(Function.config.isImageDownloader());
                     setting_root.getChildren().add(setting_checkbox4);
 
-                    Label setting_label6 = new Label("ImageDownloaderのログを表示");
+                    Label setting_label6 = new Label(Function.langData.get("setting-image"));
                     setting_label6.setLayoutX(25);
                     setting_label6.setLayoutY(135);
                     setting_root.getChildren().add(setting_label6);
@@ -220,7 +220,7 @@ public class GUI extends Application {
                     setting_checkbox5.setSelected(Function.config.isStringDownloader());
                     setting_root.getChildren().add(setting_checkbox5);
 
-                    Label setting_label7 = new Label("StringDownloaderのログを表示");
+                    Label setting_label7 = new Label(Function.langData.get("setting-string"));
                     setting_label7.setLayoutX(25);
                     setting_label7.setLayoutY(155);
                     setting_root.getChildren().add(setting_label7);
@@ -229,7 +229,7 @@ public class GUI extends Application {
                     CheckBox setting_checkbox7 = new CheckBox();
                     CheckBox setting_checkbox8 = new CheckBox();
                     if (Function.ntSystem != null){
-                        Label setting_label8 = new Label("自動起動タイミング");
+                        Label setting_label8 = new Label(Function.langData.get("setting-autostart"));
                         setting_label8.setLayoutX(5);
                         setting_label8.setLayoutY(175);
                         setting_root.getChildren().add(setting_label8);
@@ -250,7 +250,7 @@ public class GUI extends Application {
                         });
                         setting_root.getChildren().add(setting_checkbox6);
 
-                        Label setting_label9 = new Label("自動起動しない");
+                        Label setting_label9 = new Label(Function.langData.get("setting-autostart-no"));
                         setting_label9.setLayoutX(25);
                         setting_label9.setLayoutY(195);
                         setting_root.getChildren().add(setting_label9);
@@ -264,7 +264,7 @@ public class GUI extends Application {
                         setting_checkbox7.setDisable(!Function.config.isAutoStaring());
                         setting_root.getChildren().add(setting_checkbox7);
 
-                        Label setting_label10 = new Label("Windows起動時");
+                        Label setting_label10 = new Label(Function.langData.get("setting-autostart-windows"));
                         setting_label10.setLayoutX(25);
                         setting_label10.setLayoutY(215);
                         setting_root.getChildren().add(setting_label10);
@@ -278,7 +278,7 @@ public class GUI extends Application {
                         setting_checkbox8.setDisable(!Function.config.isAutoStaring());
                         setting_root.getChildren().add(setting_checkbox8);
 
-                        Label setting_label11 = new Label("VRChat起動時");
+                        Label setting_label11 = new Label(Function.langData.get("setting-autostart-vrchat"));
                         setting_label11.setLayoutX(25);
                         setting_label11.setLayoutY(235);
                         setting_root.getChildren().add(setting_label11);
@@ -337,13 +337,13 @@ public class GUI extends Application {
                         AnchorPane detail_root = new AnchorPane();
                         Scene detail_scene = new Scene(detail_root);
 
-                        Label detail_label1 = new Label("詳細");
+                        Label detail_label1 = new Label(Function.langData.get("detail"));
                         detail_label1.setLayoutX(5);
                         detail_label1.setLayoutY(5);
                         detail_label1.setFont(new Font(16));
                         detail_root.getChildren().add(detail_label1);
 
-                        Label detail_label1_2 = new Label("Date");
+                        Label detail_label1_2 = new Label(Function.langData.get("date"));
                         detail_label1_2.setLayoutX(10);
                         detail_label1_2.setLayoutY(40);
                         detail_root.getChildren().add(detail_label1_2);
@@ -353,7 +353,7 @@ public class GUI extends Application {
                         detail_label1_2_1.setLayoutY(60);
                         detail_root.getChildren().add(detail_label1_2_1);
 
-                        Label detail_label1_3 = new Label("URL");
+                        Label detail_label1_3 = new Label(Function.langData.get("url"));
                         detail_label1_3.setLayoutX(10);
                         detail_label1_3.setLayoutY(80);
                         detail_root.getChildren().add(detail_label1_3);
@@ -368,17 +368,17 @@ public class GUI extends Application {
                         detail_root.getChildren().add(detail_field);
                         //Platform.runLater(()-> );
 
-                        Label detail_label1_4 = new Label("種類");
+                        Label detail_label1_4 = new Label(Function.langData.get("kind"));
                         detail_label1_4.setLayoutX(10);
                         detail_label1_4.setLayoutY(130);
                         detail_root.getChildren().add(detail_label1_4);
 
-                        Label detail_label1_4_1 = new Label(data.getURLType().equals("Video") ? "動画(Video)" : data.getURLType().equals("String") ? "テキスト(String)" : "画像(Image)");
+                        Label detail_label1_4_1 = new Label(data.getURLType().equals("Video") ? Function.langData.get("video") : data.getURLType().equals("String") ? Function.langData.get("string") : Function.langData.get("image"));
                         detail_label1_4_1.setLayoutX(10);
                         detail_label1_4_1.setLayoutY(150);
                         detail_root.getChildren().add(detail_label1_4_1);
 
-                        Label detail_label1_5 = new Label("エラーメッセージ");
+                        Label detail_label1_5 = new Label(Function.langData.get("error-message"));
                         detail_label1_5.setLayoutX(10);
                         detail_label1_5.setLayoutY(170);
                         detail_root.getChildren().add(detail_label1_5);
@@ -393,13 +393,13 @@ public class GUI extends Application {
                         //Platform.runLater(()-> );
                         detail_root.getChildren().add(detail_textArea);
 
-                        Button detail_button = new Button("閉じる");
+                        Button detail_button = new Button(Function.langData.get("exit"));
                         detail_button.setLayoutX(650);
                         detail_button.setLayoutY(10);
                         detail_button.setOnAction(e -> detail_stage.close());
                         detail_root.getChildren().add(detail_button);
 
-                        Label detail_label1_6 = new Label("Now Loading...");
+                        Label detail_label1_6 = new Label(Function.langData.get("now-loading"));
                         detail_label1_6.setLayoutX(10);
                         detail_label1_6.setLayoutY(360);
                         detail_root.getChildren().add(detail_label1_6);
@@ -416,7 +416,7 @@ public class GUI extends Application {
                                 Image fxImage = videoData.getThumbnail() != null ? new Image(new ByteArrayInputStream(videoData.getThumbnail())) : null;
                                 //System.out.println("debug 2");
 
-                                Platform.runLater(()->detail_label1_6.setText("タイトル"));
+                                Platform.runLater(()->detail_label1_6.setText(Function.langData.get("video-title")));
 
                                 TextField detail_field2 = new TextField();
                                 detail_field2.setLayoutX(10);
@@ -544,43 +544,43 @@ public class GUI extends Application {
             update_stage.setResizable(false);
             update_stage.setMaximized(false);
             update_stage.setFullScreen(false);
-            update_stage.setTitle("アップデートのお知らせ");
+            update_stage.setTitle(Function.langData.get("update-notify"));
             update_stage.setWidth(400);
             update_stage.setHeight(200);
 
             AnchorPane update_root = new AnchorPane();
             Scene update_scene = new Scene(update_root);
 
-            Button update_button1 = new Button("閉じる");
+            Button update_button1 = new Button(Function.langData.get("exit"));
             update_button1.setLayoutX(300);
             update_button1.setLayoutY(10);
             update_button1.setOnAction(e -> update_stage.close());
             update_root.getChildren().add(update_button1);
 
-            Label update_label1 = new Label("アップデートのお知らせ");
+            Label update_label1 = new Label(Function.langData.get("update-notify"));
             update_label1.setLayoutX(5);
             update_label1.setLayoutY(5);
             update_label1.setFont(new Font(16));
             update_root.getChildren().add(update_label1);
 
-            Label update_label2 = new Label("アップデートがあります。");
+            Label update_label2 = new Label(Function.langData.get("update-found"));
             update_label2.setLayoutX(10);
             update_label2.setLayoutY(40);
             update_root.getChildren().add(update_label2);
 
-            Label update_label3 = new Label("現在のバージョン : " + Function.Version);
+            Label update_label3 = new Label(Function.langData.get("update-now-version").replaceAll("#nowver#", Function.Version));
             update_label3.setLayoutX(10);
             update_label3.setLayoutY(80);
             update_root.getChildren().add(update_label3);
 
-            Label update_label4 = new Label("最新のバージョン : " + Function.new_version);
+            Label update_label4 = new Label(Function.langData.get("update-new-version").replaceAll("#newver#", Function.new_version));
             update_label4.setLayoutX(10);
             update_label4.setLayoutY(100);
             update_root.getChildren().add(update_label4);
 
             if (Function.ntSystem != null){
                 // Windowsの場合のアップデートバッチ用のボタン
-                Button update_button2 = new Button("アップデート");
+                Button update_button2 = new Button(Function.langData.get("update"));
                 update_button2.setLayoutX(10);
                 update_button2.setLayoutY(120);
                 update_button2.setOnAction(e -> {
@@ -612,10 +612,10 @@ public class GUI extends Application {
         }
 
         if (Function.config.isDebugOutput()){
-            System.out.println("[Info] GUI組み立て完了！");
+            System.out.println("[Info] "+Function.langData.get("gui-create-success"));
         }
         if (Function.config.isDebugOutput()){
-            System.out.println("[Info] GUI表示！");
+            System.out.println("[Info] "+Function.langData.get("gui-print"));
         }
         stage.show();
         if (Function.isUpdate){

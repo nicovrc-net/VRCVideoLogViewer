@@ -8,10 +8,7 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import net.nicovrc.dev.data.ConfigData;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -37,6 +34,8 @@ public class Main {
             e.printStackTrace();
             return;
         }
+
+        String lang = "ja";
 
         if (args.length == 1){
             if (args[0].equals("--start-Windows")){
@@ -167,15 +166,87 @@ public class Main {
                 }
                 return;
             }
-            return;
+            if (args[0].startsWith("--lang:")){
+                lang = args[0].replaceFirst("--lang:", "");
+            }
         }
 
+        // 言語ファイル
+        File file = new File("./lang");
+        if (!file.exists()){
+            file.mkdir();
+        }
 
+        if (args.length == 0){
+            file = new File("./config.yml");
+            if (file.exists()){
+                try {
+                    final YamlMapping yamlMapping = Yaml.createYamlInput(new File("./config.yml")).readYamlMapping();
+                    lang = yamlMapping.string("lang");
+                } catch (Exception e){
+                    lang = "ja";
+                }
+            }
+        }
 
-        System.out.println("[Info] VRCVideoLogViewer Ver " + Function.Version + "起動");
+        file = new File("./lang/"+lang+".txt");
+        if (file.exists()){
+            file = new File("./lang/ja.txt");
+        }
+
+        String langText = null;
+        if (file.exists()){
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))){
+                String str;
+                StringBuilder sb = new StringBuilder();
+                while ((str = reader.readLine()) != null) {
+                    sb.append(str).append("\n");
+                }
+                langText = sb.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            try (HttpClient client = HttpClient.newBuilder()
+                    .version(HttpClient.Version.HTTP_2)
+                    .followRedirects(HttpClient.Redirect.ALWAYS)
+                    .connectTimeout(Duration.ofSeconds(5))
+                    .build()) {
+
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(new URI("https://nicovrc.net/v/lang-ja.txt"))
+                        .headers("User-Agent", Function.UserAgent)
+                        .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                        .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                        .GET()
+                        .build();
+                HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+                langText = send.body();
+
+                FileWriter file1 = new FileWriter("./lang/ja.txt");
+                PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
+                pw.print(langText);
+                pw.close();
+                file1.close();
+                pw = null;
+                file1 = null;
+            } catch (Exception e){
+                // e.printStackTrace();
+            }
+        }
+
+        for (String str : langText.split("\n")) {
+            Matcher matcher = Function.matcher_langData.matcher(str);
+            if (matcher.find()){
+                Function.langData.add(matcher.group(1), matcher.group(2));
+            }
+        }
+
+        System.out.println("[Info] "+Function.langData.get("start-message").replaceAll("#ver#", Function.Version));
         final boolean isWindowsBatchStart = Function.ntSystem != null;
 
-        File file = new File("./tools/openjdk-21.0.2_windows-x64_bin.zip");
+        file = new File("./tools/openjdk-21.0.2_windows-x64_bin.zip");
         if (file.exists()){
             file.delete();
         }
@@ -197,7 +268,7 @@ public class Main {
             file.delete();
         }
 
-        System.out.println("[Info] アップデート確認");
+        System.out.println("[Info] "+Function.langData.get("update-check"));
 
         try (HttpClient client = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_2)
@@ -245,7 +316,7 @@ public class Main {
             Function.isUpdate = !Function.Version.equals(Function.new_version);
 
             if (Function.isUpdate){
-                System.out.println("[Info] アップデートが見つかりました。");
+                System.out.println("[Info] " + Function.langData.get("update-found"));
                 if (Function.ntSystem != null){
                     File update_file = new File("./tools/update1.bat");
                     if (update_file.exists()){
@@ -282,7 +353,7 @@ public class Main {
                     file1 = null;
                 }
             } else {
-                System.out.println("[Info] アップデートはありませんでした。 (現在: "+Function.Version+" 最新:"+Function.new_version+")");
+                System.out.println("[Info] "+Function.langData.get("update-notfound").replaceAll("#nowver#", Function.Version).replaceAll("#newver#", Function.new_version));
             }
         } catch (Exception e){
             e.printStackTrace();
@@ -291,11 +362,11 @@ public class Main {
             return;
         }
 
-        System.out.println("[Info] config.yml 存在チェック");
+        System.out.println("[Info] "+Function.langData.get("config-check"));
         file = new File("./config.yml");
 
         if (!file.exists()){
-            System.out.println("[Info] config.yml 自動生成します");
+            System.out.println("[Info] "+Function.langData.get("config-autocreate"));
 
             try {
                 FileWriter file1 = new FileWriter("./config.yml");
@@ -334,7 +405,7 @@ public class Main {
 
             try {
                 if (Function.config.isDebugOutput()){
-                    System.out.println("[Info] ログフォルダの自動取得");
+                    System.out.println("[Info] "+Function.langData.get("logfolder-autoget"));
                 }
                 String LocalAppData = System.getenv().get("LOCALAPPDATA");
                 String LinuxUserHome = System.getenv().get("HOME");
@@ -344,23 +415,27 @@ public class Main {
                     file = new File("/home/"+Function.unixSystem.getUsername()+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
                 }
 
+                String path = file.getCanonicalPath();
                 if (file.exists()) {
-                    Function.config.setLogFolderPass(file.getCanonicalPath());
+                    Function.config.setLogFolderPass(path);
 
                     if (Function.config.isDebugOutput()) {
-                        System.out.println("[Info] 自動取得成功 : " + file.getCanonicalPath());
+                        System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path));
                     }
                 } else if (Function.ntSystem != null && new File(LocalAppData+"Low\\VRChat\\VRChat").exists()) {
                     file = new File(LocalAppData + "Low\\VRChat\\VRChat");
+                    path = file.getCanonicalPath();
 
-                    Function.config.setLogFolderPass(file.getCanonicalPath());
-                    System.out.println("[Info] 自動取得成功 : " + file.getCanonicalPath());
+                    Function.config.setLogFolderPass(path);
+                    System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path));
                 } else if (Function.unixSystem != null && new File(LinuxUserHome+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat").exists()){
                     file = new File(LinuxUserHome+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
-                    Function.config.setLogFolderPass(file.getCanonicalPath());
-                    System.out.println("[Info] 自動取得成功 : " + file.getCanonicalPath());
+                    path = file.getCanonicalPath();
+
+                    Function.config.setLogFolderPass(path);
+                    System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path));
                 } else {
-                    System.out.println("[Info] 自動取得失敗");
+                    System.out.println("[Info] " + Function.langData.get("logfolder-autoget-fail"));
                 }
             } catch (Exception e) {
                 //e.printStackTrace();
@@ -370,18 +445,18 @@ public class Main {
         }
 
         if (Function.config.isDebugOutput()){
-            System.out.println("[Info] フォルダチェック");
+            System.out.println("[Info] "+Function.langData.get("logfolder-check"));
         }
         if (Function.config.getLogFolderPass() != null){
             file = new File(Function.config.getLogFolderPass());
             if (!file.exists()){
-                System.out.println("フォルダが見つかりませんでした。\nFolder not found.");
+                System.out.println("[Error] "+Function.langData.get("logfolder-notfound"));
                 Function.timer1.cancel();
                 Function.timer2.cancel();
                 return;
             }
         } else {
-            System.out.println("設定ファイルが正しく設定されていません。\nThe configuration file is not set up correctly.");
+            System.out.println("[Error] "+Function.langData.get("logfolder-setting-fail"));
             Function.timer1.cancel();
             Function.timer2.cancel();
             return;
@@ -394,14 +469,14 @@ public class Main {
             // e.printStackTrace();
         }
         if (Function.logFileList.isEmpty()){
-            System.out.println("ログファイルが見つかりませんでした。\nLog file not found.");
+            System.out.println("[Error] "+Function.langData.get("logfile-notfound"));
             Function.timer1.cancel();
             Function.timer2.cancel();
             return;
         }
 
         if (Function.config.isDebugOutput()){
-            System.out.println("[Info] ログファイルの並び替え");
+            System.out.println("[Info] "+Function.langData.get("logfile-sort"));
         }
 
         Function.timer1.scheduleAtFixedRate(new TimerTask() {

@@ -1,0 +1,65 @@
+# lang name
+lang_name="日本語"
+
+# 起動時
+start-message="VRCVideoLogViewer Ver #version#起動"
+update-check="アップデート確認"
+update-found="アップデートが見つかりました。"
+update-notfound="アップデートはありませんでした。 (現在: #nowver# 最新: #newver#)"
+config-check="config.yml 存在チェック"
+config-autocreate="config.yml 自動生成します"
+logfolder-autoget="ログフォルダの自動取得"
+logfolder-autoget-success="自動取得成功 : #folder_pass#"
+logfolder-autoget-fail="自動取得失敗"
+logfolder-check="フォルダチェック"
+logfolder-notfound="フォルダが見つかりませんでした。"
+logfolder-setting-fall="設定ファイルが正しく設定されていません。"
+logfile-notfound="ログファイルが見つかりませんでした。"
+logfile-sort="ログファイルの並び替え"
+log-extraction="ログ抽出開始"
+log-read-fail="ログファイル読み込みに失敗"
+log-realtime-read="リアルタイム取得開始します..."
+gui-create="GUI組み立て中..."
+gui-create-success="GUI組み立て完了！"
+gui-print="GUI表示！"
+
+# メイン画面
+setting="設定"
+
+# 画面共通
+exit="閉じる"
+update="アップデート"
+
+# アップデート画面
+update-notify="アップデートのお知らせ"
+update-found="アップデートがあります。"
+update-now-version="現在のバージョン : #nowver#"
+update-new-version="最新のバージョン : #newver#"
+
+# 詳細画面
+detail="詳細"
+date="日時"
+url="URL"
+kind="種類"
+video="動画(Video)"
+string="テキスト(String)"
+image="画像(Image)"
+error-message="エラーメッセージ"
+now-loading="読込中..."
+video-title="タイトル"
+
+
+# 設定画面
+setting-message="※再起動するまで一部設定は反映されません。"
+setting-reflection="設定反映"
+setting-vrchat-logfolder="VRChatログフォルダ (通常は変更する必要はありません)"
+setting-debug-print="デバッグログを表示"
+setting-previous-log-get="過去のログを取得"
+setting-videoplayer="動画プレーヤーのログを表示"
+setting-image="ImageDownloaderのログを表示"
+setting-string="StringDownloaderのログを表示"
+setting-autostart="自動起動タイミング"
+setting-autostart-no="自動起動しない"
+setting-autostart-windows="Windows起動時"
+setting-autostart-linux="Linux起動時"
+setting-autostart-vrchat="VRChat起動時"

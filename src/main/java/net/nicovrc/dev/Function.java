@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.sun.security.auth.module.NTSystem;
 import com.sun.security.auth.module.UnixSystem;
 import net.nicovrc.dev.data.ConfigData;
+import net.nicovrc.dev.data.LangData;
 
 import java.io.*;
 import java.net.URI;
@@ -48,6 +49,9 @@ public class Function {
                 """;
 
     public static final ConfigData config = new ConfigData();
+
+    public static LangData langData = new LangData();
+    public static final Pattern matcher_langData = Pattern.compile("(.+)=\"(,+)\"");
 
     public static final Timer timer1 = new Timer();
     public static final Timer timer2 = new Timer();
