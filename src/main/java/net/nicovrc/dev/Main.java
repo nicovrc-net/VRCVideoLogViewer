@@ -338,6 +338,7 @@ public class Main {
                     System.out.println("[Info] ログフォルダの自動取得");
                 }
                 String LocalAppData = System.getenv().get("LOCALAPPDATA");
+                String LinuxUserHome = System.getenv().get("HOME");
                 if (Function.ntSystem != null){
                     file = new File("C:\\Users\\"+Function.ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
                 } else if (Function.unixSystem != null) {
@@ -350,9 +351,13 @@ public class Main {
                     if (Function.config.isDebugOutput()) {
                         System.out.println("[Info] 自動取得成功 : " + file.getCanonicalPath());
                     }
-                } else if (Function.ntSystem != null && new File(LocalAppData+"Low\\VRChat\\VRChat").exists()){
-                    file = new File(LocalAppData+"Low\\VRChat\\VRChat");
+                } else if (Function.ntSystem != null && new File(LocalAppData+"Low\\VRChat\\VRChat").exists()) {
+                    file = new File(LocalAppData + "Low\\VRChat\\VRChat");
 
+                    Function.config.setLogFolderPass(file.getCanonicalPath());
+                    System.out.println("[Info] 自動取得成功 : " + file.getCanonicalPath());
+                } else if (Function.unixSystem != null && new File(LinuxUserHome+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat").exists()){
+                    file = new File(LinuxUserHome+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
                     Function.config.setLogFolderPass(file.getCanonicalPath());
                     System.out.println("[Info] 自動取得成功 : " + file.getCanonicalPath());
                 } else {
