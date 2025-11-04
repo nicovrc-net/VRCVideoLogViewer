@@ -225,15 +225,15 @@ public class GUI extends Application {
                     setting_label7.setLayoutY(155);
                     setting_root.getChildren().add(setting_label7);
 
+                    CheckBox setting_checkbox6 = new CheckBox();
+                    CheckBox setting_checkbox7 = new CheckBox();
+                    CheckBox setting_checkbox8 = new CheckBox();
                     if (Function.ntSystem != null){
                         Label setting_label8 = new Label("自動起動タイミング");
                         setting_label8.setLayoutX(5);
                         setting_label8.setLayoutY(175);
                         setting_root.getChildren().add(setting_label8);
 
-                        CheckBox setting_checkbox6 = new CheckBox();
-                        CheckBox setting_checkbox7 = new CheckBox();
-                        CheckBox setting_checkbox8 = new CheckBox();
                         setting_checkbox6.setLayoutX(5);
                         setting_checkbox6.setLayoutY(195);
                         setting_checkbox6.setSelected(!Function.config.isAutoStaring());
@@ -283,24 +283,24 @@ public class GUI extends Application {
                         setting_label11.setLayoutY(235);
                         setting_root.getChildren().add(setting_label11);
 
-                        Platform.runLater(()->{
-                            setting_stage.setScene(setting_scene);
-                            setting_stage.showAndWait();
-
-                            ConfigData data = new ConfigData();
-                            data.setLang("ja");
-                            data.setLogFolderPass(setting_field1.getText());
-                            data.setDebugOutput(setting_checkbox1.isSelected());
-                            data.setOldLogCheck(setting_checkbox2.isSelected());
-                            data.setVideoPlayer(setting_checkbox3.isSelected());
-                            data.setImageDownloader(setting_checkbox4.isSelected());
-                            data.setStringDownloader(setting_checkbox5.isSelected());
-                            data.setAutoStaring(!setting_checkbox6.isSelected());
-                            data.setAutoStaringMode(setting_checkbox7.isSelected() ? "Windows" : setting_checkbox8.isSelected() ? "VRChat" : "");
-
-                            Function.SettingConfig(data);
-                        });
                     }
+                    Platform.runLater(()->{
+                        setting_stage.setScene(setting_scene);
+                        setting_stage.showAndWait();
+
+                        ConfigData data = new ConfigData();
+                        data.setLang("ja");
+                        data.setLogFolderPass(setting_field1.getText());
+                        data.setDebugOutput(setting_checkbox1.isSelected());
+                        data.setOldLogCheck(setting_checkbox2.isSelected());
+                        data.setVideoPlayer(setting_checkbox3.isSelected());
+                        data.setImageDownloader(setting_checkbox4.isSelected());
+                        data.setStringDownloader(setting_checkbox5.isSelected());
+                        data.setAutoStaring(!setting_checkbox6.isSelected());
+                        data.setAutoStaringMode(setting_checkbox7.isSelected() ? "Windows" : setting_checkbox8.isSelected() ? "VRChat" : "");
+
+                        Function.SettingConfig(data);
+                    });
                 } catch (Exception ex){
                     ex.printStackTrace();
                 }
