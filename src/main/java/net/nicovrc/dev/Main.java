@@ -19,15 +19,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
 
     public static void main(String[] args) {
 
         try {
+            //System.out.println(System.getProperty("os.name").toLowerCase(Locale.ROOT));
             if (System.getProperty("os.name").toLowerCase(Locale.ROOT).equals("linux")){
                 Function.unixSystem = new UnixSystem();
-            } else if (System.getProperty("os.name").toLowerCase(Locale.ROOT).equals("windows")){
+            } else if (System.getProperty("os.name").toLowerCase(Locale.ROOT).startsWith("windows")){
                 Function.ntSystem = new NTSystem();
             }
         } catch (Exception e){
@@ -238,7 +240,9 @@ public class Main {
 
         for (String str : langText.split("\n")) {
             Matcher matcher = Function.matcher_langData.matcher(str);
+            //System.out.println("debug : " + str);
             if (matcher.find()){
+                //System.out.println("debug : " + matcher.group(1) + " / " + matcher.group(2));
                 Function.langData.add(matcher.group(1), matcher.group(2));
             }
         }
@@ -299,7 +303,7 @@ public class Main {
         try {
 
             file = new File("./");
-            final String CurrentFolderPass = file.getCanonicalPath().replaceAll("\\\\", "/").replaceAll("/", File.separator);
+            final String CurrentFolderPass = file.getCanonicalPath();
 
             file = new File("./tools/VRCVideoLogViewer.zip");
             if (file.exists()){
@@ -420,14 +424,14 @@ public class Main {
                     Function.config.setLogFolderPass(path);
 
                     if (Function.config.isDebugOutput()) {
-                        System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path));
+                        System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path.replaceAll(Pattern.quote("\\"), "/").replaceAll("/", "\\\\\\\\")));
                     }
                 } else if (Function.ntSystem != null && new File(LocalAppData+"Low\\VRChat\\VRChat").exists()) {
                     file = new File(LocalAppData + "Low\\VRChat\\VRChat");
                     path = file.getCanonicalPath();
 
                     Function.config.setLogFolderPass(path);
-                    System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path));
+                    System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path.replaceAll(Pattern.quote("\\"), "/").replaceAll("/", "\\\\\\\\")));
                 } else if (Function.unixSystem != null && new File(LinuxUserHome+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat").exists()){
                     file = new File(LinuxUserHome+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
                     path = file.getCanonicalPath();

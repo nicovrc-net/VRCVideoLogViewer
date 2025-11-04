@@ -51,7 +51,7 @@ public class Function {
     public static final ConfigData config = new ConfigData();
 
     public static LangData langData = new LangData();
-    public static final Pattern matcher_langData = Pattern.compile("(.+)=\"(,+)\"");
+    public static final Pattern matcher_langData = Pattern.compile("(.+)=\"(.+)\"");
 
     public static final Timer timer1 = new Timer();
     public static final Timer timer2 = new Timer();
@@ -470,7 +470,12 @@ public class Function {
                 """;
 
         configText = configText.replaceAll("#lang#", config.getLang());
-        configText = configText.replaceAll("#logfolder#", config.getLogFolderPass().replaceAll("\\\\", "/").replaceAll("/", File.separator));
+        if (ntSystem != null){
+            configText = configText.replaceAll("#logfolder#", config.getLogFolderPass().replaceAll(Pattern.quote("\\"), "/").replaceAll("/", "\\\\\\\\"));
+        } else {
+            configText = configText.replaceAll("#logfolder#", config.getLogFolderPass());
+        }
+
         configText = configText.replaceAll("#debug#", (config.isDebugOutput()+"").toLowerCase(Locale.ROOT));
         configText = configText.replaceAll("#oldcheck#", (config.isOldLogCheck()+"").toLowerCase(Locale.ROOT));
         configText = configText.replaceAll("#videoplayer#", (config.isVideoPlayer()+"").toLowerCase(Locale.ROOT));
@@ -511,7 +516,7 @@ public class Function {
         if (config.isAutoStaring()){
             String path = "";
             try {
-                path = new File("./").getCanonicalPath().replaceAll("\\\\", "/").replaceAll("/", File.separator);
+                path = new File("./").getCanonicalPath().replaceAll(Pattern.quote("\\"), "/").replaceAll("/", "\\\\\\\\");
             } catch (IOException e) {
                 //e.printStackTrace();
             }
@@ -567,7 +572,7 @@ public class Function {
             }
 
             try {
-                file = new File(file.getCanonicalPath().replaceAll("\\\\", "/")+"\\vrcvideologviewer.bat");
+                file = new File(file.getCanonicalPath().replaceAll(Pattern.quote("\\"), "/").replaceAll("/", "\\\\\\\\")+"\\vrcvideologviewer.bat");
             } catch (IOException e) {
                 //e.printStackTrace();
             }
