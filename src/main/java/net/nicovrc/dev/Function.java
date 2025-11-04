@@ -3,6 +3,7 @@ package net.nicovrc.dev;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.sun.security.auth.module.NTSystem;
+import com.sun.security.auth.module.UnixSystem;
 import net.nicovrc.dev.data.ConfigData;
 
 import java.io.*;
@@ -19,7 +20,7 @@ import java.util.regex.Pattern;
 
 public class Function {
 
-    public static final String Version = "0.6.0-beta.1";
+    public static final String Version = "0.7.0-beta.1";
 
     public static final String UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:144.0) Gecko/20100101 Firefox/144.0 VRCVideoLogViewer/"+Version;
     public static final String Unity_UserAgent = "UnityPlayer/2022.3.22f1-DWR (UnityWebRequest/1.0, libcurl/8.5.0-DEV)";
@@ -54,6 +55,7 @@ public class Function {
     public static boolean isUpdate = false;
 
     public static final NTSystem ntSystem = new NTSystem();
+    public static final UnixSystem unixSystem = new UnixSystem();
     public static final Runtime runtime = Runtime.getRuntime();
 
     public static final SimpleDateFormat file_sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
@@ -464,7 +466,7 @@ public class Function {
                 """;
 
         configText = configText.replaceAll("#lang#", config.getLang());
-        configText = configText.replaceAll("#logfolder#", config.getLogFolderPass().replaceAll("\\\\", "/"));
+        configText = configText.replaceAll("#logfolder#", config.getLogFolderPass().replaceAll("\\\\", "/").replaceAll("/", File.separator));
         configText = configText.replaceAll("#debug#", (config.isDebugOutput()+"").toLowerCase(Locale.ROOT));
         configText = configText.replaceAll("#oldcheck#", (config.isOldLogCheck()+"").toLowerCase(Locale.ROOT));
         configText = configText.replaceAll("#videoplayer#", (config.isVideoPlayer()+"").toLowerCase(Locale.ROOT));
@@ -500,7 +502,7 @@ public class Function {
         if (config.isAutoStaring()){
             String path = "";
             try {
-                path = new File("./").getCanonicalPath().replaceAll("\\\\", "/");
+                path = new File("./").getCanonicalPath().replaceAll("\\\\", "/").replaceAll("/", File.separator);
             } catch (IOException e) {
                 //e.printStackTrace();
             }
