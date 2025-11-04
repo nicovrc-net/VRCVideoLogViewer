@@ -499,6 +499,11 @@ public class Function {
             //e.printStackTrace();
         }
 
+        // TODO Linux環境での自動起動を調べてそのうち実装する
+        if (ntSystem == null){
+            return;
+        }
+
         if (config.isAutoStaring()){
             String path = "";
             try {
