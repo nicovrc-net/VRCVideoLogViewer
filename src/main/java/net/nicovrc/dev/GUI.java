@@ -365,10 +365,27 @@ public class GUI extends Application {
                             Thread.ofVirtual().start(()->{
                                 try {
                                     final Process exec0;
+                                    String batText = "start "+data.getURL();
+                                    String bashText = "#!/bin/bash\nxdg-open "+data.getURL();
                                     if (Function.ntSystem != null){
-                                        exec0 = Function.runtime.exec(new String[]{"start", data.getURL()});
+                                        FileWriter file1 = new FileWriter("./temp.bat");
+                                        PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
+                                        pw.print(batText);
+                                        pw.close();
+                                        file1.close();
+                                        pw = null;
+                                        file1 = null;
+                                        exec0 = Function.runtime.exec(new String[]{"./temp.bat"});
                                     } else if (Function.unixSystem != null) {
-                                        exec0 = Function.runtime.exec(new String[]{"xdg-open", data.getURL()});
+                                        FileWriter file1 = new FileWriter("./temp.sh");
+                                        PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
+                                        pw.print(bashText);
+                                        pw.close();
+                                        file1.close();
+                                        pw = null;
+                                        file1 = null;
+                                        new File("./temp.sh").setExecutable(true);
+                                        exec0 = Function.runtime.exec(new String[]{"./temp.sh"});
                                     } else {
                                         exec0 = null;
                                     }
@@ -382,6 +399,11 @@ public class GUI extends Application {
                                             }
                                         });
                                         exec0.waitFor();
+                                    }
+                                    if (Function.ntSystem != null) {
+                                        new File("./temp.bat").delete();
+                                    } else if (Function.unixSystem != null){
+                                        new File("./temp.sh").delete();
                                     }
                                 } catch (Exception ex){
                                     // ex.printStackTrace();
