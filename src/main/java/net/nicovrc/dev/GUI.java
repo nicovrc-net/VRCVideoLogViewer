@@ -358,6 +358,38 @@ public class GUI extends Application {
                         detail_label1_3.setLayoutY(80);
                         detail_root.getChildren().add(detail_label1_3);
 
+                        Button detail_button1 = new Button(Function.langData.get("open"));
+                        detail_button1.setLayoutX(150);
+                        detail_button1.setLayoutY(75);
+                        detail_button1.setOnAction(e -> {
+                            Thread.ofVirtual().start(()->{
+                                try {
+                                    final Process exec0;
+                                    if (Function.ntSystem != null){
+                                        exec0 = Function.runtime.exec(new String[]{"start", data.getURL()});
+                                    } else if (Function.unixSystem != null) {
+                                        exec0 = Function.runtime.exec(new String[]{"xdg-open", data.getURL()});
+                                    } else {
+                                        exec0 = null;
+                                    }
+                                    if (exec0 != null){
+                                        Thread.ofVirtual().start(()->{
+                                            try {
+                                                Thread.sleep(5000L);
+                                                exec0.destroy();
+                                            } catch (Exception ex){
+                                                // ex.printStackTrace();
+                                            }
+                                        });
+                                        exec0.waitFor();
+                                    }
+                                } catch (Exception ex){
+                                    // ex.printStackTrace();
+                                }
+                            });
+                        });
+                        detail_root.getChildren().add(detail_button1);
+
                         TextField detail_field = new TextField();
                         detail_field.setLayoutX(10);
                         detail_field.setLayoutY(100);
@@ -393,16 +425,17 @@ public class GUI extends Application {
                         //Platform.runLater(()-> );
                         detail_root.getChildren().add(detail_textArea);
 
-                        Button detail_button = new Button(Function.langData.get("exit"));
-                        detail_button.setLayoutX(650);
-                        detail_button.setLayoutY(10);
-                        detail_button.setOnAction(e -> detail_stage.close());
-                        detail_root.getChildren().add(detail_button);
+                        Button detail_button2 = new Button(Function.langData.get("exit"));
+                        detail_button2.setLayoutX(650);
+                        detail_button2.setLayoutY(10);
+                        detail_button2.setOnAction(e -> detail_stage.close());
+                        detail_root.getChildren().add(detail_button2);
 
                         Label detail_label1_6 = new Label(Function.langData.get("now-loading"));
                         detail_label1_6.setLayoutX(10);
                         detail_label1_6.setLayoutY(360);
                         detail_root.getChildren().add(detail_label1_6);
+
 
                         Platform.runLater(()->{
                             detail_stage.setScene(detail_scene);
