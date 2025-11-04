@@ -29,6 +29,7 @@ setting="設定"
 # 画面共通
 exit="閉じる"
 update="アップデート"
+open="開く"
 
 # アップデート画面
 update-notify="アップデートのお知らせ"
