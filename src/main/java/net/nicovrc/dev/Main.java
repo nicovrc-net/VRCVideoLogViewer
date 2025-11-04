@@ -225,7 +225,6 @@ public class Main {
             return;
         }
 
-        boolean isUpdate;
         try {
 
             file = new File("./");
@@ -243,9 +242,9 @@ public class Main {
                 file.delete();
             }
 
-            isUpdate = !Function.Version.equals(Function.new_version);
+            Function.isUpdate = !Function.Version.equals(Function.new_version);
 
-            if (isUpdate){
+            if (Function.isUpdate){
                 System.out.println("[Info] アップデートが見つかりました。");
                 if (Function.ntSystem != null){
                     File update_file = new File("./tools/update1.bat");
