@@ -390,6 +390,7 @@ public class GUI extends Application {
                                         Process process = pb.start();
                                         process.waitFor();
                                         System.out.println(process.exitValue());
+                                        System.out.println(new String(process.getErrorStream().readAllBytes(), StandardCharsets.UTF_8));
                                     }
                                 } catch (Exception ex){
                                     ex.printStackTrace();
