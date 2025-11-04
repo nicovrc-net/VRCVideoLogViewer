@@ -391,7 +391,7 @@ public class GUI extends Application {
                                         process.waitFor();
                                     }
                                 } catch (Exception ex){
-                                    // ex.printStackTrace();
+                                    ex.printStackTrace();
                                 }
                             });
                         });
