@@ -11,7 +11,11 @@ public class LangData {
     }
 
     public String get(String o_text){
-        return langData.get(o_text);
+        if (langData.get(o_text) != null){
+            return langData.get(o_text);
+        } else {
+            return "";
+        }
     }
 
 }
