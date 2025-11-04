@@ -1,0 +1,65 @@
+# lang name
+lang_name="English"
+
+# startup
+start-message="VRCVideoLogViewer Ver #version# started"
+update-check="Check for updates"
+update-found="Update found."
+update-notfound="No updates found. (Current: #nowver# Latest: #newver#)"
+config-check="Checking for config.yml"
+config-autocreate="Auto-creating config.yml"
+logfolder-autoget="Auto-detect log folder"
+logfolder-autoget-success="Auto-detect succeeded : #folder_pass#"
+logfolder-autoget-fail="Auto-detect failed"
+logfolder-check="Checking folder"
+logfolder-notfound="Folder not found."
+logfolder-setting-fall="Configuration file is not set correctly."
+logfile-notfound="Log file not found."
+logfile-sort="Sort log files"
+log-extraction="Starting log extraction"
+log-read-fail="Failed to read log file"
+log-realtime-read="Starting real-time retrieval..."
+gui-create="Building GUI..."
+gui-create-success="GUI build complete!"
+gui-print="Displaying GUI!"
+
+# main screen
+setting="Settings"
+
+# common
+exit="Close"
+update="Update"
+open="Open"
+
+# update screen
+update-notify="Update notification"
+update-found="An update is available."
+update-now-version="Current version : #nowver#"
+update-new-version="Latest version : #newver#"
+
+# detail screen
+detail="Details"
+date="Date & Time"
+url="URL"
+kind="Type"
+video="Video"
+string="Text"
+image="Image"
+error-message="Error message"
+now-loading="Loading..."
+video-title="Title"
+
+# settings screen
+setting-message="Some settings will not take effect until restart."
+setting-reflection="Apply settings"
+setting-vrchat-logfolder="VRChat log folder (usually no change needed)"
+setting-debug-print="Show debug logs"
+setting-previous-log-get="Retrieve past logs"
+setting-videoplayer="Show VideoPlayer logs"
+setting-image="Show ImageDownloader logs"
+setting-string="Show StringDownloader logs"
+setting-autostart="Auto-start timing"
+setting-autostart-no="Do not auto-start"
+setting-autostart-windows="At Windows startup"
+setting-autostart-linux="At Linux startup"
+setting-autostart-vrchat="When VRChat
