@@ -224,7 +224,7 @@ public class GUI extends Application {
                 setting_label7.setLayoutY(155);
                 setting_root.getChildren().add(setting_label7);
 
-                if (!Function.ntSystem.getName().isEmpty()){
+                if (Function.ntSystem != null){
                     Label setting_label8 = new Label("自動起動タイミング");
                     setting_label8.setLayoutX(5);
                     setting_label8.setLayoutY(175);
@@ -574,7 +574,7 @@ public class GUI extends Application {
             update_label4.setLayoutY(100);
             update_root.getChildren().add(update_label4);
 
-            if (!Function.ntSystem.getName().isEmpty()){
+            if (Function.ntSystem != null){
                 // Windowsの場合のアップデートバッチ用のボタン
                 Button update_button2 = new Button("アップデート");
                 update_button2.setLayoutX(10);

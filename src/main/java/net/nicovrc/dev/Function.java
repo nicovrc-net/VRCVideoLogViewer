@@ -54,8 +54,8 @@ public class Function {
 
     public static boolean isUpdate = false;
 
-    public static final NTSystem ntSystem = new NTSystem();
-    public static final UnixSystem unixSystem = new UnixSystem();
+    public static NTSystem ntSystem = null;
+    public static UnixSystem unixSystem = null;
     public static final Runtime runtime = Runtime.getRuntime();
 
     public static final SimpleDateFormat file_sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
@@ -359,7 +359,7 @@ public class Function {
         stream = null;
 
         final Process exec0;
-        if (!ntSystem.getName().isEmpty()){
+        if (ntSystem != null){
             exec0 = runtime.exec(new String[]{".\\tools\\ImageMagick-7.1.2-8-portable-Q16-x64\\magick.exe", "./temp/"+filename+".webp", "./temp/"+filename+".png"});
         } else {
             exec0 = runtime.exec(new String[]{"./tools/ImageMagick/magick", "./temp/"+filename+".webp", "./temp/"+filename+".png"});

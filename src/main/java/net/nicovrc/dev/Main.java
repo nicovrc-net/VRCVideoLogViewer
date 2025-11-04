@@ -2,6 +2,8 @@ package net.nicovrc.dev;
 
 import com.amihaiemil.eoyaml.Yaml;
 import com.amihaiemil.eoyaml.YamlMapping;
+import com.sun.security.auth.module.NTSystem;
+import com.sun.security.auth.module.UnixSystem;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import net.nicovrc.dev.data.ConfigData;
@@ -17,12 +19,25 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
 
 public class Main {
 
     public static void main(String[] args) {
+
+        try {
+            if (System.getProperty("os.name").toLowerCase(Locale.ROOT).equals("linux")){
+                Function.unixSystem = new UnixSystem();
+            } else if (System.getProperty("os.name").toLowerCase(Locale.ROOT).equals("windows")){
+                Function.ntSystem = new NTSystem();
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            return;
+        }
+
         if (args.length == 1){
             if (args[0].equals("--start-Windows")){
                 boolean isAutoStaring = false;
@@ -158,7 +173,7 @@ public class Main {
 
 
         System.out.println("[Info] VRCVideoLogViewer Ver " + Function.Version + "起動");
-        final boolean isWindowsBatchStart = new File("./tools").exists() && new File("./tools/jdk-21.0.2").exists();
+        final boolean isWindowsBatchStart = Function.ntSystem != null;
 
         File file = new File("./tools/openjdk-21.0.2_windows-x64_bin.zip");
         if (file.exists()){
@@ -169,7 +184,7 @@ public class Main {
             file.delete();
         }
 
-        if (!Function.ntSystem.getName().isEmpty()){
+        if (isWindowsBatchStart){
             file = new File("./tools/ImageMagick-7.1.2-8-portable-Q16-x64.7z");
             file.delete();
         }
@@ -206,7 +221,7 @@ public class Main {
         try {
 
             file = new File("./");
-            final String CurrentFolderPass = file.getCanonicalPath().replaceAll("\\\\", "/");
+            final String CurrentFolderPass = file.getCanonicalPath().replaceAll("\\\\", "/").replaceAll("/", File.separator);
 
             file = new File("./tools/VRCVideoLogViewer.zip");
             if (file.exists()){
@@ -224,7 +239,7 @@ public class Main {
 
             if (isUpdate){
                 System.out.println("[Info] アップデートが見つかりました。");
-                if (isWindowsBatchStart || !Function.ntSystem.getName().isEmpty()){
+                if (Function.ntSystem != null){
                     File update_file = new File("./tools/update1.bat");
                     if (update_file.exists()){
                         update_file.delete();
@@ -310,7 +325,7 @@ public class Main {
 
         if (Function.config.getLogFolderPass().isEmpty()){
 
-            if (Function.ntSystem.getName().isEmpty()){
+            if (Function.ntSystem != null){
                 //UnixSystem unixSystem = new UnixSystem();
 
             } else {
