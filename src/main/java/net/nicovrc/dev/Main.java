@@ -217,7 +217,7 @@ public class Main {
                     .build()) {
 
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(new URI("https://nicovrc.net/v/lang-ja.txt"))
+                        .uri(new URI("https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/ja.txt"))
                         .headers("User-Agent", Function.UserAgent)
                         .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
                         .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
