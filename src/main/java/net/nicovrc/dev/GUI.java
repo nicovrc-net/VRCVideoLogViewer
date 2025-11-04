@@ -48,7 +48,7 @@ public class GUI extends Application {
             }
 
             for (String s : Function.logFileList) {
-                File file = new File(Function.config.getLogFolderPass() + "\\" + s);
+                File file = new File(Function.config.getLogFolderPass() + File.separator + s);
 
                 String text = Function.getTextForFile(file);
                 try {
@@ -224,81 +224,84 @@ public class GUI extends Application {
                 setting_label7.setLayoutY(155);
                 setting_root.getChildren().add(setting_label7);
 
-                Label setting_label8 = new Label("自動起動タイミング");
-                setting_label8.setLayoutX(5);
-                setting_label8.setLayoutY(175);
-                setting_root.getChildren().add(setting_label8);
+                if (!Function.ntSystem.getName().isEmpty()){
+                    Label setting_label8 = new Label("自動起動タイミング");
+                    setting_label8.setLayoutX(5);
+                    setting_label8.setLayoutY(175);
+                    setting_root.getChildren().add(setting_label8);
 
-                CheckBox setting_checkbox6 = new CheckBox();
-                CheckBox setting_checkbox7 = new CheckBox();
-                CheckBox setting_checkbox8 = new CheckBox();
-                setting_checkbox6.setLayoutX(5);
-                setting_checkbox6.setLayoutY(195);
-                setting_checkbox6.setSelected(!Function.config.isAutoStaring());
-                setting_checkbox6.setOnAction(ev->{
-                    if (setting_checkbox6.isSelected()){
-                        setting_checkbox7.setSelected(false);
+                    CheckBox setting_checkbox6 = new CheckBox();
+                    CheckBox setting_checkbox7 = new CheckBox();
+                    CheckBox setting_checkbox8 = new CheckBox();
+                    setting_checkbox6.setLayoutX(5);
+                    setting_checkbox6.setLayoutY(195);
+                    setting_checkbox6.setSelected(!Function.config.isAutoStaring());
+                    setting_checkbox6.setOnAction(ev->{
+                        if (setting_checkbox6.isSelected()){
+                            setting_checkbox7.setSelected(false);
+                            setting_checkbox8.setSelected(false);
+                            setting_checkbox7.setDisable(true);
+                            setting_checkbox8.setDisable(true);
+                        } else {
+                            setting_checkbox7.setDisable(false);
+                            setting_checkbox8.setDisable(false);
+                        }
+                    });
+                    setting_root.getChildren().add(setting_checkbox6);
+
+                    Label setting_label9 = new Label("自動起動しない");
+                    setting_label9.setLayoutX(25);
+                    setting_label9.setLayoutY(195);
+                    setting_root.getChildren().add(setting_label9);
+
+                    setting_checkbox7.setLayoutX(5);
+                    setting_checkbox7.setLayoutY(215);
+                    setting_checkbox7.setSelected(Function.config.getAutoStaringMode().equals("Windows"));
+                    setting_checkbox7.setOnAction(ev->{
                         setting_checkbox8.setSelected(false);
-                        setting_checkbox7.setDisable(true);
-                        setting_checkbox8.setDisable(true);
-                    } else {
-                        setting_checkbox7.setDisable(false);
-                        setting_checkbox8.setDisable(false);
-                    }
-                });
-                setting_root.getChildren().add(setting_checkbox6);
+                    });
+                    setting_checkbox7.setDisable(!Function.config.isAutoStaring());
+                    setting_root.getChildren().add(setting_checkbox7);
 
-                Label setting_label9 = new Label("自動起動しない");
-                setting_label9.setLayoutX(25);
-                setting_label9.setLayoutY(195);
-                setting_root.getChildren().add(setting_label9);
+                    Label setting_label10 = new Label("Windows起動時");
+                    setting_label10.setLayoutX(25);
+                    setting_label10.setLayoutY(215);
+                    setting_root.getChildren().add(setting_label10);
 
-                setting_checkbox7.setLayoutX(5);
-                setting_checkbox7.setLayoutY(215);
-                setting_checkbox7.setSelected(Function.config.getAutoStaringMode().equals("Windows"));
-                setting_checkbox7.setOnAction(ev->{
-                    setting_checkbox8.setSelected(false);
-                });
-                setting_checkbox7.setDisable(!Function.config.isAutoStaring());
-                setting_root.getChildren().add(setting_checkbox7);
+                    setting_checkbox8.setLayoutX(5);
+                    setting_checkbox8.setLayoutY(235);
+                    setting_checkbox8.setSelected(Function.config.getAutoStaringMode().equals("VRChat"));
+                    setting_checkbox8.setOnAction(ev->{
+                        setting_checkbox7.setSelected(false);
+                    });
+                    setting_checkbox8.setDisable(!Function.config.isAutoStaring());
+                    setting_root.getChildren().add(setting_checkbox8);
 
-                Label setting_label10 = new Label("Windows起動時");
-                setting_label10.setLayoutX(25);
-                setting_label10.setLayoutY(215);
-                setting_root.getChildren().add(setting_label10);
+                    Label setting_label11 = new Label("VRChat起動時");
+                    setting_label11.setLayoutX(25);
+                    setting_label11.setLayoutY(235);
+                    setting_root.getChildren().add(setting_label11);
 
-                setting_checkbox8.setLayoutX(5);
-                setting_checkbox8.setLayoutY(235);
-                setting_checkbox8.setSelected(Function.config.getAutoStaringMode().equals("VRChat"));
-                setting_checkbox8.setOnAction(ev->{
-                    setting_checkbox7.setSelected(false);
-                });
-                setting_checkbox8.setDisable(!Function.config.isAutoStaring());
-                setting_root.getChildren().add(setting_checkbox8);
+                    Platform.runLater(()->{
+                        setting_stage.setScene(setting_scene);
+                        setting_stage.showAndWait();
 
-                Label setting_label11 = new Label("VRChat起動時");
-                setting_label11.setLayoutX(25);
-                setting_label11.setLayoutY(235);
-                setting_root.getChildren().add(setting_label11);
+                        ConfigData data = new ConfigData();
+                        data.setLang("ja");
+                        data.setLogFolderPass(setting_field1.getText());
+                        data.setDebugOutput(setting_checkbox1.isSelected());
+                        data.setOldLogCheck(setting_checkbox2.isSelected());
+                        data.setVideoPlayer(setting_checkbox3.isSelected());
+                        data.setImageDownloader(setting_checkbox4.isSelected());
+                        data.setStringDownloader(setting_checkbox5.isSelected());
+                        data.setAutoStaring(!setting_checkbox6.isSelected());
+                        data.setAutoStaringMode(setting_checkbox7.isSelected() ? "Windows" : setting_checkbox8.isSelected() ? "VRChat" : "");
 
-                Platform.runLater(()->{
-                    setting_stage.setScene(setting_scene);
-                    setting_stage.showAndWait();
-
-                    ConfigData data = new ConfigData();
-                    data.setLang("ja");
-                    data.setLogFolderPass(setting_field1.getText());
-                    data.setDebugOutput(setting_checkbox1.isSelected());
-                    data.setOldLogCheck(setting_checkbox2.isSelected());
-                    data.setVideoPlayer(setting_checkbox3.isSelected());
-                    data.setImageDownloader(setting_checkbox4.isSelected());
-                    data.setStringDownloader(setting_checkbox5.isSelected());
-                    data.setAutoStaring(!setting_checkbox6.isSelected());
-                    data.setAutoStaringMode(setting_checkbox7.isSelected() ? "Windows" : setting_checkbox8.isSelected() ? "VRChat" : "");
-
-                    Function.SettingConfig(data);
-                });
+                        Function.SettingConfig(data);
+                    });
+                }
             });
+
         });
         root.getChildren().add(button);
 

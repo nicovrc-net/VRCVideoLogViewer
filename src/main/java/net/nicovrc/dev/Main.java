@@ -386,7 +386,7 @@ public class Main {
                         logFileList = Function.ListSort(logFileList);
                     }
 
-                    Function.temp_lastLogFile[0] = Function.config.getLogFolderPass() + "\\" + logFileList.getLast();
+                    Function.temp_lastLogFile[0] = Function.config.getLogFolderPass() + File.separator + logFileList.getLast();
                 } catch (Exception e){
                     Function.timer1.cancel();
                     Function.timer2.cancel();
