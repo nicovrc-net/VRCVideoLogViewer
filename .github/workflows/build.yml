@@ -80,9 +80,14 @@ jobs:
         run: |
           wget https://r2.7mi.site/vrc/start_v0.6.x.bat
           wget https://r2.7mi.site/vrc/start_v0.6.x_forLinux.sh
+          wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/ja.txt
+          wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/en.txt
           mv ./start_v0.6.x.bat start.bat
           mv ./start_v0.6.x_forLinux.sh start_forLinux.sh
-          zip VRCVideoLogViewer.zip VRCVideoLogViewer-1.0-SNAPSHOT-all.jar start.bat start_forLinux.sh
+          mkdir ./lang
+          mv ./ja.txt ./lang
+          mv ./en.txt ./lang
+          zip VRCVideoLogViewer.zip VRCVideoLogViewer-1.0-SNAPSHOT-all.jar start.bat start_forLinux.sh lang
         shell: bash
 
       - name: Linux Bash Setup Test
