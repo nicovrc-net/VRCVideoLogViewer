@@ -128,7 +128,7 @@ public class GUI extends Application {
         root.getChildren().add(label);
 
         Button button = new Button("設定");
-        button.setLayoutX(260);
+        button.setLayoutX(Function.ntSystem != null ? 260 : 300);
         button.setLayoutY(20);
         button.setOnAction(e->{
             final Stage setting_stage = new Stage();
