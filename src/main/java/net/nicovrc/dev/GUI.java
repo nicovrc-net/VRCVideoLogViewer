@@ -366,7 +366,6 @@ public class GUI extends Application {
                                 try {
                                     final Process exec0;
                                     String batText = "start "+data.getURL();
-                                    String bashText = "#!/bin/bash\nxdg-open "+data.getURL();
                                     if (Function.ntSystem != null){
                                         FileWriter file1 = new FileWriter("./temp.bat");
                                         PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
@@ -376,20 +375,6 @@ public class GUI extends Application {
                                         pw = null;
                                         file1 = null;
                                         exec0 = Function.runtime.exec(new String[]{"./temp.bat"});
-                                    } else if (Function.unixSystem != null) {
-                                        FileWriter file1 = new FileWriter("./temp.sh");
-                                        PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-                                        pw.print(bashText);
-                                        pw.close();
-                                        file1.close();
-                                        pw = null;
-                                        file1 = null;
-                                        new File("./temp.sh").setExecutable(true);
-                                        exec0 = Function.runtime.exec(new String[]{"./temp.sh"});
-                                    } else {
-                                        exec0 = null;
-                                    }
-                                    if (exec0 != null){
                                         Thread.ofVirtual().start(()->{
                                             try {
                                                 Thread.sleep(5000L);
@@ -399,11 +384,13 @@ public class GUI extends Application {
                                             }
                                         });
                                         exec0.waitFor();
+                                    } else if (Function.unixSystem != null) {
+                                        ProcessBuilder pb = new ProcessBuilder("bash", "-c", "xdg-open", data.getURL());
+                                        Process process = pb.start();
+                                        process.waitFor();
                                     }
                                     if (Function.ntSystem != null) {
-                                        //new File("./temp.bat").delete();
-                                    } else if (Function.unixSystem != null){
-                                        //new File("./temp.sh").delete();
+                                        new File("./temp.bat").delete();
                                     }
                                 } catch (Exception ex){
                                     // ex.printStackTrace();
