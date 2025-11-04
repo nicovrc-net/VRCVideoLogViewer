@@ -179,7 +179,15 @@ public class Main {
         if (file.exists()){
             file.delete();
         }
+        file = new File("./tools/openjdk-21.0.2_linux-x64_bin.tar.gz");
+        if (file.exists()){
+            file.delete();
+        }
         file = new File("./tools/openjfx-21.0.9_windows-x64_bin-sdk.zip");
+        if (file.exists()){
+            file.delete();
+        }
+        file = new File(".//tools/openjfx-21.0.9_linux-x64_bin-sdk.zip");
         if (file.exists()){
             file.delete();
         }
