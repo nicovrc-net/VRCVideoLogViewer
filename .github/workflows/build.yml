@@ -78,16 +78,30 @@ jobs:
       - name: Create Release Package
         if: startsWith(github.ref, 'refs/tags/')
         run: |
+          wget https://www.7-zip.org/a/7z2501-linux-x64.tar.xz
+          tar -Jxvf ./7z2501-linux-x64.tar.xz
+          mkdir ./tools
+          mkdir ./tools/7z2501
+          mv ./7zz ./tools/7z2501
+          mv ./7zzs ./tools/7z2501
+          mv ./History.txt ./tools/7z2501
+          mv ./License.txt ./tools/7z2501
+          mv ./MANUAL ./tools/7z2501
+          mv ./readme.txt ./tools/7z2501
+          chmod +x ./tools/7z2501/7zz
+  
           wget https://r2.7mi.site/vrc/start_v0.6.x.bat
           wget https://r2.7mi.site/vrc/start_v0.6.x_forLinux.sh
           wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/ja.txt
           wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/en.txt
-          mv ./start_v0.6.x.bat start.bat
-          mv ./start_v0.6.x_forLinux.sh start_forLinux.sh
-          mkdir ./lang
-          mv ./ja.txt ./lang
-          mv ./en.txt ./lang
-          zip VRCVideoLogViewer.zip VRCVideoLogViewer-1.0-SNAPSHOT-all.jar start.bat start_forLinux.sh lang
+          
+          mkdir ./tmp
+          mv ./start_v0.6.x.bat ./tmp/start.bat
+          mv ./start_v0.6.x_forLinux.sh ./tmp/start_forLinux.sh
+          mkdir ./tmp/lang
+          mv ./ja.txt ./tmp/lang
+          mv ./en.txt ./tmp/lang
+          ./tools/7z2501/7zz a ./VRCVideoLogViewer.zip ./tmp/*
         shell: bash
 
       - name: Linux Bash Setup Test
