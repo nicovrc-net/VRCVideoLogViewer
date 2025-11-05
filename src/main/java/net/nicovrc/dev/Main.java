@@ -424,7 +424,11 @@ public class Main {
                     Function.config.setLogFolderPass(path);
 
                     if (Function.config.isDebugOutput()) {
-                        System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path.replaceAll(Pattern.quote("\\"), "/").replaceAll("/", "\\\\\\\\")));
+                        if (Function.ntSystem != null){
+                            System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path.replaceAll(Pattern.quote("\\"), "/").replaceAll("/", "\\\\\\\\")));
+                        } else {
+                            System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path);
+                        }
                     }
                 } else if (Function.ntSystem != null && new File(LocalAppData+"Low\\VRChat\\VRChat").exists()) {
                     file = new File(LocalAppData + "Low\\VRChat\\VRChat");
@@ -432,7 +436,7 @@ public class Main {
 
                     Function.config.setLogFolderPass(path);
                     System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path.replaceAll(Pattern.quote("\\"), "/").replaceAll("/", "\\\\\\\\")));
-                } else if (Function.unixSystem != null && new File(LinuxUserHome+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat").exists()){
+                } else if (new File(LinuxUserHome+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat").exists()){
                     file = new File(LinuxUserHome+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
                     path = file.getCanonicalPath();
 
