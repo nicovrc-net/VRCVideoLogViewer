@@ -427,7 +427,7 @@ public class Main {
                         if (Function.ntSystem != null){
                             System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path.replaceAll(Pattern.quote("\\"), "/").replaceAll("/", "\\\\\\\\")));
                         } else {
-                            System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path);
+                            System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path));
                         }
                     }
                 } else if (Function.ntSystem != null && new File(LocalAppData+"Low\\VRChat\\VRChat").exists()) {
