@@ -317,7 +317,7 @@ public class GUI extends Application {
                     TextField setting_field1 = new TextField();
                     setting_field1.setLayoutX(5);
                     setting_field1.setLayoutY(45);
-                    setting_field1.setEditable(false);
+                    setting_field1.setEditable(true);
                     setting_field1.setFocusTraversable(false);
                     setting_field1.setText(Function.config.getLogFolderPass());
                     setting_field1.setPrefWidth(700);
