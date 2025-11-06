@@ -457,63 +457,11 @@ public class Main {
 
         }
 
-        if (Function.config.isDebugOutput()){
-            System.out.println("[Info] "+Function.langData.get("logfolder-check"));
-        }
-        if (Function.config.getLogFolderPass() != null){
-            file = new File(Function.config.getLogFolderPass());
-            if (!file.exists()){
-                System.out.println("[Error] "+Function.langData.get("logfolder-notfound"));
-                Function.timer1.cancel();
-                Function.timer2.cancel();
-                return;
-            }
-        } else {
-            System.out.println("[Error] "+Function.langData.get("logfolder-setting-fail"));
-            Function.timer1.cancel();
-            Function.timer2.cancel();
-            return;
-        }
-
-
-        try {
-            Function.logFileList = Function.getFileList(Function.config.getLogFolderPass());
-        } catch (Exception e){
-            // e.printStackTrace();
-        }
-        if (Function.logFileList.isEmpty()){
-            System.out.println("[Error] "+Function.langData.get("logfile-notfound"));
-            Function.timer1.cancel();
-            Function.timer2.cancel();
-            return;
-        }
-
-        if (Function.config.isDebugOutput()){
-            System.out.println("[Info] "+Function.langData.get("logfile-sort"));
-        }
-
-        Function.timer1.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    List<String> logFileList = Function.getFileList(Function.config.getLogFolderPass());
-                    if (logFileList.size() > 1){
-                        logFileList = Function.ListSort(logFileList);
-                    }
-
-                    Function.temp_lastLogFile[0] = Function.config.getLogFolderPass() + File.separator + logFileList.getLast();
-                } catch (Exception e){
-                    Function.timer1.cancel();
-                    Function.timer2.cancel();
-                    Function.isTimerRun = false;
-                }
-            }
-        }, 0L, 1000L);
-
         Platform.startup(() -> {
             try {
                 GUI gui = new GUI(true);
                 gui.start(new Stage());
+                gui.stop();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
