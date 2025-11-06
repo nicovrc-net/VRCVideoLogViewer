@@ -1,0 +1,65 @@
+# lang name
+lang_name="한국어"
+
+# 시작 시
+start-message="VRCVideoLogViewer Ver #version# 시작"
+update-check="업데이트 확인"
+update-found="업데이트를 찾았습니다."
+update-notfound="업데이트가 없습니다. (현재: #nowver# 최신: #newver#)"
+config-check="config.yml 존재 확인"
+config-autocreate="config.yml 자동 생성"
+logfolder-autoget="로그 폴더 자동 감지"
+logfolder-autoget-success="자동 감지 성공 : #folder_pass#"
+logfolder-autoget-fail="자동 감지 실패"
+logfolder-check="폴더 확인"
+logfolder-notfound="폴더를 찾을 수 없습니다."
+logfolder-setting-fall="설정 파일이 올바르게 설정되어 있지 않습니다."
+logfile-notfound="로그 파일을 찾을 수 없습니다."
+logfile-sort="로그 파일 정렬"
+log-extraction="로그 추출 시작"
+log-read-fail="로그 파일 읽기 실패"
+log-realtime-read="실시간 수집을 시작합니다..."
+gui-create="GUI 구성 중..."
+gui-create-success="GUI 구성 완료!"
+gui-print="GUI 표시!"
+
+# 메인 화면
+setting="설정"
+
+# 화면 공통
+exit="닫기"
+update="업데이트"
+open="열기"
+
+# 업데이트 화면
+update-notify="업데이트 알림"
+update-found="업데이트가 있습니다."
+update-now-version="현재 버전 : #nowver#"
+update-new-version="최신 버전 : #newver#"
+
+# 상세 화면
+detail="상세"
+date="날짜 및 시간"
+url="URL"
+kind="종류"
+video="비디오"
+string="텍스트"
+image="이미지"
+error-message="오류 메시지"
+now-loading="로딩 중..."
+video-title="제목"
+
+# 설정 화면
+setting-message="※일부 설정은 재시작할 때까지 반영되지 않습니다."
+setting-reflection="설정 적용"
+setting-vrchat-logfolder="VRChat 로그 폴더 (보통 변경할 필요 없음)"
+setting-debug-print="디버그 로그 표시"
+setting-previous-log-get="과거 로그 가져오기"
+setting-videoplayer="VideoPlayer 로그 표시"
+setting-image="ImageDownloader 로그 표시"
+setting-string="StringDownloader 로그 표시"
+setting-autostart="자동 시작 시점"
+setting-autostart-no="자동 시작 안 함"
+setting-autostart-windows="Windows 시작 시"
+setting-autostart-linux="Linux 시작 시"
+setting-autostart-vrchat="VRChat 시작 시"

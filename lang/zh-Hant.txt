@@ -1,0 +1,65 @@
+# lang name
+lang_name="繁體中文"
+
+# 啟動時
+start-message="VRCVideoLogViewer 版本 #version# 已啟動"
+update-check="檢查更新"
+update-found="找到更新。"
+update-notfound="未發現更新。 (目前: #nowver# 最新: #newver#)"
+config-check="檢查 config.yml 是否存在"
+config-autocreate="自動建立 config.yml"
+logfolder-autoget="自動取得日誌資料夾"
+logfolder-autoget-success="自動取得成功 : #folder_pass#"
+logfolder-autoget-fail="自動取得失敗"
+logfolder-check="檢查資料夾"
+logfolder-notfound="找不到資料夾。"
+logfolder-setting-fall="設定檔未正確設定。"
+logfile-notfound="找不到日誌檔案。"
+logfile-sort="排列日誌檔案"
+log-extraction="開始擷取日誌"
+log-read-fail="讀取日誌檔案失敗"
+log-realtime-read="開始即時擷取..."
+gui-create="正在建立 GUI..."
+gui-create-success="GUI 建置完成！"
+gui-print="顯示 GUI！"
+
+# 主畫面
+setting="設定"
+
+# 畫面共通
+exit="關閉"
+update="更新"
+open="開啟"
+
+# 更新畫面
+update-notify="更新通知"
+update-found="有可用更新。"
+update-now-version="目前版本 : #nowver#"
+update-new-version="最新版本 : #newver#"
+
+# 詳細畫面
+detail="詳細"
+date="日期與時間"
+url="URL"
+kind="類型"
+video="影片"
+string="文字"
+image="圖片"
+error-message="錯誤訊息"
+now-loading="載入中..."
+video-title="標題"
+
+# 設定畫面
+setting-message="※部分設定在重新啟動前不會生效。"
+setting-reflection="套用設定"
+setting-vrchat-logfolder="VRChat 日誌資料夾（通常不需要更改）"
+setting-debug-print="顯示偵錯日誌"
+setting-previous-log-get="取得過去的日誌"
+setting-videoplayer="顯示 VideoPlayer 日誌"
+setting-image="顯示 ImageDownloader 日誌"
+setting-string="顯示 StringDownloader 日誌"
+setting-autostart="自動啟動時機"
+setting-autostart-no="不自動啟動"
+setting-autostart-windows="隨 Windows 啟動"
+setting-autostart-linux="隨 Linux 啟動"
+setting-autostart-vrchat="VRChat 啟動時"

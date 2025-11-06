@@ -348,6 +348,11 @@ public class Main {
                         del ./start.bat
                         move ./tools\\VRCVideoLogViewer-1.0-SNAPSHOT-all.jar ./
                         move ./tools\\start.bat ./
+                        move ./lang\\ja.txt ./lang
+                        move ./lang\\en.txt ./lang
+                        move ./lang\\zh-Hans.txt ./lang
+                        move ./lang\\zh-Hant.txt ./lang
+                        move ./lang\\ko.txt ./lang
                         exit
                         """;
                     pw.print(str.replaceAll("#ver#", Function.new_version).replaceAll("\\./", CurrentFolderPass.replaceAll("/", "\\\\\\\\")+"\\\\"));

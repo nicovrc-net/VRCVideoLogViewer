@@ -94,6 +94,9 @@ jobs:
           wget https://r2.7mi.site/vrc/start_v0.6.x_forLinux.sh
           wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/ja.txt
           wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/en.txt
+          wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/zh-Hans.txt
+          wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/zh-Hant.txt
+          wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/ko.txt
           
           mkdir ./tmp
           mv ./start_v0.6.x.bat ./tmp/start.bat
@@ -101,6 +104,9 @@ jobs:
           mkdir ./tmp/lang
           mv ./ja.txt ./tmp/lang
           mv ./en.txt ./tmp/lang
+          mv ./zh-Hans.txt ./tmp/lang
+          mv ./zh-Hant.txt ./tmp/lang
+          mv ./ko.txt ./tmp/lang
           ./tools/7z2501/7zz a ./VRCVideoLogViewer.zip ./tmp/*
         shell: bash
 
@@ -142,7 +148,8 @@ jobs:
           release_name: v${{ github.ref }}
           body: |
             - 正式版リリース
-            - 多言語対応 (現在は日本語と英語のみ)
+            - 多言語対応 (日本語/英語/中国語(简体/繁體)/韓国語)
+            - ログフォルダ自動取得の改善
           draft: false
           prerelease: false
 
