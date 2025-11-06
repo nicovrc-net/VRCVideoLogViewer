@@ -52,6 +52,7 @@ video-title="タイトル"
 
 # 設定画面
 setting-message="※再起動するまで一部設定は反映されません。"
+setting-message2="VRChatのログフォルダのパスを入力または選択してください (その後もう一度起動してください。)"
 setting-reflection="設定反映"
 setting-vrchat-logfolder="VRChatログフォルダ (通常は変更する必要はありません)"
 setting-debug-print="デバッグログを表示"

@@ -10,6 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import net.nicovrc.dev.data.ConfigData;
 
@@ -34,11 +35,103 @@ public class GUI extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
+        File file = new File(Function.config.getLogFolderPass());
+
+        boolean isFolderSet = false;
+        Stage folder_stage = new Stage();
+        if (!file.exists()){
+            isFolderSet = true;
+            try {
+                AnchorPane root = new AnchorPane();
+
+                Label label1 = new Label(Function.langData.get("setting-message2"));
+                label1.setLayoutX(5);
+                label1.setLayoutY(5);
+                root.getChildren().add(label1);
+
+                String str = Function.langData.get("setting-vrchat-logfolder").split(" \\(")[0];
+                Label label2 = new Label(str);
+                label2.setLayoutX(5);
+                label2.setLayoutY(25);
+                root.getChildren().add(label2);
+
+                TextField field1 = new TextField();
+                field1.setLayoutX(5);
+                field1.setLayoutY(45);
+                field1.setEditable(true);
+                field1.setFocusTraversable(false);
+                field1.setText("");
+                field1.setPrefWidth(400);
+                root.getChildren().add(field1);
+
+                Button button1 = new Button(Function.langData.get("open"));
+                button1.setLayoutX(410);
+                button1.setLayoutY(45);
+                button1.setOnAction(e->{
+                    DirectoryChooser chooser = new DirectoryChooser();
+                    chooser.setTitle("Select Folder");
+                    chooser.setInitialDirectory(new File("./"));
+
+
+                    File file2 = chooser.showDialog(folder_stage);
+                    if (file2 != null) {
+                        try {
+                            field1.setText(file2.getCanonicalPath());
+                        } catch (Exception ex){
+                            //ex.printStackTrace();
+                        }
+                    }
+
+                });
+                root.getChildren().add(button1);
+
+                Button button2 = new Button(Function.langData.get("setting-reflection"));
+                button2.setLayoutX(5);
+                button2.setLayoutY(75);
+                button2.setOnAction(e->{
+                    folder_stage.close();
+                });
+                root.getChildren().add(button2);
+
+
+                Scene scene = new Scene(root);
+                folder_stage.setResizable(false);
+                folder_stage.setMaximized(false);
+                folder_stage.setFullScreen(false);
+                folder_stage.setTitle(Function.langData.get("setting-message2").split(" \\(")[0]);
+                folder_stage.setWidth(600);
+                folder_stage.setHeight(200);
+                folder_stage.setScene(scene);
+
+                folder_stage.setOnHidden(e->{
+                    if (new File(field1.getText()).exists()){
+                        Function.config.setLogFolderPass(field1.getText());
+                        Function.SettingConfig(Function.config);
+                        Platform.runLater(Platform::exit);
+                    } else {
+                        if (folder_stage.isShowing()){
+                            folder_stage.close();
+                        }
+                        folder_stage.show();
+                    }
+                });
+                folder_stage.show();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        if (isFolderSet){
+            Function.timer1.cancel();
+            Function.timer2.cancel();
+            return;
+        }
+
         if (Function.config.isDebugOutput()){
             System.out.println("[Info] "+Function.langData.get("logfolder-check"));
         }
         if (Function.config.getLogFolderPass() != null){
-            File file = new File(Function.config.getLogFolderPass());
+            file = new File(Function.config.getLogFolderPass());
             if (!file.exists()){
                 System.out.println("[Error] "+Function.langData.get("logfolder-notfound"));
                 Function.timer1.cancel();
@@ -108,7 +201,7 @@ public class GUI extends Application {
             }
 
             for (String s : Function.logFileList) {
-                File file = new File(Function.config.getLogFolderPass() + File.separator + s);
+                file = new File(Function.config.getLogFolderPass() + File.separator + s);
 
                 String text = Function.getTextForFile(file);
                 try {

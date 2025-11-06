@@ -51,6 +51,7 @@ video-title="Title"
 
 # settings screen
 setting-message="Some settings will not take effect until restart."
+setting-message2="Please enter or choose the path to your VRChat log folder (then restart the application)."
 setting-reflection="Apply settings"
 setting-vrchat-logfolder="VRChat log folder (usually no change needed)"
 setting-debug-print="Show debug logs"

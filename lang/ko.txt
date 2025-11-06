@@ -51,6 +51,7 @@ video-title="제목"
 
 # 설정 화면
 setting-message="※일부 설정은 재시작할 때까지 반영되지 않습니다."
+setting-message2="VRChat 로그 폴더의 경로를 입력하거나 선택하세요 (그런 다음 애플리케이션을 다시 시작하세요)."
 setting-reflection="설정 적용"
 setting-vrchat-logfolder="VRChat 로그 폴더 (보통 변경할 필요 없음)"
 setting-debug-print="디버그 로그 표시"

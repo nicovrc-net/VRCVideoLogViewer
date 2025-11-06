@@ -51,6 +51,7 @@ video-title="標題"
 
 # 設定畫面
 setting-message="※部分設定在重新啟動前不會生效。"
+setting-message2="請輸入或選擇 VRChat 日誌資料夾的路徑（然後重新啟動應用程式）。"
 setting-reflection="套用設定"
 setting-vrchat-logfolder="VRChat 日誌資料夾（通常不需要更改）"
 setting-debug-print="顯示偵錯日誌"

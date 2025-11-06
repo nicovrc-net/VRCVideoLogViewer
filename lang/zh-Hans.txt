@@ -51,6 +51,7 @@ video-title="标题"
 
 # 设置界面
 setting-message="※部分设置在重启前不会生效。"
+setting-message2="请输入或选择 VRChat 日志文件夹的路径（然后重启应用程序）。"
 setting-reflection="应用设置"
 setting-vrchat-logfolder="VRChat 日志文件夹（通常无需更改）"
 setting-debug-print="显示调试日志"
