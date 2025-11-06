@@ -192,7 +192,7 @@ public class Main {
         }
 
         file = new File("./lang/"+lang+".txt");
-        if (file.exists()){
+        if (!file.exists()){
             file = new File("./lang/ja.txt");
         }
 

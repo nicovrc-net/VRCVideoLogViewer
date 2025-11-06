@@ -21,6 +21,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.*;
+import java.util.regex.Matcher;
 
 public class GUI extends Application {
 
@@ -284,12 +285,64 @@ public class GUI extends Application {
                         setting_root.getChildren().add(setting_label11);
 
                     }
+
+                    final ObservableList<String> lang_items = FXCollections.observableArrayList();
+                    final HashMap<String, String> langList = new HashMap<>();
+
+                    for (String s : Function.iso639_1) {
+                        if (new File("./lang/"+s+".txt").exists()){
+                            String langText = null;
+                            try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("./lang/"+s+".txt")), StandardCharsets.UTF_8))){
+                                String str;
+                                StringBuilder sb = new StringBuilder();
+                                while ((str = reader.readLine()) != null) {
+                                    sb.append(str).append("\n");
+                                }
+                                langText = sb.toString();
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+
+                            for (String str : langText.split("\n")) {
+                                Matcher matcher = Function.matcher_langData.matcher(str);
+                                //System.out.println("debug : " + str);
+                                if (matcher.find()){
+                                    //System.out.println("debug : " + matcher.group(1) + " / " + matcher.group(2));
+                                    if (matcher.group(1).equals("lang_name")){
+                                        lang_items.add(matcher.group(2));
+                                        langList.put(matcher.group(2), s);
+                                        break;
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+
+                    Label setting_label12 = new Label(Function.langData.get("setting-lang"));
+                    setting_label12.setLayoutX(5);
+                    setting_label12.setLayoutY(255);
+                    setting_root.getChildren().add(setting_label12);
+
+                    ListView<String> setting_listView = new ListView<>(lang_items);
+                    setting_listView.setEditable(false);
+                    setting_listView.setPrefSize(400, 400);
+                    setting_listView.setLayoutX(5);
+                    setting_listView.setLayoutY(275);
+                    final String[] setting_lang = {langList.get(Function.langData.get("lang_name"))};
+                    setting_listView.setOnMouseClicked(event -> {
+                        setting_lang[0] = langList.get(setting_listView.getSelectionModel().getSelectedItem());
+                        //System.out.println(setting_lang[0]);
+                    });
+                    setting_root.getChildren().add(setting_listView);
+                    setting_listView.getSelectionModel().select(setting_lang[0]);
+
                     Platform.runLater(()->{
                         setting_stage.setScene(setting_scene);
                         setting_stage.showAndWait();
 
                         ConfigData data = new ConfigData();
-                        data.setLang("ja");
+                        data.setLang(setting_lang[0]);
                         data.setLogFolderPass(setting_field1.getText());
                         data.setDebugOutput(setting_checkbox1.isSelected());
                         data.setOldLogCheck(setting_checkbox2.isSelected());
