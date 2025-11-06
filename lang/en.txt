@@ -62,5 +62,5 @@ setting-autostart="Auto-start timing"
 setting-autostart-no="Do not auto-start"
 setting-autostart-windows="At Windows startup"
 setting-autostart-linux="At Linux startup"
-setting-autostart-vrchat="When VRChat
+setting-autostart-vrchat="When VRChat"
 setting-lang="Language"
