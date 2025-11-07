@@ -113,6 +113,7 @@ jobs:
       - name: Linux Bash Setup Test
         if: startsWith(github.ref, 'refs/tags/')
         run: |
+          cd ./tmp
           chmod +x ./start_forLinux.sh
           screen -UAmdS test ./start_forLinux.sh
           sleep 15s
