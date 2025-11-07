@@ -107,6 +107,7 @@ jobs:
           mv ./zh-Hans.txt ./tmp/lang
           mv ./zh-Hant.txt ./tmp/lang
           mv ./ko.txt ./tmp/lang
+          mv ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar ./tmp
           ./tools/7z2501/7zz a ./VRCVideoLogViewer.zip ./tmp/*
         shell: bash
 
