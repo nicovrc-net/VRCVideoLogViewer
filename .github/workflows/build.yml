@@ -90,8 +90,8 @@ jobs:
           mv ./readme.txt ./tools/7z2501
           chmod +x ./tools/7z2501/7zz
   
-          wget https://r2.7mi.site/vrc/start_v0.6.x.bat
-          wget https://r2.7mi.site/vrc/start_v0.6.x_forLinux.sh
+          wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/run-batch/start.bat
+          wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/run-batch/start_forLinux.sh
           wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/ja.txt
           wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/en.txt
           wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/zh-Hans.txt
@@ -99,8 +99,8 @@ jobs:
           wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/ko.txt
           
           mkdir ./tmp
-          mv ./start_v0.6.x.bat ./tmp/start.bat
-          mv ./start_v0.6.x_forLinux.sh ./tmp/start_forLinux.sh
+          mv ./start.bat ./tmp/start.bat
+          mv ./start_forLinux.sh ./tmp/start_forLinux.sh
           mkdir ./tmp/lang
           mv ./ja.txt ./tmp/lang
           mv ./en.txt ./tmp/lang
