@@ -6,8 +6,8 @@ arch=('x86_64')
 url="https://github.com/nicovrc-net/VRCVideoLogViewer"
 license=('')
 depends=()
-makedepends=('git', 'curl', 'java-runtime>=21')
-source=("$pkgname::git+https://github.com/nicovrc-net/VRCVideoLogViewer.git#tag=v$pkgver")
+makedepends=('git' 'curl' 'java-runtime>=21')
+source=("$pkgname::git+https://github.com/nicovrc-net/VRCVideoLogViewer.git#branch=release")
 sha256sums=('SKIP')
 
 build() {
