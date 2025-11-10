@@ -5,7 +5,7 @@ pkgdesc="A tool for parsing VRChat logs to collect links to videos, images, and 
 arch=('x86_64')
 url="https://github.com/nicovrc-net/VRCVideoLogViewer"
 license=('MIT')
-depends=()
+depends=('imagemagick')
 makedepends=('git' '7zip' 'jdk21-openjdk' 'curl')
 source=("$pkgname::git+https://github.com/nicovrc-net/VRCVideoLogViewer.git#branch=release")
 sha256sums=('SKIP')
@@ -36,14 +36,15 @@ package() {
   tar -zxvf "$pkgdir/usr/share/$pkgname/tools/openjdk-21.0.2_linux-x64_bin.tar.gz"
   mv ./jdk-21.0.2 "$pkgdir/usr/share/$pkgname/tools"
   chmod +x "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin/java"
+  rm "$pkgdir/usr/share/$pkgname/tools/openjdk-21.0.2_linux-x64_bin.tar.gz"
 
   curl https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_linux-x64_bin-sdk.zip --output "$pkgdir/usr/share/$pkgname/tools/openjfx-21.0.9_linux-x64_bin-sdk.zip"
   7z x "$pkgdir/usr/share/$pkgname/tools/openjfx-21.0.9_linux-x64_bin-sdk.zip"
   mv ./javafx-sdk-21.0.9 "$pkgdir/usr/share/$pkgname/tools"
+  rm "$pkgdir/usr/share/$pkgname/tools/openjfx-21.0.9_linux-x64_bin-sdk.zip"
 
   mkdir "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
-  curl https://imagemagick.org/archive/binaries/magick --output "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
-  chmod +x "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
+  ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
 
 
 }
