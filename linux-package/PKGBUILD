@@ -39,9 +39,12 @@ package() {
   install -dm755 "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
   ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
 
-  screen -UAmdS config-create java -jar ./build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
+  {
+    java -jar ./build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
+  } &
+  pid=$!
   sleep 1s
-  screen -S config-create -X quit
+  kill -9 ${pid}
 
   install -Dm666 "./config.yml" "$pkgdir/usr/share/$pkgname/config.yml"
 
