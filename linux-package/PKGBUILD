@@ -6,7 +6,7 @@ arch=('x86_64')
 url="https://github.com/nicovrc-net/VRCVideoLogViewer"
 license=('MIT')
 depends=('imagemagick')
-makedepends=('git' '7zip' 'jdk21-openjdk' 'curl')
+makedepends=('git' '7zip' 'jdk21-openjdk' 'curl' 'screen')
 source=("$pkgname::git+https://github.com/nicovrc-net/VRCVideoLogViewer.git#branch=release")
 sha256sums=('SKIP')
 
@@ -46,7 +46,8 @@ package() {
   mkdir "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
   ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
 
-  java -jar ./build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar --start-Windows
+  screen -UAmdS install java -jar ./build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
+  sleep 2s
   install -Dm666 "./config.yml" "$pkgdir/usr/share/$pkgname/config.yml"
 
 }
