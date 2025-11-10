@@ -40,7 +40,7 @@ package() {
     ln -s /usr/lib/jvm/java-21-openjdk/bin/java "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin/java"
 
     install -d "$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21.0.9"
-    ./7z2501/7zz x -o"$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21.0.9" "$srcdir/openjfx-21.0.9_linux-x64_bin-sdk.zip"
+    ./7z2501/7zz x -o"$pkgdir/usr/share/$pkgname/tools" "$srcdir/openjfx-21.0.9_linux-x64_bin-sdk.zip"
 
     install -dm755 "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
     ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
