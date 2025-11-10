@@ -6,7 +6,7 @@ arch=('x86_64')
 url="https://github.com/nicovrc-net/VRCVideoLogViewer"
 license=('MIT')
 depends=('jdk21-openjdk' 'imagemagick')
-makedepends=('git' '7zip' 'curl' 'screen')
+makedepends=('git' '7zip' 'curl')
 source=("$pkgname::git+https://github.com/nicovrc-net/VRCVideoLogViewer.git#branch=release")
 sha256sums=('SKIP')
 
