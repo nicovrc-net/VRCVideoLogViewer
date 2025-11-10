@@ -6,7 +6,7 @@ arch=('x86_64')
 url="https://github.com/nicovrc-net/VRCVideoLogViewer"
 license=('MIT')
 depends=()
-makedepends=('git' '7zip' 'jdk21-openjdk' 'imagemagick' 'curl')
+makedepends=('git' '7zip' 'jdk21-openjdk' 'curl')
 source=("$pkgname::git+https://github.com/nicovrc-net/VRCVideoLogViewer.git#branch=release")
 sha256sums=('SKIP')
 
@@ -19,22 +19,21 @@ build() {
 package() {
   cd "$srcdir/$pkgname"
 
-  mkdir ./tools
   mkdir "$pkgdir/usr/share/$pkgname/tools"
   mkdir "$pkgdir/usr/share/$pkgname/tools/7z2501"
 
-  curl https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz --output ./tools/openjdk-21.0.2_linux-x64_bin.tar.gz
-  tar -zxvf ./tools/openjdk-21.0.2_linux-x64_bin.tar.gz
+  curl https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz --output "$pkgdir/usr/share/$pkgname/tools/openjdk-21.0.2_linux-x64_bin.tar.gz"
+  tar -zxvf "$pkgdir/usr/share/$pkgname/tools/openjdk-21.0.2_linux-x64_bin.tar.gz"
   mv ./jdk-21.0.2 "$pkgdir/usr/share/$pkgname/tools"
   chmod +x "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin/java"
 
-  curl https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_linux-x64_bin-sdk.zip --output ./tools/openjfx-21.0.9_linux-x64_bin-sdk.zip
-  7z x ./tools/openjfx-21.0.9_linux-x64_bin-sdk.zip
+  curl https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_linux-x64_bin-sdk.zip --output "$pkgdir/usr/share/$pkgname/tools/openjfx-21.0.9_linux-x64_bin-sdk.zip"
+  7z x "$pkgdir/usr/share/$pkgname/tools/openjfx-21.0.9_linux-x64_bin-sdk.zip"
   mv ./javafx-sdk-21.0.9 "$pkgdir/usr/share/$pkgname/tools"
 
   mkdir "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
   curl https://imagemagick.org/archive/binaries/magick --output "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
-  chmod +x ./tools/ImageMagick/magick
+  chmod +x "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
 
   install -Dm755 "./run-batch/start_forArchLinux_aur.sh" "$pkgdir/usr/share/$pkgname/start_forLinux.sh"
 
