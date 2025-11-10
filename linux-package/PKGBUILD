@@ -21,7 +21,7 @@ package() {
 
   install -Dm755 "./run-batch/start_forArchLinux_aur.sh" "$pkgdir/usr/share/$pkgname/start_forLinux.sh"
 
-  install -Dm755 "./lang/en.txt" "$pkgdir/usr/share/$pkgname/lang/en.txt"
+  install -Dm755 "./lang" "$pkgdir/usr/share/$pkgname/lang"
   install -Dm755 "./lang/ja.txt" "$pkgdir/usr/share/$pkgname/lang/ja.txt"
   install -Dm755 "./lang/ko.txt" "$pkgdir/usr/share/$pkgname/lang/ko.txt"
   install -Dm755 "./lang/zh-Hans.txt" "$pkgdir/usr/share/$pkgname/lang/zh-Hans.txt"
@@ -29,25 +29,24 @@ package() {
 
   install -Dm644 "build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar" "$pkgdir/usr/share/$pkgname/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar"
 
-  mkdir "$pkgdir/usr/share/$pkgname/tools"
-  mkdir "$pkgdir/usr/share/$pkgname/tools/7z2501"
+  install -dm755 "$pkgdir/usr/share/$pkgname/tools/7z2501"
 
   curl https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz --output "$pkgdir/usr/share/$pkgname/tools/openjdk-21.0.2_linux-x64_bin.tar.gz"
-  tar -zxvf "$pkgdir/usr/share/$pkgname/tools/openjdk-21.0.2_linux-x64_bin.tar.gz"
-  mv ./jdk-21.0.2 "$pkgdir/usr/share/$pkgname/tools"
+  tar -zxvf "$pkgdir/usr/share/$pkgname/tools/openjdk-21.0.2_linux-x64_bin.tar.gz" -C "$pkgdir/usr/share/$pkgname/tools"
   chmod +x "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin/java"
   rm "$pkgdir/usr/share/$pkgname/tools/openjdk-21.0.2_linux-x64_bin.tar.gz"
 
   curl https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_linux-x64_bin-sdk.zip --output "$pkgdir/usr/share/$pkgname/tools/openjfx-21.0.9_linux-x64_bin-sdk.zip"
-  7z x "$pkgdir/usr/share/$pkgname/tools/openjfx-21.0.9_linux-x64_bin-sdk.zip"
-  mv ./javafx-sdk-21.0.9 "$pkgdir/usr/share/$pkgname/tools"
+  7z x "$pkgdir/usr/share/$pkgname/tools/openjfx-21.0.9_linux-x64_bin-sdk.zip" -o "$pkgdir/usr/share/$pkgname/tools"
   rm "$pkgdir/usr/share/$pkgname/tools/openjfx-21.0.9_linux-x64_bin-sdk.zip"
 
-  mkdir "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
+  install -dm755 "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
   ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
 
-  screen -UAmdS install java -jar ./build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
-  sleep 2s
+  screen -UAmdS config-create java -jar ./build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
+  sleep 1s
+  screen -S config-create -X quit
+
   install -Dm666 "./config.yml" "$pkgdir/usr/share/$pkgname/config.yml"
 
 }
