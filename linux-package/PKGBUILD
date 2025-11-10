@@ -37,6 +37,7 @@ package() {
   cp -a "./jdk-21.0.2" "$pkgdir/usr/share/$pkgname/tools/"
 
   for f in "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/lib/*"; do
+    f=${basename "${f}"}
     objcopy --remove-section=.gnu_debuglink "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/lib/${f}"
   done
 
