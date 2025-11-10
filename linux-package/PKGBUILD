@@ -9,7 +9,6 @@ depends=('jdk21-openjdk' 'imagemagick')
 makedepends=('git' 'curl')
 source=( "$pkgname::git+https://github.com/nicovrc-net/VRCVideoLogViewer.git#branch=release" "7z2501-linux-x64.tar.xz::https://www.7-zip.org/a/7z2501-linux-x64.tar.xz" "openjfx-21.0.9_linux-x64_bin-sdk.zip::https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_linux-x64_bin-sdk.zip")
 sha256sums=('SKIP' 'SKIP' 'SKIP')
-options=('!splitdebug')
 
 build() {
   cd "$srcdir/$pkgname"
@@ -44,8 +43,6 @@ package() {
 
   install -dm755 "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
   ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
-
-
 
   install -Dm666 "./config.yml" "$pkgdir/usr/share/$pkgname/config.yml"
 
