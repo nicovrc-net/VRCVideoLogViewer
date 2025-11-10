@@ -45,4 +45,6 @@ package() {
 
   install -Dm666 "./config.yml" "$pkgdir/usr/share/$pkgname/config.yml"
 
+  strip --strip-all
+
 }
