@@ -46,5 +46,7 @@ package() {
   mkdir "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
   ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
 
+  java -jar ./build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar --start-Windows
+  install -Dm666 "./config.yml" "$pkgdir/usr/share/$pkgname/config.yml"
 
 }
