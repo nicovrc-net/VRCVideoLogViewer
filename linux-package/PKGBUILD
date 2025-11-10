@@ -5,7 +5,7 @@ pkgdesc="A tool for parsing VRChat logs to collect links to videos, images, and 
 arch=('x86_64')
 url="https://github.com/nicovrc-net/VRCVideoLogViewer"
 license=('MIT')
-depends=('java-runtime>=21' 'imagemagick')
+depends=('java-runtime>=21' 'imagemagick' 'curl' '7zip')
 makedepends=('git' 'curl')
 source=("$pkgname::git+https://github.com/nicovrc-net/VRCVideoLogViewer.git#branch=release")
 sha256sums=('SKIP')
@@ -33,6 +33,8 @@ package() {
   mkdir "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2"
   mkdir "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin"
   mkdir "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
+  mkdir "$pkgdir/usr/share/$pkgname/tools/7z2501"
+  ln -s /usr/bin/7z "$pkgdir/usr/share/$pkgname/tools/7z2501/7zz"
   ln -s /usr/bin/java "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin/java"
   ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
 
