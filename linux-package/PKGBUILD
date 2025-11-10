@@ -50,11 +50,11 @@ package() {
   install -dm755 "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
   ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
 
-  java -jar ./build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar &
+  java --module-path "$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21.0.9/lib" --add-modules javafx.controls,javafx.fxml -jar ./build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar &
   sleep 1s
 
   install -Dm666 "./config.yml" "$pkgdir/usr/share/$pkgname/config.yml"
 
-  strip --strip-all "$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21.0.9/"
+  strip --strip-all "$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21.0.9/lib/*"
 
 }
