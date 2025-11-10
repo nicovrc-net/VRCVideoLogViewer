@@ -6,7 +6,7 @@ arch=('x86_64')
 url="https://github.com/nicovrc-net/VRCVideoLogViewer"
 license=('MIT')
 depends=('jdk21-openjdk' 'imagemagick')
-makedepends=('git' 'curl')
+makedepends=('git' '7zip' 'curl')
 source=("$pkgname::git+https://github.com/nicovrc-net/VRCVideoLogViewer.git#branch=release")
 sha256sums=('SKIP')
 
@@ -18,17 +18,6 @@ build() {
 
 package() {
   cd "$srcdir/$pkgname"
-
-  curl https://www.7-zip.org/a/7z2501-linux-x64.tar.xz --output ./7z2501-linux-x64.tar.xz
-  tar -Jxvf ./7z2501-linux-x64.tar.xz
-  mkdir ./7z2501
-  mv ./7zz ./7z2501
-  mv ./7zzs ./7z2501
-  mv ./History.txt ./7z2501
-  mv ./License.txt ./7z2501
-  mv ./MANUAL ./7z2501
-  mv ./readme.txt ./7z2501
-  chmod +x ./7z2501/7zz
 
   install -Dm755 "./run-batch/start_forArchLinux_aur.sh" "$pkgdir/usr/share/$pkgname/start_forLinux.sh"
 
@@ -45,16 +34,20 @@ package() {
 
   install -d "$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21.0.9"
   curl https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_linux-x64_bin-sdk.zip --output "./openjfx-21.0.9_linux-x64_bin-sdk.zip"
-  ./7z2501/7zz x -o"$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21.0.9" "./openjfx-21.0.9_linux-x64_bin-sdk.zip"
+  7z x -o"$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21.0.9" "./openjfx-21.0.9_linux-x64_bin-sdk.zip"
 
   install -dm755 "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
   ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
 
-  java -jar ./build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar &
+  {
+    java -jar ./build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
+  } &
+  pid=$!
   sleep 1s
+  kill -9 ${pid}
 
   install -Dm666 "./config.yml" "$pkgdir/usr/share/$pkgname/config.yml"
 
-  strip --strip-all "$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21.0.9/"
+  strip --strip-all
 
 }
