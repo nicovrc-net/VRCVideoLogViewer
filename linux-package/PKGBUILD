@@ -5,8 +5,8 @@ pkgdesc="A tool for parsing VRChat logs to collect links to videos, images, and 
 arch=('x86_64')
 url="https://github.com/nicovrc-net/VRCVideoLogViewer"
 license=('MIT')
-depends=('java-runtime>=21' 'imagemagick' 'curl' '7zip')
-makedepends=('git' 'curl')
+depends=()
+makedepends=('git' '7zip' 'jdk21-openjdk' 'imagemagick' 'curl')
 source=("$pkgname::git+https://github.com/nicovrc-net/VRCVideoLogViewer.git#branch=release")
 sha256sums=('SKIP')
 
@@ -19,6 +19,23 @@ build() {
 package() {
   cd "$srcdir/$pkgname"
 
+  mkdir ./tools
+  mkdir "$pkgdir/usr/share/$pkgname/tools"
+  mkdir "$pkgdir/usr/share/$pkgname/tools/7z2501"
+
+  curl https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz --output ./tools/openjdk-21.0.2_linux-x64_bin.tar.gz
+  tar -zxvf ./tools/openjdk-21.0.2_linux-x64_bin.tar.gz
+  mv ./jdk-21.0.2 "$pkgdir/usr/share/$pkgname/tools"
+  chmod +x "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin/java"
+
+  curl https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_linux-x64_bin-sdk.zip --output ./tools/openjfx-21.0.9_linux-x64_bin-sdk.zip
+  7z x ./tools/openjfx-21.0.9_linux-x64_bin-sdk.zip
+  mv ./javafx-sdk-21.0.9 "$pkgdir/usr/share/$pkgname/tools"
+
+  mkdir "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
+  curl https://imagemagick.org/archive/binaries/magick --output "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
+  chmod +x ./tools/ImageMagick/magick
+
   install -Dm755 "./run-batch/start_forArchLinux_aur.sh" "$pkgdir/usr/share/$pkgname/start_forLinux.sh"
 
   install -Dm755 "./lang/en.txt" "$pkgdir/usr/share/$pkgname/lang/en.txt"
@@ -29,13 +46,5 @@ package() {
 
   install -Dm644 "build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar" "$pkgdir/usr/share/$pkgname/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar"
 
-  mkdir "$pkgdir/usr/share/$pkgname/tools"
-  mkdir "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2"
-  mkdir "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin"
-  mkdir "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
-  mkdir "$pkgdir/usr/share/$pkgname/tools/7z2501"
-  ln -s /usr/bin/7z "$pkgdir/usr/share/$pkgname/tools/7z2501/7zz"
-  ln -s /usr/bin/java "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin/java"
-  ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
 
 }
