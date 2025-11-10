@@ -15,14 +15,20 @@ build() {
   chmod +x gradlew
   ./gradlew shadowJar
 
-  java -jar ./build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar &
+  {
+    java -jar ./build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
+  } &
+  pid=$!
   sleep 1s
+  kill ${pid}
+
 }
 
 package() {
   cd "$srcdir/$pkgname"
 
-  tar -Jxvf "$srcdir/7z2501-linux-x64.tar.xz" -C "./7z2501"
+  mkdir ./7z2501
+  tar -Jxvf "$srcdir/7z2501-linux-x64.tar.xz" -C ./7z2501
   chmod +x ./7z2501/7zz
 
   install -Dm755 "./run-batch/start_forArchLinux_aur.sh" "$pkgdir/usr/share/$pkgname/start_forLinux.sh"
