@@ -29,6 +29,7 @@ package() {
     install -Dm666 "./linux-package/config_for_package.txt" "$pkgdir/usr/share/$pkgname/config.yml"
 
     install -Dm755 "./lang/ja.txt" "$pkgdir/usr/share/$pkgname/lang/ja.txt"
+    install -Dm755 "./lang/en.txt" "$pkgdir/usr/share/$pkgname/lang/en.txt"
     install -Dm755 "./lang/ko.txt" "$pkgdir/usr/share/$pkgname/lang/ko.txt"
     install -Dm755 "./lang/zh-Hans.txt" "$pkgdir/usr/share/$pkgname/lang/zh-Hans.txt"
     install -Dm755 "./lang/zh-Hant.txt" "$pkgdir/usr/share/$pkgname/lang/zh-Hant.txt"
