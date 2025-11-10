@@ -1,0 +1,18 @@
+# 言語設定 (Language Settings)
+lang: 'ja'
+# VRChat ログフォルダパス (VRChat log folder path)
+logfolder: ''
+# デバッグログを表示するか (Enable debug log display?)
+debugOutput: true
+# 過去のログから取得して表示するか (Display data from previous logs?)
+oldLogCheck: true
+# 動画プレーヤーのログを表示するか (Enable video player log display?)
+VideoPlayer: true
+# ImageDownloaderのログを表示するか (Enable ImageDownloader log display?)
+ImageDownloader: true
+# StringDownloaderのログを表示するか (Enable StringDownloader log display?)
+StringDownloader: true
+# 自動起動するか (Windowsのみ) (Enable auto-start (Windows only))
+isAutoStaring: false
+# 自動起動タイミング (Windowsのみ) (Auto-start timing (Windows only))
+AutoStaringMode: ''

@@ -11,49 +11,42 @@ source=( "$pkgname::git+https://github.com/nicovrc-net/VRCVideoLogViewer.git#bra
 sha256sums=('SKIP' 'SKIP' 'SKIP')
 
 build() {
-  cd "$srcdir/$pkgname"
-  chmod +x gradlew
-  ./gradlew shadowJar
-
-  {
-    java -jar ./build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
-  } &
-  pid=$!
-  sleep 1s
-  kill ${pid}
-
+    cd "$srcdir/$pkgname"
+    chmod +x gradlew
+    ./gradlew shadowJar
 }
 
 package() {
-  cd "$srcdir/$pkgname"
+    cd "$srcdir/$pkgname"
 
-  mkdir ./7z2501
-  tar -Jxvf "$srcdir/7z2501-linux-x64.tar.xz" -C ./7z2501
-  chmod +x ./7z2501/7zz
+    mkdir ./7z2501
+    tar -Jxvf "$srcdir/7z2501-linux-x64.tar.xz" -C ./7z2501
+    chmod +x ./7z2501/7zz
 
-  install -Dm755 "./run-batch/start_forArchLinux_aur.sh" "$pkgdir/usr/share/$pkgname/start_forLinux.sh"
+    install -Dm755 "./run-batch/start_forArchLinux_aur.sh" "$pkgdir/usr/share/$pkgname/start_forLinux.sh"
+    install -Dm666 "./linux-package/config_for_package.txt" "$pkgdir/usr/share/$pkgname/config.yml"
 
-  install -Dm755 "./lang/ja.txt" "$pkgdir/usr/share/$pkgname/lang/ja.txt"
-  install -Dm755 "./lang/ko.txt" "$pkgdir/usr/share/$pkgname/lang/ko.txt"
-  install -Dm755 "./lang/zh-Hans.txt" "$pkgdir/usr/share/$pkgname/lang/zh-Hans.txt"
-  install -Dm755 "./lang/zh-Hant.txt" "$pkgdir/usr/share/$pkgname/lang/zh-Hant.txt"
+    install -Dm755 "./lang/ja.txt" "$pkgdir/usr/share/$pkgname/lang/ja.txt"
+    install -Dm755 "./lang/ko.txt" "$pkgdir/usr/share/$pkgname/lang/ko.txt"
+    install -Dm755 "./lang/zh-Hans.txt" "$pkgdir/usr/share/$pkgname/lang/zh-Hans.txt"
+    install -Dm755 "./lang/zh-Hant.txt" "$pkgdir/usr/share/$pkgname/lang/zh-Hant.txt"
 
-  install -Dm644 "build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar" "$pkgdir/usr/share/$pkgname/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar"
+    install -Dm644 "build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar" "$pkgdir/usr/share/$pkgname/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar"
 
-  install -d "$pkgdir/usr/share/$pkgname/tools/7z2501"
-  install -d "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin"
-  ln -s /usr/lib/jvm/java-21-openjdk/bin/java "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin/java"
+    install -d "$pkgdir/usr/share/$pkgname/tools/7z2501"
+    install -d "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin"
+    ln -s /usr/lib/jvm/java-21-openjdk/bin/java "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin/java"
 
-  install -d "$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21.0.9"
-  ./7z2501/7zz x -o"$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21.0.9" "$srcdir/openjfx-21.0.9_linux-x64_bin-sdk.zip"
+    install -d "$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21.0.9"
+    ./7z2501/7zz x -o"$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21.0.9" "$srcdir/openjfx-21.0.9_linux-x64_bin-sdk.zip"
 
-  install -dm755 "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
-  ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
+    install -dm755 "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
+    ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
 
-  install -Dm666 "./config.yml" "$pkgdir/usr/share/$pkgname/config.yml"
+    install -Dm666 "./config.yml" "$pkgdir/usr/share/$pkgname/config.yml"
 
-  find "$pkgdir/usr/share/$pkgname" -type f -exec file {} \; | grep ELF | cut -d: -f1 | while read -r elf; do
-      strip --strip-all "$elf" || true
-  done
+    find "$pkgdir/usr/share/$pkgname" -type f -exec file {} \; | grep ELF | cut -d: -f1 | while read -r elf; do
+        strip --strip-all "$elf" || true
+    done
 
 }
