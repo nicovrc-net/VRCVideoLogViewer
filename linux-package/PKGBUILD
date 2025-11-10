@@ -1,0 +1,32 @@
+pkgname=VRCVideoLogViewer
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="A tool for parsing VRChat logs to collect links to videos, images, and text content."
+arch=('x86_64')
+url="https://github.com/nicovrc-net/VRCVideoLogViewer"
+license=('')
+depends=()
+makedepends=('git', 'curl', 'java-runtime>=21')
+source=("$pkgname::git+https://github.com/nicovrc-net/VRCVideoLogViewer.git#tag=v$pkgver")
+sha256sums=('SKIP')
+
+build() {
+  cd "$srcdir/$pkgname"
+  chmod +x gradlew
+  ./gradlew shadowJar
+}
+
+package() {
+  cd "$srcdir/$pkgname"
+
+  install -Dm755 "./run-batch/start_forLinux.sh" "/usr/bin/$pkgname.sh"
+
+  install -Dm755 "./lang/en.txt" "/usr/share/$pkgname/lang/en.txt"
+  install -Dm755 "./lang/ja.txt" "/usr/share/$pkgname/lang/ja.txt"
+  install -Dm755 "./lang/ko.txt" "/usr/share/$pkgname/lang/ko.txt"
+  install -Dm755 "./lang/zh-Hans.txt" "/usr/share/$pkgname/lang/zh-Hans.txt"
+  install -Dm755 "./lang/zh-Hant.txt" "/usr/share/$pkgname/lang/zh-Hant.txt"
+
+  install -Dm644 "build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar" "/usr/share/$pkgname/$pkgname.jar"
+
+}
