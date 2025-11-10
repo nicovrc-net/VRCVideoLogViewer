@@ -4,9 +4,9 @@ pkgrel=1
 pkgdesc="A tool for parsing VRChat logs to collect links to videos, images, and text content."
 arch=('x86_64')
 url="https://github.com/nicovrc-net/VRCVideoLogViewer"
-license=('')
-depends=()
-makedepends=('git' 'curl' 'java-runtime>=21')
+license=('MIT')
+depends=('java-runtime>=21' 'imagemagick')
+makedepends=('git' 'curl')
 source=("$pkgname::git+https://github.com/nicovrc-net/VRCVideoLogViewer.git#branch=release")
 sha256sums=('SKIP')
 
@@ -19,14 +19,19 @@ build() {
 package() {
   cd "$srcdir/$pkgname"
 
-  install -Dm755 "./run-batch/start_forLinux.sh" "/usr/bin/$pkgname.sh"
+  install -Dm755 "./run-batch/start_forLinux.sh" "$pkgdir/usr/share/$pkgname/start_forLinux.sh"
 
-  install -Dm755 "./lang/en.txt" "/usr/share/$pkgname/lang/en.txt"
-  install -Dm755 "./lang/ja.txt" "/usr/share/$pkgname/lang/ja.txt"
-  install -Dm755 "./lang/ko.txt" "/usr/share/$pkgname/lang/ko.txt"
-  install -Dm755 "./lang/zh-Hans.txt" "/usr/share/$pkgname/lang/zh-Hans.txt"
-  install -Dm755 "./lang/zh-Hant.txt" "/usr/share/$pkgname/lang/zh-Hant.txt"
+  install -Dm755 "./lang/en.txt" "$pkgdir/usr/share/$pkgname/lang/en.txt"
+  install -Dm755 "./lang/ja.txt" "$pkgdir/usr/share/$pkgname/lang/ja.txt"
+  install -Dm755 "./lang/ko.txt" "$pkgdir/usr/share/$pkgname/lang/ko.txt"
+  install -Dm755 "./lang/zh-Hans.txt" "$pkgdir/usr/share/$pkgname/lang/zh-Hans.txt"
+  install -Dm755 "./lang/zh-Hant.txt" "$pkgdir/usr/share/$pkgname/lang/zh-Hant.txt"
 
-  install -Dm644 "build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar" "/usr/share/$pkgname/$pkgname.jar"
+  install -Dm644 "build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar" "$pkgdir/usr/share/$pkgname/$pkgname.jar"
+
+  mkdir "$pkgdir/usr/share/$pkgname/tools"
+  mkdir "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2"
+  mkdir "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin"
+  ln -l /usr/bin/java "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin/java"
 
 }
