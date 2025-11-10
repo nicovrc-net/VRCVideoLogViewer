@@ -19,6 +19,16 @@ build() {
 package() {
   cd "$srcdir/$pkgname"
 
+  install -Dm755 "./run-batch/start_forArchLinux_aur.sh" "$pkgdir/usr/share/$pkgname/start_forLinux.sh"
+
+  install -Dm755 "./lang/en.txt" "$pkgdir/usr/share/$pkgname/lang/en.txt"
+  install -Dm755 "./lang/ja.txt" "$pkgdir/usr/share/$pkgname/lang/ja.txt"
+  install -Dm755 "./lang/ko.txt" "$pkgdir/usr/share/$pkgname/lang/ko.txt"
+  install -Dm755 "./lang/zh-Hans.txt" "$pkgdir/usr/share/$pkgname/lang/zh-Hans.txt"
+  install -Dm755 "./lang/zh-Hant.txt" "$pkgdir/usr/share/$pkgname/lang/zh-Hant.txt"
+
+  install -Dm644 "build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar" "$pkgdir/usr/share/$pkgname/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar"
+
   mkdir "$pkgdir/usr/share/$pkgname/tools"
   mkdir "$pkgdir/usr/share/$pkgname/tools/7z2501"
 
@@ -34,16 +44,6 @@ package() {
   mkdir "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
   curl https://imagemagick.org/archive/binaries/magick --output "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
   chmod +x "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
-
-  install -Dm755 "./run-batch/start_forArchLinux_aur.sh" "$pkgdir/usr/share/$pkgname/start_forLinux.sh"
-
-  install -Dm755 "./lang/en.txt" "$pkgdir/usr/share/$pkgname/lang/en.txt"
-  install -Dm755 "./lang/ja.txt" "$pkgdir/usr/share/$pkgname/lang/ja.txt"
-  install -Dm755 "./lang/ko.txt" "$pkgdir/usr/share/$pkgname/lang/ko.txt"
-  install -Dm755 "./lang/zh-Hans.txt" "$pkgdir/usr/share/$pkgname/lang/zh-Hans.txt"
-  install -Dm755 "./lang/zh-Hant.txt" "$pkgdir/usr/share/$pkgname/lang/zh-Hant.txt"
-
-  install -Dm644 "build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar" "$pkgdir/usr/share/$pkgname/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar"
 
 
 }
