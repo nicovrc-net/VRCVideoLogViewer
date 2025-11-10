@@ -30,11 +30,12 @@ package() {
 
   install -d "$pkgdir/usr/share/$pkgname/tools/7z2501"
 
-  curl https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz --output "./tools/openjdk-21.0.2_linux-x64_bin.tar.gz"
+  curl https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz --output "./openjdk-21.0.2_linux-x64_bin.tar.gz"
   tar -zxvf "./openjdk-21.0.2_linux-x64_bin.tar.gz"
   chmod +x "./jdk-21.0.2/bin/java"
   install -d "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2"
   cp -a "./jdk-21.0.2" "$pkgdir/usr/share/$pkgname/tools/"
+  objcopy --remove-section=.gnu_debuglink "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2"
 
 
   install -d "$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21.0.9"
