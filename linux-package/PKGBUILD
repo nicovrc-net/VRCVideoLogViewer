@@ -43,8 +43,6 @@ package() {
     install -dm755 "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
     ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
 
-    install -Dm666 "./config.yml" "$pkgdir/usr/share/$pkgname/config.yml"
-
     find "$pkgdir/usr/share/$pkgname" -type f -exec file {} \; | grep ELF | cut -d: -f1 | while read -r elf; do
         strip --strip-all "$elf" || true
     done
