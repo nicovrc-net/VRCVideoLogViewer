@@ -35,7 +35,10 @@ package() {
   chmod +x "./jdk-21.0.2/bin/java"
   install -d "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2"
   cp -a "./jdk-21.0.2" "$pkgdir/usr/share/$pkgname/tools/"
-  objcopy --remove-section=.gnu_debuglink "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/lib/*"
+
+  for f in "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/lib/*"; do
+    objcopy --remove-section=.gnu_debuglink "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/lib/${f}"
+  done
 
   install -d "$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21.0.9"
   curl https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_linux-x64_bin-sdk.zip --output "./openjfx-21.0.9_linux-x64_bin-sdk.zip"
