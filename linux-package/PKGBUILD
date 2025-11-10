@@ -32,6 +32,8 @@ package() {
   mkdir "$pkgdir/usr/share/$pkgname/tools"
   mkdir "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2"
   mkdir "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin"
-  ln -l /usr/bin/java "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin/java"
+  mkdir "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
+  ln -s /usr/bin/java "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin/java"
+  ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
 
 }
