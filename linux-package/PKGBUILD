@@ -5,8 +5,8 @@ pkgdesc="A tool for parsing VRChat logs to collect links to videos, images, and 
 arch=('x86_64')
 url="https://github.com/nicovrc-net/VRCVideoLogViewer"
 license=('MIT')
-depends=('imagemagick')
-makedepends=('git' '7zip' 'jdk21-openjdk' 'curl' 'screen')
+depends=('jdk21-openjdk' 'imagemagick')
+makedepends=('git' '7zip' 'curl' 'screen')
 source=("$pkgname::git+https://github.com/nicovrc-net/VRCVideoLogViewer.git#branch=release")
 sha256sums=('SKIP')
 
@@ -29,17 +29,8 @@ package() {
   install -Dm644 "build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar" "$pkgdir/usr/share/$pkgname/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar"
 
   install -d "$pkgdir/usr/share/$pkgname/tools/7z2501"
-
-  curl https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz --output "./openjdk-21.0.2_linux-x64_bin.tar.gz"
-  tar -zxvf "./openjdk-21.0.2_linux-x64_bin.tar.gz"
-  chmod +x "./jdk-21.0.2/bin/java"
-  install -d "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2"
-  cp -a "./jdk-21.0.2" "$pkgdir/usr/share/$pkgname/tools/"
-
-  for f in "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/lib/*"; do
-    f=${basename "${f}"}
-    objcopy --remove-section=.gnu_debuglink "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/lib/${f}"
-  done
+  install -d "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin"
+  ln -s /usr/lib/jvm/java-21-openjdk/bin/java "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin/java"
 
   install -d "$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21.0.9"
   curl https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_linux-x64_bin-sdk.zip --output "./openjfx-21.0.9_linux-x64_bin-sdk.zip"
