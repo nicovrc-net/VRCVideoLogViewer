@@ -25,7 +25,7 @@ package() {
     tar -Jxvf "$srcdir/7z2501-linux-x64.tar.xz" -C ./7z2501
     chmod +x ./7z2501/7zz
 
-    sed -i 's/^## cd/cd/' > ./run-batch/start_forLinux.sh
+    sed -i 's/^## cd/cd/' ./run-batch/start_forLinux.sh
     install -Dm755 "./run-batch/start_forLinux.sh" "$pkgdir/usr/share/$pkgname/start_forLinux.sh"
     install -Dm666 "./linux-package/config_for_package.txt" "$pkgdir/usr/share/$pkgname/config.yml"
 
