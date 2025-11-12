@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# for Arch PKGBUILD
+## cd /usr/share/VRCVideoLogViewer
+
 if [ -d ./tools ]; then
 	
 	if [ -d ./tools/7z2501 ]; then

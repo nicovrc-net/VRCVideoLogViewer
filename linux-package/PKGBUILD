@@ -1,6 +1,6 @@
 pkgname=VRCVideoLogViewer
 pkgver=1.0.0
-pkgrel=1
+pkgrel=2
 pkgdesc="A tool for parsing VRChat logs to collect links to videos, images, and text content."
 arch=('x86_64')
 url="https://github.com/nicovrc-net/VRCVideoLogViewer"
@@ -25,7 +25,8 @@ package() {
     tar -Jxvf "$srcdir/7z2501-linux-x64.tar.xz" -C ./7z2501
     chmod +x ./7z2501/7zz
 
-    install -Dm755 "./run-batch/start_forArchLinux_aur.sh" "$pkgdir/usr/share/$pkgname/start_forLinux.sh"
+    sed -i 's/^## cd/cd/' > ./run-batch/start_forLinux.sh
+    install -Dm755 "./run-batch/start_forLinux.sh" "$pkgdir/usr/share/$pkgname/start_forLinux.sh"
     install -Dm666 "./linux-package/config_for_package.txt" "$pkgdir/usr/share/$pkgname/config.yml"
 
     install -Dm755 "./lang/ja.txt" "$pkgdir/usr/share/$pkgname/lang/ja.txt"
