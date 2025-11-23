@@ -1,6 +1,6 @@
 pkgname=VRCVideoLogViewer
-pkgver=1.0.0
-pkgrel=2
+pkgver=1.1.0
+pkgrel=1
 pkgdesc="A tool for parsing VRChat logs to collect links to videos, images, and text content."
 arch=('x86_64')
 url="https://github.com/nicovrc-net/VRCVideoLogViewer"

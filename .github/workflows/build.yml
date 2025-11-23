@@ -149,9 +149,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: v${{ github.ref }}
           body: |
-            - 正式版リリース
-            - 多言語対応 (日本語/英語/中国語(简体/繁體)/韓国語)
-            - ログフォルダが存在しない場合は選択ダイアログを出すようにした
+            - Linux版Steamの設定パスを自動取得するように
           draft: false
           prerelease: false
 
