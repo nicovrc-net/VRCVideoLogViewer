@@ -447,6 +447,10 @@ public class Main {
 
                     Function.config.setLogFolderPass(path);
                     System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path));
+                } else if (new File(LinuxUserHome+"/.steampath").exists()) {
+                    file = new File(LinuxUserHome+"/.steampath");
+                    String path1 = file.getCanonicalPath();
+                    System.out.println(path1);
                 } else {
                     System.out.println("[Info] " + Function.langData.get("logfolder-autoget-fail"));
                 }
