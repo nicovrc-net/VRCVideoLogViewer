@@ -213,10 +213,15 @@ jobs:
           
           mkdir -p ./deb-package
           mkdir -p ./deb-package/usr/share/VRCVideoLogViewer
+          mkdir -p ./deb-package/usr/bin
           
           mkdir -p ./deb-package/DEBIAN
           
           echo -e "Package: VRCVideoLogViewer\nVersion: $INPUT_VERSION-1\nArchitecture: amd64\nMaintainer: Chino Nanami <tino_nanami@7mi.site>\nDescription: A tool for parsing VRChat logs to collect links to videos, images, and text content.\nDepends: openjdk-21-jdk, imagemagick\nPre-Depends: curl, unzip" > ./deb-package/DEBIAN/control
+          
+          echo -e "#!/bin/bash\nif [ -x /usr/bin/VRCVideoLogViewer ]; then\nelse\n  rm /usr/share/VRCVideoLogViewer -fr" > ./deb-package/DEBIAN/postrm
+          chmod +x ./deb-package/DEBIAN/postrm
+          
           
           cp ./tmp/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar ./deb-package/usr/share/VRCVideoLogViewer
           cp -r ./tmp/lang ./deb-package/usr/share/VRCVideoLogViewer
@@ -233,15 +238,16 @@ jobs:
           ln -s /usr/lib/jvm/java-21-openjdk-amd64/bin/java ./deb-package/usr/share/VRCVideoLogViewer/tools/jdk-21.0.2/bin/java
           
           echo -e "#!/bin/bash\ncurl https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_linux-x64_bin-sdk.zip --output /usr/share/VRCVideoLogViewer/tools/openjfx-21.0.9_linux-x64_bin-sdk.zip\nunzip /usr/share/VRCVideoLogViewer/tools/openjfx-21.0.9_linux-x64_bin-sdk.zip -d /usr/share/VRCVideoLogViewer/tools/" > ./deb-package/DEBIAN/postinst
+          chmod +x ./deb-package/DEBIAN/postinst
           
           mkdir -p ./deb-package/usr/share/VRCVideoLogViewer/tools/ImageMagick
-          if [ -d /usr/bin/convert ]; then
+          if [ -x /usr/bin/convert ]; then
           
             ln -s /usr/bin/convert ./deb-package/usr/share/VRCVideoLogViewer/tools/ImageMagick/magick
           
           else
           
-            if [ -d /usr/bin/magick ]; then
+            if [ -x /usr/bin/magick ]; then
               ln -s /usr/bin/magick ./deb-package/usr/share/VRCVideoLogViewer/tools/ImageMagick/magick
             fi
           
@@ -286,6 +292,17 @@ jobs:
           asset_path: ./PKGBUILD
           asset_name: PKGBUILD
           asset_content_type: text/plain
+
+      - name: Upload deb package File
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./deb-package.deb
+          asset_name: vrcvideologviewer.deb
+          asset_content_type: application/vnd.debian.binary-package
 
       - name: Delete File
         if: startsWith(github.ref, 'refs/tags/')
