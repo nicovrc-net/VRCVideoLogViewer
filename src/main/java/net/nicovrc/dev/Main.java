@@ -17,11 +17,12 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Main {
+
+    private static final Pattern matcher_ls = Pattern.compile("/home/(.+)/\\.steampath -> (.+)");
 
     public static void main(String[] args) {
 
@@ -455,7 +456,20 @@ public class Main {
                     process.waitFor();
 
                     String s = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-                    System.out.println(s);
+                    //System.out.println(s);
+
+                    Matcher matcher = matcher_ls.matcher(s);
+                    if (matcher.find()){
+                        path = matcher.group(2).replaceAll("/sdk32/steam", "/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
+                        file = new File(path);
+                    }
+
+                    if (file.exists()){
+                        Function.config.setLogFolderPass(path);
+                        System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path));
+                    } else {
+                        System.out.println("[Info] " + Function.langData.get("logfolder-autoget-fail"));
+                    }
 
                 } else {
                     System.out.println("[Info] " + Function.langData.get("logfolder-autoget-fail"));
