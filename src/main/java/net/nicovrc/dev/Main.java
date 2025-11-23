@@ -449,11 +449,14 @@ public class Main {
                     System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path));
                 } else if (!LinuxUserHome.isEmpty()) {
                     file = new File(LinuxUserHome+"/.steampath");
-                    if (file.exists()){
-                        System.out.println("aru");
-                    }
-                    String path1 = file.getCanonicalPath();
-                    System.out.println(path1);
+
+                    ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "ls -al "+file.getCanonicalPath());
+                    Process process = pb.start();
+                    process.waitFor();
+
+                    String s = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+                    System.out.println(s);
+
                 } else {
                     System.out.println("[Info] " + Function.langData.get("logfolder-autoget-fail"));
                 }
