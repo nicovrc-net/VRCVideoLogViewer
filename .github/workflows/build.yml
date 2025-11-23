@@ -36,11 +36,47 @@ jobs:
       - name: Build with Gradle Wrapper
         run: ./gradlew shadowJar
 
+      - name: Create Package Files
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          tar -zcvf lang.tar.gz ./lang
+          tar -zcvf run_batch.tar.gz ./run-batch
+        shell: bash
+
       - name: Upload JarFile
+        if: startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v4
         with:
           name: jar
           path: ./build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
+
+      - name: Upload LangFile
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-artifact@v4
+        with:
+          name: lang
+          path: ./lang.tar.gz
+
+      - name: Upload StartBatchFile
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-artifact@v4
+        with:
+          name: run_batch
+          path: ./run_batch.tar.gz
+
+      - name: Upload ConfigFile
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-artifact@v4
+        with:
+          name: config
+          path: ./linux-package/config_for_package.txt
+
+      - name: Upload PKGBUILD File
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-artifact@v4
+        with:
+          name: PKGBUILD
+          path: ./linux-package/PKGBUILD
 
   build-24:
     runs-on: ubuntu-24.04
@@ -63,23 +99,57 @@ jobs:
       - name: Build with Gradle Wrapper
         run: ./gradlew shadowJar
 
-  release:
-    needs: [build-21, build-24]
+  download-7zip:
     runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
+      - name: Download 7zip
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          wget https://www.7-zip.org/a/7z2501-linux-x64.tar.xz
+        shell: bash
+      - name: Upload 7zip
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-artifact@v4
+        with:
+          name: 7zip
+          path: ./7z.tar.xz
+
+  release:
+    needs: [build-21, build-24, download-7zip]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Download 7zip
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/download-artifact@v4
+        with:
+          name: 7zip
+
       - name: Download JarFile
         if: startsWith(github.ref, 'refs/tags/')
         uses: actions/download-artifact@v4
         with:
           name: jar
 
+      - name: Download RunBatch File
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/download-artifact@v4
+        with:
+          name: run_batch
+
+      - name: Download PKGBUILD File
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/download-artifact@v4
+        with:
+          name: PKGBUILD
+
       - name: Create Release Package
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          wget https://www.7-zip.org/a/7z2501-linux-x64.tar.xz
-          tar -Jxvf ./7z2501-linux-x64.tar.xz
+          tar -Jxvf ./7z.tar.xz
           mkdir ./tools
           mkdir ./tools/7z2501
           mv ./7zz ./tools/7z2501
@@ -89,24 +159,14 @@ jobs:
           mv ./MANUAL ./tools/7z2501
           mv ./readme.txt ./tools/7z2501
           chmod +x ./tools/7z2501/7zz
-  
-          wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/run-batch/start.bat
-          wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/run-batch/start_forLinux.sh
-          wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/ja.txt
-          wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/en.txt
-          wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/zh-Hans.txt
-          wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/zh-Hant.txt
-          wget https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/ko.txt
           
+          tar -zxvf ./run_batch.tar.gz
+          tar -zxvf ./lang.tar.gz
+            
           mkdir ./tmp
-          mv ./start.bat ./tmp/start.bat
-          mv ./start_forLinux.sh ./tmp/start_forLinux.sh
-          mkdir ./tmp/lang
-          mv ./ja.txt ./tmp/lang
-          mv ./en.txt ./tmp/lang
-          mv ./zh-Hans.txt ./tmp/lang
-          mv ./zh-Hant.txt ./tmp/lang
-          mv ./ko.txt ./tmp/lang
+          mv ./run-batch/start.bat ./tmp/start.bat
+          mv ./run-batch/start_forLinux.sh ./tmp/start_forLinux.sh
+          mv ./lang ./tmp
           mv ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar ./tmp
           ./tools/7z2501/7zz a ./VRCVideoLogViewer.zip ./tmp/*
         shell: bash
@@ -139,6 +199,58 @@ jobs:
 
         shell: bash
 
+      - name: Download config File
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/download-artifact@v4
+        with:
+          name: config
+
+      - name: Create deb Package
+        if: startsWith(github.ref, 'refs/tags/')
+        id: create_deb_package
+        run: |
+          INPUT_VERSION="$(echo "${{ github.ref }}" | sed -E "s,^refs/tags/,,")"
+          
+          mkdir -p ./deb-package
+          mkdir -p ./deb-package/usr/share/VRCVideoLogViewer
+          
+          mkdir -p ./deb-package/DEBIAN
+          
+          echo -e "Package: VRCVideoLogViewer\nVersion: $INPUT_VERSION-1\nArchitecture: amd64\nMaintainer: Chino Nanami <tino_nanami@7mi.site>\nDescription: A tool for parsing VRChat logs to collect links to videos, images, and text content.\nDepends: openjdk-21-jdk, imagemagick\nPre-Depends: curl, unzip" > ./deb-package/DEBIAN/control
+          
+          cp ./tmp/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar ./deb-package/usr/share/VRCVideoLogViewer
+          cp -r ./tmp/lang ./deb-package/usr/share/VRCVideoLogViewer
+          mv ./config_for_package.txt ./deb-package/usr/share/VRCVideoLogViewer/config.yml
+          sed -i 's/^## cd/cd/' ./tmp/start_forLinux.sh
+          cp ./tmp/start_forLinux.sh ./deb-package/usr/bin/VRCVideoLogViewer
+          chmod +x ./deb-package/usr/bin/VRCVideoLogViewer
+          chmod 777 ./deb-package/usr/share/VRCVideoLogViewer/config.yml
+          
+          mkdir -p ./deb-package/usr/share/VRCVideoLogViewer/tools
+          mkdir -p ./deb-package/usr/share/VRCVideoLogViewer/tools/7z2501
+          
+          mkdir -p ./deb-package/usr/share/VRCVideoLogViewer/tools/jdk-21.0.2/bin
+          ln -s /usr/lib/jvm/java-21-openjdk-amd64/bin/java ./deb-package/usr/share/VRCVideoLogViewer/tools/jdk-21.0.2/bin/java
+          
+          echo -e "#!/bin/bash\ncurl https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_linux-x64_bin-sdk.zip --output /usr/share/VRCVideoLogViewer/tools/openjfx-21.0.9_linux-x64_bin-sdk.zip\nunzip /usr/share/VRCVideoLogViewer/tools/openjfx-21.0.9_linux-x64_bin-sdk.zip -d /usr/share/VRCVideoLogViewer/tools/" > ./deb-package/DEBIAN/postinst
+          
+          mkdir -p ./deb-package/usr/share/VRCVideoLogViewer/tools/ImageMagick
+          if [ -d /usr/bin/convert ]; then
+          
+            ln -s /usr/bin/convert ./deb-package/usr/share/VRCVideoLogViewer/tools/ImageMagick/magick
+          
+          else
+          
+            if [ -d /usr/bin/magick ]; then
+              ln -s /usr/bin/magick ./deb-package/usr/share/VRCVideoLogViewer/tools/ImageMagick/magick
+            fi
+          
+          fi
+          
+          fakeroot dpkg-deb --build $WORK ./deb-package
+
+        shell: bash
+
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/')
         id: create_release
@@ -153,7 +265,7 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload JarFile
+      - name: Upload ZipFile
         if: startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-release-asset@v1
         env:
@@ -162,10 +274,26 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./VRCVideoLogViewer.zip
           asset_name: VRCVideoLogViewer.zip
-          asset_content_type: application/java-archive
+          asset_content_type: application/zip
+
+      - name: Upload PKGBUILD File
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./PKGBUILD
+          asset_name: PKGBUILD
+          asset_content_type: text/plain
 
       - name: Delete File
+        if: startsWith(github.ref, 'refs/tags/')
         uses: geekyeggo/delete-artifact@v5
         with:
           name: |
+            7zip
             jar
+            run_batch
+            PKGBUILD
+            config

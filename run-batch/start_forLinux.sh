@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# for Arch PKGBUILD
+# for Arch PKGBUILD / Ubuntu deb Package
 ## cd /usr/share/VRCVideoLogViewer
 
 if [ -d ./tools ]; then
