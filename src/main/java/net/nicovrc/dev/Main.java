@@ -449,6 +449,9 @@ public class Main {
                     System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path));
                 } else if (!LinuxUserHome.isEmpty()) {
                     file = new File(LinuxUserHome+"/.steampath");
+                    if (file.exists()){
+                        System.out.println("aru");
+                    }
                     String path1 = file.getCanonicalPath();
                     System.out.println(path1);
                 } else {
