@@ -38,7 +38,11 @@ if exist "./tools/" (
 	    if exist "./fonts/NotoSansCJK-Regular.ttc" (
 	        echo Font OK
 	    ) else (
-	        curl -L "https://github.com/googlefonts/noto-cjk/raw/main/Sans/Variable/OTC/NotoSansCJK-VF.ttf.ttc" --output ./fonts/NotoSansCJK-Regular.ttc
+	        if exist "./fonts/NotoSansCJK-Regular.ttf" (
+        	    echo Font OK
+        	) else (
+        	    curl -L "https://github.com/googlefonts/noto-cjk/raw/main/Sans/Variable/OTC/NotoSansCJK-VF.ttf.ttc" --output ./fonts/NotoSansCJK-Regular.ttc
+        	)
 	    )
 	) else (
 	    mkdir fonts

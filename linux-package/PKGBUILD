@@ -49,6 +49,8 @@ package() {
 
     ln -s /usr/share/fonts/noto-cjk/ ./fonts
 
+    ln -s "$pkgdir/usr/share/$pkgname/start_forLinux.sh" "/$pkgdir/usr/bin/$pkgname"
+
     find "$pkgdir/usr/share/$pkgname" -type f -exec file {} \; | grep ELF | cut -d: -f1 | while read -r elf; do
         strip --strip-all "$elf" || true
     done
