@@ -217,7 +217,7 @@ jobs:
           
           mkdir -p ./deb-package/DEBIAN
           
-          echo -e "Package: VRCVideoLogViewer\nVersion: $INPUT_VERSION-1\nArchitecture: amd64\nMaintainer: Chino Nanami <tino_nanami@7mi.site>\nDescription: A tool for parsing VRChat logs to collect links to videos, images, and text content.\nDepends: openjdk-21-jdk, imagemagick\nPre-Depends: curl, unzip" > ./deb-package/DEBIAN/control
+          echo -e "Package: VRCVideoLogViewer\nVersion: $INPUT_VERSION-1\nArchitecture: amd64\nMaintainer: Chino Nanami <tino_nanami@7mi.site>\nDescription: A tool for parsing VRChat logs to collect links to videos, images, and text content.\nDepends: openjdk-21-jdk, imagemagick, fonts-noto-cjk\nPre-Depends: curl, unzip" > ./deb-package/DEBIAN/control
           
           echo -e "#!/bin/bash\nif [ -x /usr/bin/VRCVideoLogViewer ]; then\nelse\n  rm /usr/share/VRCVideoLogViewer -fr" > ./deb-package/DEBIAN/postrm
           chmod +x ./deb-package/DEBIAN/postrm
@@ -253,6 +253,11 @@ jobs:
           
           fi
           
+          mkdir -p ./deb-package/usr/share/VRCVideoLogViewer/fonts
+          if [ -f /usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc ]; then
+            ln -s /usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc ./deb-package/usr/share/VRCVideoLogViewer/fonts/NotoSansCJK-Regular.ttc
+          fi
+          
           fakeroot dpkg-deb --build $WORK ./deb-package
 
         shell: bash
@@ -268,6 +273,7 @@ jobs:
           release_name: v${{ github.ref }}
           body: |
             - Linux版Steamの設定パスを自動取得するように
+            - (Linux環境のみ) 表示フォントをNoto Fontに変更
           draft: false
           prerelease: false
 

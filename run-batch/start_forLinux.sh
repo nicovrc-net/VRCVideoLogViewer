@@ -45,6 +45,16 @@ if [ -d ./tools ]; then
 		curl https://imagemagick.org/archive/binaries/magick --output ./tools/ImageMagick/magick
 		chmod +x ./tools/ImageMagick/magick
 	fi
+
+	if [ -f ./fonts/NotoSansCJK-Medium.ttc ]; then
+		echo "Font OK"
+	else
+	  if [ -f ./fonts/NotoSansCJK-Medium.ttf ]; then
+	    echo "Font OK"
+	  else
+
+	  fi
+	fi
 	
 	echo "Starting..."
 	./tools/jdk-21.0.2/bin/java --module-path "./tools/javafx-sdk-21.0.9/lib" --add-modules javafx.controls,javafx.fxml -jar ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar

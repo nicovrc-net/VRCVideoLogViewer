@@ -5,7 +5,7 @@ pkgdesc="A tool for parsing VRChat logs to collect links to videos, images, and 
 arch=('x86_64')
 url="https://github.com/nicovrc-net/VRCVideoLogViewer"
 license=('MIT')
-depends=('jdk21-openjdk' 'imagemagick')
+depends=('jdk21-openjdk' 'imagemagick' 'noto-fonts-cjk')
 makedepends=('git' 'curl')
 source=( "$pkgname::git+https://github.com/nicovrc-net/VRCVideoLogViewer.git#branch=release" "7z2501-linux-x64.tar.xz::https://www.7-zip.org/a/7z2501-linux-x64.tar.xz" "openjfx-21.0.9_linux-x64_bin-sdk.zip::https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_linux-x64_bin-sdk.zip")
 sha256sums=('SKIP' 'SKIP' 'SKIP')
@@ -46,6 +46,8 @@ package() {
 
     install -dm755 "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
     ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
+
+    ln -s /usr/share/fonts/noto-cjk/ ./fonts
 
     find "$pkgdir/usr/share/$pkgname" -type f -exec file {} \; | grep ELF | cut -d: -f1 | while read -r elf; do
         strip --strip-all "$elf" || true
