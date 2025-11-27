@@ -563,6 +563,11 @@ public class GUI extends Application {
                     }
 
                     Label setting_label12 = new Label(Function.langData.get("setting-lang"));
+                    if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
+                        setting_label12.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), setting_label12.getFont().getSize()));
+                    } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
+                        setting_label12.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), setting_label12.getFont().getSize()));
+                    }
                     setting_label12.setLayoutX(5);
                     setting_label12.setLayoutY(255);
                     setting_root.getChildren().add(setting_label12);
@@ -1034,16 +1039,15 @@ public class GUI extends Application {
             Label update_label1 = new Label(Function.langData.get("update-notify"));
             try {
                 if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                    update_label1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), update_label1.getFont().getSize()));
+                    update_label1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), 16));
                 } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                    update_label1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), update_label1.getFont().getSize()));
+                    update_label1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), 16));
                 }
             } catch (Exception e){
                 //e.printStackTrace();
             }
             update_label1.setLayoutX(5);
             update_label1.setLayoutY(5);
-            update_label1.setFont(new Font(16));
             update_root.getChildren().add(update_label1);
 
             Label update_label2 = new Label(Function.langData.get("update-found"));
