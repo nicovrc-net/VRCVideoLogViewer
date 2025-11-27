@@ -33,6 +33,17 @@ if exist "./tools/" (
 		curl https://imagemagick.org/archive/binaries/ImageMagick-7.1.2-8-portable-Q16-x64.7z --output ./tools/ImageMagick-7.1.2-8-portable-Q16-x64.7z
 		.\tools\7z2501\7za.exe x -o./tools/ImageMagick-7.1.2-8-portable-Q16-x64 ./tools/ImageMagick-7.1.2-8-portable-Q16-x64.7z
 	)
+
+	if exist "./fonts" (
+	    if exist "./fonts/NotoSansCJK-Regular.ttf" (
+	        echo "Font OK"
+	    ) else (
+	        curl https://fonts.gstatic.com/s/notosansjp/v55/-F6jfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFBEj75vY0rw-oME.ttf --output ./fonts/NotoSansCJK-Regular.ttf
+	    )
+	) else (
+	    mkdir ./fonts
+	    curl https://fonts.gstatic.com/s/notosansjp/v55/-F6jfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFBEj75vY0rw-oME.ttf --output ./fonts/NotoSansCJK-Regular.ttf
+	)
 	
 	echo Starting...
 	
@@ -56,6 +67,9 @@ if exist "./tools/" (
 	
 	curl https://imagemagick.org/archive/binaries/ImageMagick-7.1.2-8-portable-Q16-x64.7z --output ./tools/ImageMagick-7.1.2-8-portable-Q16-x64.7z
 	.\tools\7z2501\7za.exe x -o./tools/ImageMagick-7.1.2-8-portable-Q16-x64 ./tools/ImageMagick-7.1.2-8-portable-Q16-x64.7z
+
+	mkdir ./fonts
+	curl https://fonts.gstatic.com/s/notosansjp/v55/-F6jfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFBEj75vY0rw-oME.ttf --output ./fonts/NotoSansCJK-Regular.ttf
 	
 	echo Starting...
 	

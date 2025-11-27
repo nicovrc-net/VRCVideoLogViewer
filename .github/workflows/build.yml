@@ -273,7 +273,7 @@ jobs:
           release_name: v${{ github.ref }}
           body: |
             - Linux版Steamの設定パスを自動取得するように
-            - (Linux環境のみ) 表示フォントをNoto Fontに変更
+            - 表示フォントをNoto Fontに変更
           draft: false
           prerelease: false
 
