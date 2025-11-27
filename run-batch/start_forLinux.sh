@@ -46,13 +46,22 @@ if [ -d ./tools ]; then
 		chmod +x ./tools/ImageMagick/magick
 	fi
 
-	if [ -f ./fonts/NotoSansCJK-Medium.ttc ]; then
+	if [ -f ./fonts/NotoSansCJK-Regular.ttc ]; then
 		echo "Font OK"
 	else
-	  if [ -f ./fonts/NotoSansCJK-Medium.ttf ]; then
+	  if [ -f ./fonts/NotoSansCJK-Regular.ttf ]; then
 	    echo "Font OK"
 	  else
-
+	    if [ -d /usr/share/fonts/noto-cjk/ ]; then
+	      ln -s /usr/share/fonts/noto-cjk/ ./fonts
+	    else
+	      if [ -d /usr/share/fonts/opentype/noto/ ]; then
+	        ln -s /usr/share/fonts/opentype/noto/ ./fonts
+	      else
+	        mkdir -p ./fonts
+	        curl https://fonts.gstatic.com/s/notosansjp/v55/-F6jfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFBEj75vY0rw-oME.ttf --output ./fonts/NotoSansCJK-Regular.ttf
+	      fi
+	    fi
 	  fi
 	fi
 	
@@ -84,7 +93,17 @@ else
 	mkdir ./tools/ImageMagick
 	curl https://imagemagick.org/archive/binaries/magick --output ./tools/ImageMagick/magick
 	chmod +x ./tools/ImageMagick/magick
-	
+
+	if [ -d /usr/share/fonts/noto-cjk/ ]; then
+	  ln -s /usr/share/fonts/noto-cjk/ ./fonts
+	else
+	  if [ -d /usr/share/fonts/opentype/noto/ ]; then
+	    ln -s /usr/share/fonts/opentype/noto/ ./fonts
+	  else
+	    mkdir -p ./fonts
+	    curl https://fonts.gstatic.com/s/notosansjp/v55/-F6jfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFBEj75vY0rw-oME.ttf --output ./fonts/NotoSansCJK-Regular.ttf
+	  fi
+	fi
 
 	echo "Starting..."
 	./tools/jdk-21.0.2/bin/java --module-path "./tools/javafx-sdk-21.0.9/lib" --add-modules javafx.controls,javafx.fxml -jar ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
