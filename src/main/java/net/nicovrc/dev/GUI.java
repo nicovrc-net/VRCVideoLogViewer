@@ -634,7 +634,21 @@ public class GUI extends Application {
         listView.setPrefSize(1200, 600);
         listView.setLayoutX(15);
         listView.setLayoutY(55);
-        listView.setCellFactory(lv -> new ListCell<String>() {
+
+        final Font font;
+        Font font1 = null;
+        try {
+            if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
+                font1 = Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), button.getFont().getSize());
+            } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
+                font1 = Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), button.getFont().getSize());
+            }
+        } catch (Exception e){
+            //e.printStackTrace();
+        }
+
+        font = font1;
+        listView.setCellFactory(lv -> new ListCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -642,15 +656,7 @@ public class GUI extends Application {
                     setText(null);
                 } else {
                     setText(item);
-                    try {
-                        if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                            setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), getFont().getSize()));
-                        } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                            setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), getFont().getSize()));
-                        }
-                    } catch (Exception e){
-                        //e.printStackTrace();
-                    }
+                    setFont(font);
                 }
             }
         });
