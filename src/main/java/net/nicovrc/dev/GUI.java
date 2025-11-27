@@ -573,6 +573,26 @@ public class GUI extends Application {
                     setting_root.getChildren().add(setting_label12);
 
                     ListView<String> setting_listView = new ListView<>(lang_items);
+                    setting_listView.setCellFactory(lv -> new ListCell<String>() {
+                        @Override
+                        protected void updateItem(String item, boolean empty) {
+                            super.updateItem(item, empty);
+                            if (empty || item == null) {
+                                setText(null);
+                            } else {
+                                setText(item);
+                                try {
+                                    if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
+                                        setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), getFont().getSize()));
+                                    } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
+                                        setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), getFont().getSize()));
+                                    }
+                                } catch (Exception e){
+                                    //e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
                     setting_listView.setEditable(false);
                     setting_listView.setPrefSize(400, 400);
                     setting_listView.setLayoutX(5);
@@ -614,6 +634,26 @@ public class GUI extends Application {
         listView.setPrefSize(1200, 600);
         listView.setLayoutX(15);
         listView.setLayoutY(55);
+        listView.setCellFactory(lv -> new ListCell<String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item);
+                    try {
+                        if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
+                            setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), getFont().getSize()));
+                        } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
+                            setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), getFont().getSize()));
+                        }
+                    } catch (Exception e){
+                        //e.printStackTrace();
+                    }
+                }
+            }
+        });
         listView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 final Stage detail_stage = new Stage();
