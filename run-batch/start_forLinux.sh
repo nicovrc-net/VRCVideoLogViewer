@@ -59,7 +59,7 @@ if [ -d ./tools ]; then
 	        ln -s /usr/share/fonts/opentype/noto/ ./fonts
 	      else
 	        mkdir -p ./fonts
-	        curl https://fonts.gstatic.com/s/notosansjp/v55/-F6jfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFBEj75vY0rw-oME.ttf --output ./fonts/NotoSansCJK-Regular.ttf
+	        curl https://github.com/googlefonts/noto-cjk/raw/main/Sans/Variable/OTC/NotoSansCJK-VF.ttf.ttc --output ./fonts/NotoSansCJK-Regular.ttc
 	      fi
 	    fi
 	  fi
@@ -101,7 +101,7 @@ else
 	    ln -s /usr/share/fonts/opentype/noto/ ./fonts
 	  else
 	    mkdir -p ./fonts
-	    curl https://fonts.gstatic.com/s/notosansjp/v55/-F6jfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFBEj75vY0rw-oME.ttf --output ./fonts/NotoSansCJK-Regular.ttf
+	    curl https://github.com/googlefonts/noto-cjk/raw/main/Sans/Variable/OTC/NotoSansCJK-VF.ttf.ttc --output ./fonts/NotoSansCJK-Regular.ttc
 	  fi
 	fi
 
