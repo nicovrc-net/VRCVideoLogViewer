@@ -37,30 +37,63 @@ public class GUI extends Application {
 
         File file = new File(Function.config.getLogFolderPass());
 
+
+        String TempFontLang = "JP";
+        if (Function.langData.get("lang_name").equals("한국어")) {
+            TempFontLang = "KR";
+        } else if (Function.langData.get("lang_name").equals("简体中文")) {
+            TempFontLang = "SC";
+        } else if (Function.langData.get("lang_name").equals("繁體中文")) {
+            TempFontLang = "TC";
+        }
+        final String FontLang = TempFontLang;
+
+        Font tempFont1 = Font.getDefault();
+        if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
+            tempFont1 = Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), Font.getDefault().getSize());
+        } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
+            tempFont1 = Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), Font.getDefault().getSize());
+        } else if (new File("./fonts/NotoSans"+FontLang+"-Medium.ttf").exists()){
+            tempFont1 = Font.loadFont(new FileInputStream("./fonts/NotoSans"+FontLang+"-Medium.ttf"), Font.getDefault().getSize());
+        }
+
+        Font tempFont2 = new Font(24);
+        if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
+            tempFont2 = Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), 24);
+        } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
+            tempFont2 = Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), 24);
+        } else if (new File("./fonts/NotoSans"+FontLang+"-Medium.ttf").exists()){
+            tempFont2 = Font.loadFont(new FileInputStream("./fonts/NotoSans"+FontLang+"-Medium.ttf"), 24);
+        }
+
+        Font tempFont3 = new Font(16);
+        if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
+            tempFont3 = Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), 16);
+        } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
+            tempFont3 = Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), 16);
+        } else if (new File("./fonts/NotoSans"+FontLang+"-Medium.ttf").exists()){
+            tempFont3 = Font.loadFont(new FileInputStream("./fonts/NotoSans"+FontLang+"-Medium.ttf"), 16);
+        }
+        final Font DefaultFont = tempFont1;
+        final Font TitleFont = tempFont2;
+        final Font Size16Font = tempFont3;
+
         boolean isFolderSet = false;
         Stage folder_stage = new Stage();
-        if (!file.exists()){
+        if (!file.exists()) {
             isFolderSet = true;
             try {
                 AnchorPane root = new AnchorPane();
 
                 Label label1 = new Label(Function.langData.get("setting-message2"));
-                if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                    label1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), label1.getFont().getSize()));
-                } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                    label1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), label1.getFont().getSize()));
-                }               
+                label1.setFont(DefaultFont);
                 label1.setLayoutX(5);
                 label1.setLayoutY(5);
                 root.getChildren().add(label1);
 
                 String str = Function.langData.get("setting-vrchat-logfolder").split(" \\(")[0];
                 Label label2 = new Label(str);
-                if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                    label2.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), label2.getFont().getSize()));
-                } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                    label2.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), label2.getFont().getSize()));
-                }
+                label2.setFont(DefaultFont);
                 label2.setLayoutX(5);
                 label2.setLayoutY(25);
                 root.getChildren().add(label2);
@@ -75,14 +108,10 @@ public class GUI extends Application {
                 root.getChildren().add(field1);
 
                 Button button1 = new Button(Function.langData.get("open"));
-                if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                    button1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), button1.getFont().getSize()));
-                } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                    button1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), button1.getFont().getSize()));
-                }
+                button1.setFont(DefaultFont);
                 button1.setLayoutX(410);
                 button1.setLayoutY(45);
-                button1.setOnAction(e->{
+                button1.setOnAction(e -> {
                     DirectoryChooser chooser = new DirectoryChooser();
                     chooser.setTitle("Select Folder");
                     chooser.setInitialDirectory(new File("./"));
@@ -92,7 +121,7 @@ public class GUI extends Application {
                     if (file2 != null) {
                         try {
                             field1.setText(file2.getCanonicalPath());
-                        } catch (Exception ex){
+                        } catch (Exception ex) {
                             //ex.printStackTrace();
                         }
                     }
@@ -101,14 +130,10 @@ public class GUI extends Application {
                 root.getChildren().add(button1);
 
                 Button button2 = new Button(Function.langData.get("setting-reflection"));
-                if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                    button2.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), button2.getFont().getSize()));
-                } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                    button2.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), button2.getFont().getSize()));
-                }
+                button2.setFont(DefaultFont);
                 button2.setLayoutX(5);
                 button2.setLayoutY(75);
-                button2.setOnAction(e->{
+                button2.setOnAction(e -> {
                     folder_stage.close();
                 });
                 root.getChildren().add(button2);
@@ -123,44 +148,44 @@ public class GUI extends Application {
                 folder_stage.setHeight(200);
                 folder_stage.setScene(scene);
 
-                folder_stage.setOnHidden(e->{
-                    if (new File(field1.getText()).exists()){
+                folder_stage.setOnHidden(e -> {
+                    if (new File(field1.getText()).exists()) {
                         Function.config.setLogFolderPass(field1.getText());
                         Function.SettingConfig(Function.config);
                         Platform.runLater(Platform::exit);
                     } else {
-                        if (folder_stage.isShowing()){
+                        if (folder_stage.isShowing()) {
                             folder_stage.close();
                         }
                         folder_stage.show();
                     }
                 });
                 folder_stage.show();
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        if (isFolderSet){
+        if (isFolderSet) {
             Function.timer1.cancel();
             Function.timer2.cancel();
             return;
         }
 
-        if (Function.config.isDebugOutput()){
-            System.out.println("[Info] "+Function.langData.get("logfolder-check"));
+        if (Function.config.isDebugOutput()) {
+            System.out.println("[Info] " + Function.langData.get("logfolder-check"));
         }
-        if (Function.config.getLogFolderPass() != null){
+        if (Function.config.getLogFolderPass() != null) {
             file = new File(Function.config.getLogFolderPass());
-            if (!file.exists()){
-                System.out.println("[Error] "+Function.langData.get("logfolder-notfound"));
+            if (!file.exists()) {
+                System.out.println("[Error] " + Function.langData.get("logfolder-notfound"));
                 Function.timer1.cancel();
                 Function.timer2.cancel();
                 Platform.runLater(Platform::exit);
                 return;
             }
         } else {
-            System.out.println("[Error] "+Function.langData.get("logfolder-setting-fail"));
+            System.out.println("[Error] " + Function.langData.get("logfolder-setting-fail"));
             Function.timer1.cancel();
             Function.timer2.cancel();
             Platform.runLater(Platform::exit);
@@ -170,19 +195,19 @@ public class GUI extends Application {
 
         try {
             Function.logFileList = Function.getFileList(Function.config.getLogFolderPass());
-        } catch (Exception e){
+        } catch (Exception e) {
             // e.printStackTrace();
         }
-        if (Function.logFileList.isEmpty()){
-            System.out.println("[Error] "+Function.langData.get("logfile-notfound"));
+        if (Function.logFileList.isEmpty()) {
+            System.out.println("[Error] " + Function.langData.get("logfile-notfound"));
             Function.timer1.cancel();
             Function.timer2.cancel();
             Platform.runLater(Platform::exit);
             return;
         }
 
-        if (Function.config.isDebugOutput()){
-            System.out.println("[Info] "+Function.langData.get("logfile-sort"));
+        if (Function.config.isDebugOutput()) {
+            System.out.println("[Info] " + Function.langData.get("logfile-sort"));
         }
 
         Function.timer1.scheduleAtFixedRate(new TimerTask() {
@@ -190,12 +215,12 @@ public class GUI extends Application {
             public void run() {
                 try {
                     List<String> logFileList = Function.getFileList(Function.config.getLogFolderPass());
-                    if (logFileList.size() > 1){
+                    if (logFileList.size() > 1) {
                         logFileList = Function.ListSort(logFileList);
                     }
 
                     Function.temp_lastLogFile[0] = Function.config.getLogFolderPass() + File.separator + logFileList.getLast();
-                } catch (Exception e){
+                } catch (Exception e) {
                     Function.timer1.cancel();
                     Function.timer2.cancel();
                     Function.isTimerRun = false;
@@ -203,7 +228,7 @@ public class GUI extends Application {
             }
         }, 0L, 1000L);
 
-        if (!isGUI){
+        if (!isGUI) {
             Function.timer1.cancel();
             Function.timer2.cancel();
             Platform.runLater(Platform::exit);
@@ -215,9 +240,9 @@ public class GUI extends Application {
         final LogData lastLogData = new LogData();
         lastLogData.setLogDate(new Date());
 
-        if (Function.config.isOldLogCheck()){
-            if (Function.config.isDebugOutput()){
-                System.out.println("[Info] "+Function.langData.get("log-extraction"));
+        if (Function.config.isOldLogCheck()) {
+            if (Function.config.isDebugOutput()) {
+                System.out.println("[Info] " + Function.langData.get("log-extraction"));
             }
 
             for (String s : Function.logFileList) {
@@ -233,17 +258,17 @@ public class GUI extends Application {
                         lastLogData.setURLType(logData.getURLType());
 
                         //LogData.add(logData);
-                        final String str = "["+Function.log_sdf.format(logData.getLogDate())+"] " + logData.getURL() + " ("+logData.getURLType()+")";
+                        final String str = "[" + Function.log_sdf.format(logData.getLogDate()) + "] " + logData.getURL() + " (" + logData.getURLType() + ")";
                         Function.logDataList.put(str, logData);
                         items.add(str);
                         listView.refresh();
                         listView.scrollTo(items.size());
                     }
 
-                } catch (Exception e){
+                } catch (Exception e) {
                     //e.printStackTrace();
-                    if (Function.config.isDebugOutput()){
-                        System.out.println("[Error] "+Function.langData.get("log-read-fail"));
+                    if (Function.config.isDebugOutput()) {
+                        System.out.println("[Error] " + Function.langData.get("log-read-fail"));
                         System.out.println("filename : " + file.getName());
                         e.printStackTrace();
                     }
@@ -251,9 +276,9 @@ public class GUI extends Application {
             }
         }
 
-        if (Function.config.isDebugOutput()){
+        if (Function.config.isDebugOutput()) {
             //System.out.println(Function.log_sdf.format(lastLogData.getLogDate()));
-            System.out.println("[Info] "+Function.langData.get("log-realtime-read"));
+            System.out.println("[Info] " + Function.langData.get("log-realtime-read"));
         }
 
         Function.timer2.scheduleAtFixedRate(new TimerTask() {
@@ -263,9 +288,9 @@ public class GUI extends Application {
 
                 try {
                     File f = new File(lastLogFile);
-                    for (LogData logData : Function.getLogForURL(Function.getTextForFile(f))){
+                    for (LogData logData : Function.getLogForURL(Function.getTextForFile(f))) {
                         String s = "[" + Function.log_sdf.format(logData.getLogDate()) + "] " + logData.getURL() + " (" + logData.getURLType() + ")";
-                        if (logData.getLogDate().getTime() >= lastLogData.getLogDate().getTime() && Function.logDataList.get(s) == null){
+                        if (logData.getLogDate().getTime() >= lastLogData.getLogDate().getTime() && Function.logDataList.get(s) == null) {
 
                             lastLogData.setLogDate(logData.getLogDate());
                             lastLogData.setURL(logData.getURL());
@@ -281,7 +306,7 @@ public class GUI extends Application {
 
                         }
                     }
-                } catch (Exception e){
+                } catch (Exception e) {
                     Function.timer1.cancel();
                     Function.timer2.cancel();
                     Function.isTimerRun = false;
@@ -290,28 +315,18 @@ public class GUI extends Application {
         }, 0L, 1000L);
 
 
-        if (Function.config.isDebugOutput()){
-            System.out.println("[Info] "+Function.langData.get("gui-create"));
+        if (Function.config.isDebugOutput()) {
+            System.out.println("[Info] " + Function.langData.get("gui-create"));
         }
         AnchorPane root = new AnchorPane();
         Label label = new Label("VRCVideoLogViewer");
         label.setLayoutX(15);
         label.setLayoutY(15);
-        if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-            label.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), 24));
-        } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-            label.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), 24));
-        } else {
-            label.setFont(new Font(24));
-        }
+        label.setFont(TitleFont);
         root.getChildren().add(label);
 
         Button button = new Button(Function.langData.get("setting"));
-        if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-            button.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), button.getFont().getSize()));
-        } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-            button.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), button.getFont().getSize()));
-        }
+        button.setFont(DefaultFont);
         button.setLayoutX(Function.ntSystem != null ? 260 : 300);
         button.setLayoutY(20);
         button.setOnAction(e->{
@@ -330,42 +345,26 @@ public class GUI extends Application {
                     });
 
                     Label setting_label1 = new Label(Function.langData.get("setting-message"));
-                    if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                        setting_label1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), setting_label1.getFont().getSize()));
-                    } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                        setting_label1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), setting_label1.getFont().getSize()));
-                    }
+                    setting_label1.setFont(DefaultFont);
                     setting_label1.setLayoutX(5);
                     setting_label1.setLayoutY(5);
                     setting_root.getChildren().add(setting_label1);
 
                     Button setting_button1 = new Button(Function.langData.get("setting-reflection"));
-                    if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                        setting_button1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), setting_button1.getFont().getSize()));
-                    } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                        setting_button1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), setting_button1.getFont().getSize()));
-                    }
+                    setting_button1.setFont(DefaultFont);
                     setting_button1.setLayoutX(700);
                     setting_button1.setLayoutY(5);
                     setting_button1.setOnAction(ev -> setting_stage.close());
                     setting_root.getChildren().add(setting_button1);
 
                     Label setting_label2 = new Label(Function.langData.get("setting-vrchat-logfolder"));
-                    if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                        setting_label2.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), setting_label2.getFont().getSize()));
-                    } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                        setting_label2.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), setting_label2.getFont().getSize()));
-                    }
+                    setting_label2.setFont(DefaultFont);
                     setting_label2.setLayoutX(5);
                     setting_label2.setLayoutY(25);
                     setting_root.getChildren().add(setting_label2);
 
                     TextField setting_field1 = new TextField();
-                    if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                        setting_field1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), setting_field1.getFont().getSize()));
-                    } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                        setting_field1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), setting_field1.getFont().getSize()));
-                    }
+                    setting_field1.setFont(DefaultFont);
                     setting_field1.setLayoutX(5);
                     setting_field1.setLayoutY(45);
                     setting_field1.setEditable(true);
@@ -381,11 +380,7 @@ public class GUI extends Application {
                     setting_root.getChildren().add(setting_checkbox1);
 
                     Label setting_label3 = new Label(Function.langData.get("setting-debug-print"));
-                    if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                        setting_label3.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), setting_label3.getFont().getSize()));
-                    } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                        setting_label3.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), setting_label3.getFont().getSize()));
-                    }
+                    setting_label3.setFont(DefaultFont);
                     setting_label3.setLayoutX(25);
                     setting_label3.setLayoutY(75);
                     setting_root.getChildren().add(setting_label3);
@@ -397,11 +392,7 @@ public class GUI extends Application {
                     setting_root.getChildren().add(setting_checkbox2);
 
                     Label setting_label4 = new Label(Function.langData.get("setting-previous-log-get"));
-                    if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                        setting_label4.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), setting_label4.getFont().getSize()));
-                    } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                        setting_label4.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), setting_label4.getFont().getSize()));
-                    }
+                    setting_label4.setFont(DefaultFont);
                     setting_label4.setLayoutX(25);
                     setting_label4.setLayoutY(95);
                     setting_root.getChildren().add(setting_label4);
@@ -413,11 +404,7 @@ public class GUI extends Application {
                     setting_root.getChildren().add(setting_checkbox3);
 
                     Label setting_label5 = new Label(Function.langData.get("setting-videoplayer"));
-                    if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                        setting_label5.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), setting_label5.getFont().getSize()));
-                    } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                        setting_label5.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), setting_label5.getFont().getSize()));
-                    }
+                    setting_label5.setFont(DefaultFont);
                     setting_label5.setLayoutX(25);
                     setting_label5.setLayoutY(115);
                     setting_root.getChildren().add(setting_label5);
@@ -429,11 +416,7 @@ public class GUI extends Application {
                     setting_root.getChildren().add(setting_checkbox4);
 
                     Label setting_label6 = new Label(Function.langData.get("setting-image"));
-                    if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                        setting_label6.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), setting_label6.getFont().getSize()));
-                    } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                        setting_label6.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), setting_label6.getFont().getSize()));
-                    }
+                    setting_label6.setFont(DefaultFont);
                     setting_label6.setLayoutX(25);
                     setting_label6.setLayoutY(135);
                     setting_root.getChildren().add(setting_label6);
@@ -445,11 +428,7 @@ public class GUI extends Application {
                     setting_root.getChildren().add(setting_checkbox5);
 
                     Label setting_label7 = new Label(Function.langData.get("setting-string"));
-                    if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                        setting_label7.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), setting_label7.getFont().getSize()));
-                    } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                        setting_label7.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), setting_label7.getFont().getSize()));
-                    }
+                    setting_label7.setFont(DefaultFont);
                     setting_label7.setLayoutX(25);
                     setting_label7.setLayoutY(155);
                     setting_root.getChildren().add(setting_label7);
@@ -480,11 +459,7 @@ public class GUI extends Application {
                         setting_root.getChildren().add(setting_checkbox6);
 
                         Label setting_label9 = new Label(Function.langData.get("setting-autostart-no"));
-                        if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                            setting_label9.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), setting_label9.getFont().getSize()));
-                        } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                            setting_label9.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), setting_label9.getFont().getSize()));
-                        }
+                        setting_label9.setFont(DefaultFont);
                         setting_label9.setLayoutX(25);
                         setting_label9.setLayoutY(195);
                         setting_root.getChildren().add(setting_label9);
@@ -499,11 +474,7 @@ public class GUI extends Application {
                         setting_root.getChildren().add(setting_checkbox7);
 
                         Label setting_label10 = new Label(Function.langData.get("setting-autostart-windows"));
-                        if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                            setting_label10.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), setting_label10.getFont().getSize()));
-                        } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                            setting_label10.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), setting_label10.getFont().getSize()));
-                        }
+                        setting_label10.setFont(DefaultFont);
                         setting_label10.setLayoutX(25);
                         setting_label10.setLayoutY(215);
                         setting_root.getChildren().add(setting_label10);
@@ -518,11 +489,7 @@ public class GUI extends Application {
                         setting_root.getChildren().add(setting_checkbox8);
 
                         Label setting_label11 = new Label(Function.langData.get("setting-autostart-vrchat"));
-                        if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                            setting_label11.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), setting_label11.getFont().getSize()));
-                        } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                            setting_label11.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), setting_label11.getFont().getSize()));
-                        }
+                        setting_label11.setFont(DefaultFont);
                         setting_label11.setLayoutX(25);
                         setting_label11.setLayoutY(235);
                         setting_root.getChildren().add(setting_label11);
@@ -563,17 +530,13 @@ public class GUI extends Application {
                     }
 
                     Label setting_label12 = new Label(Function.langData.get("setting-lang"));
-                    if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                        setting_label12.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), setting_label12.getFont().getSize()));
-                    } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                        setting_label12.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), setting_label12.getFont().getSize()));
-                    }
+                    setting_label12.setFont(DefaultFont);
                     setting_label12.setLayoutX(5);
                     setting_label12.setLayoutY(255);
                     setting_root.getChildren().add(setting_label12);
 
                     ListView<String> setting_listView = new ListView<>(lang_items);
-                    setting_listView.setCellFactory(lv -> new ListCell<String>() {
+                    setting_listView.setCellFactory(lv -> new ListCell<>() {
                         @Override
                         protected void updateItem(String item, boolean empty) {
                             super.updateItem(item, empty);
@@ -583,9 +546,17 @@ public class GUI extends Application {
                                 setText(item);
                                 try {
                                     if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                                        setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), getFont().getSize()));
+                                        setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), Font.getDefault().getSize()));
                                     } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                                        setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), getFont().getSize()));
+                                        setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), Font.getDefault().getSize()));
+                                    } else if ((item.equals("한국어")) && new File("./fonts/NotoSansKR-Medium.ttf").exists()){
+                                        setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansKR-Medium.ttf"), Font.getDefault().getSize()));
+                                    } else if ((item.equals("简体中文")) && new File("./fonts/NotoSansSC-Medium.ttf").exists()){
+                                        setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansSC-Medium.ttf"), Font.getDefault().getSize()));
+                                    } else if ((item.equals("繁體中文")) && new File("./fonts/NotoSansTC-Medium.ttf").exists()){
+                                        setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansTC-Medium.ttf"), Font.getDefault().getSize()));
+                                    } else {
+                                        setFont(DefaultFont);
                                     }
                                 } catch (Exception e){
                                     //e.printStackTrace();
@@ -634,20 +605,6 @@ public class GUI extends Application {
         listView.setPrefSize(1200, 600);
         listView.setLayoutX(15);
         listView.setLayoutY(55);
-
-        final Font font;
-        Font font1 = null;
-        try {
-            if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                font1 = Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), button.getFont().getSize());
-            } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                font1 = Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), button.getFont().getSize());
-            }
-        } catch (Exception e){
-            //e.printStackTrace();
-        }
-
-        font = font1;
         listView.setCellFactory(lv -> new ListCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -656,7 +613,7 @@ public class GUI extends Application {
                     setText(null);
                 } else {
                     setText(item);
-                    setFont(font);
+                    setFont(DefaultFont);
                 }
             }
         });
@@ -685,72 +642,32 @@ public class GUI extends Application {
                         Scene detail_scene = new Scene(detail_root);
 
                         Label detail_label1 = new Label(Function.langData.get("detail"));
-                        try {
-                            if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                                detail_label1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), detail_label1.getFont().getSize()));
-                            } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                                detail_label1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), detail_label1.getFont().getSize()));
-                            }
-                        } catch (Exception e){
-                            //e.printStackTrace();
-                        }
+                        detail_label1.setFont(DefaultFont);
                         detail_label1.setLayoutX(5);
                         detail_label1.setLayoutY(5);
                         detail_label1.setFont(new Font(16));
                         detail_root.getChildren().add(detail_label1);
 
                         Label detail_label1_2 = new Label(Function.langData.get("date"));
-                        try {
-                            if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                                detail_label1_2.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), detail_label1_2.getFont().getSize()));
-                            } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                                detail_label1_2.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), detail_label1_2.getFont().getSize()));
-                            }
-                        } catch (Exception e){
-                            //e.printStackTrace();
-                        }
+                        detail_label1_2.setFont(DefaultFont);
                         detail_label1_2.setLayoutX(10);
                         detail_label1_2.setLayoutY(40);
                         detail_root.getChildren().add(detail_label1_2);
 
                         Label detail_label1_2_1 = new Label(Function.log_sdf.format(data.getLogDate()));
-                        try {
-                            if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                                detail_label1_2_1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), detail_label1_2_1.getFont().getSize()));
-                            } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                                detail_label1_2_1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), detail_label1_2_1.getFont().getSize()));
-                            }
-                        } catch (Exception e){
-                            //e.printStackTrace();
-                        }
+                        detail_label1_2_1.setFont(DefaultFont);
                         detail_label1_2_1.setLayoutX(10);
                         detail_label1_2_1.setLayoutY(60);
                         detail_root.getChildren().add(detail_label1_2_1);
 
                         Label detail_label1_3 = new Label(Function.langData.get("url"));
-                        try {
-                            if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                                detail_label1_3.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), detail_label1_3.getFont().getSize()));
-                            } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                                detail_label1_3.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), detail_label1_3.getFont().getSize()));
-                            }
-                        } catch (Exception e){
-                            //e.printStackTrace();
-                        }
+                        detail_label1_3.setFont(DefaultFont);
                         detail_label1_3.setLayoutX(10);
                         detail_label1_3.setLayoutY(80);
                         detail_root.getChildren().add(detail_label1_3);
 
                         Button detail_button1 = new Button(Function.langData.get("open"));
-                        try {
-                            if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                                detail_button1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), detail_button1.getFont().getSize()));
-                            } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                                detail_button1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), detail_button1.getFont().getSize()));
-                            }
-                        } catch (Exception e){
-                            //e.printStackTrace();
-                        }
+                        detail_button1.setFont(DefaultFont);
                         detail_button1.setLayoutX(150);
                         detail_button1.setLayoutY(75);
                         detail_button1.setOnAction(e -> {
@@ -793,15 +710,7 @@ public class GUI extends Application {
                         detail_root.getChildren().add(detail_button1);
 
                         TextField detail_field = new TextField();
-                        try {
-                            if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                                detail_field.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), detail_field.getFont().getSize()));
-                            } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                                detail_field.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), detail_field.getFont().getSize()));
-                            }
-                        } catch (Exception e){
-                            //e.printStackTrace();
-                        }
+                        detail_field.setFont(DefaultFont);
                         detail_field.setLayoutX(10);
                         detail_field.setLayoutY(100);
                         detail_field.setEditable(false);
@@ -812,57 +721,25 @@ public class GUI extends Application {
                         //Platform.runLater(()-> );
 
                         Label detail_label1_4 = new Label(Function.langData.get("kind"));
-                        try {
-                            if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                                detail_label1_4.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), detail_label1_4.getFont().getSize()));
-                            } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                                detail_label1_4.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), detail_label1_4.getFont().getSize()));
-                            }
-                        } catch (Exception e){
-                            //e.printStackTrace();
-                        }
+                        detail_label1_4.setFont(DefaultFont);
                         detail_label1_4.setLayoutX(10);
                         detail_label1_4.setLayoutY(130);
                         detail_root.getChildren().add(detail_label1_4);
 
                         Label detail_label1_4_1 = new Label(data.getURLType().equals("Video") ? Function.langData.get("video") : data.getURLType().equals("String") ? Function.langData.get("string") : Function.langData.get("image"));
-                        try {
-                            if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                                detail_label1_4_1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), detail_label1_4_1.getFont().getSize()));
-                            } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                                detail_label1_4_1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), detail_label1_4_1.getFont().getSize()));
-                            }
-                        } catch (Exception e){
-                            //e.printStackTrace();
-                        }
+                        detail_label1_4_1.setFont(DefaultFont);
                         detail_label1_4_1.setLayoutX(10);
                         detail_label1_4_1.setLayoutY(150);
                         detail_root.getChildren().add(detail_label1_4_1);
 
                         Label detail_label1_5 = new Label(Function.langData.get("error-message"));
-                        try {
-                            if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                                detail_label1_5.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), detail_label1_5.getFont().getSize()));
-                            } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                                detail_label1_5.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), detail_label1_5.getFont().getSize()));
-                            }
-                        } catch (Exception e){
-                            //e.printStackTrace();
-                        }
+                        detail_label1_5.setFont(DefaultFont);
                         detail_label1_5.setLayoutX(10);
                         detail_label1_5.setLayoutY(170);
                         detail_root.getChildren().add(detail_label1_5);
 
                         TextArea detail_textArea = new TextArea();
-                        try {
-                            if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                                detail_textArea.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), detail_textArea.getFont().getSize()));
-                            } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                                detail_textArea.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), detail_textArea.getFont().getSize()));
-                            }
-                        } catch (Exception e){
-                            //e.printStackTrace();
-                        }
+                        detail_textArea.setFont(DefaultFont);
                         detail_textArea.setLayoutX(10);
                         detail_textArea.setLayoutY(190);
                         detail_textArea.setText(data.getErrorMessage());
@@ -873,30 +750,14 @@ public class GUI extends Application {
                         detail_root.getChildren().add(detail_textArea);
 
                         Button detail_button2 = new Button(Function.langData.get("exit"));
-                        try {
-                            if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                                detail_button2.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), detail_button2.getFont().getSize()));
-                            } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                                detail_button2.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), detail_button2.getFont().getSize()));
-                            }
-                        } catch (Exception e){
-                            //e.printStackTrace();
-                        }
+                        detail_button2.setFont(DefaultFont);
                         detail_button2.setLayoutX(650);
                         detail_button2.setLayoutY(10);
                         detail_button2.setOnAction(e -> detail_stage.close());
                         detail_root.getChildren().add(detail_button2);
 
                         Label detail_label1_6 = new Label(Function.langData.get("now-loading"));
-                        try {
-                            if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                                detail_label1_6.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), detail_label1_6.getFont().getSize()));
-                            } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                                detail_label1_6.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), detail_label1_6.getFont().getSize()));
-                            }
-                        } catch (Exception e){
-                            //e.printStackTrace();
-                        }
+                        detail_label1_6.setFont(DefaultFont);
                         detail_label1_6.setLayoutX(10);
                         detail_label1_6.setLayoutY(360);
                         detail_root.getChildren().add(detail_label1_6);
@@ -917,15 +778,7 @@ public class GUI extends Application {
                                 Platform.runLater(()->detail_label1_6.setText(Function.langData.get("video-title")));
 
                                 TextField detail_field2 = new TextField();
-                                try {
-                                    if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                                        detail_field2.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), detail_field2.getFont().getSize()));
-                                    } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                                        detail_field2.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), detail_field2.getFont().getSize()));
-                                    }
-                                } catch (Exception e){
-                                    //e.printStackTrace();
-                                }
+                                detail_field2.setFont(DefaultFont);
                                 detail_field2.setLayoutX(10);
                                 detail_field2.setLayoutY(380);
                                 detail_field2.setEditable(false);
@@ -1017,15 +870,7 @@ public class GUI extends Application {
                                 if (str != null) {
 
                                     TextArea detail_textArea2 = new TextArea();
-                                    try {
-                                        if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                                            detail_textArea2.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), detail_textArea2.getFont().getSize()));
-                                        } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                                            detail_textArea2.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), detail_textArea2.getFont().getSize()));
-                                        }
-                                    } catch (Exception e){
-                                        //e.printStackTrace();
-                                    }
+                                    detail_textArea2.setFont(DefaultFont);
                                     detail_textArea2.setLayoutX(10);
                                     detail_textArea2.setLayoutY(360);
                                     detail_textArea2.setText(str);
@@ -1068,72 +913,32 @@ public class GUI extends Application {
             Scene update_scene = new Scene(update_root);
 
             Button update_button1 = new Button(Function.langData.get("exit"));
-            try {
-                if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                    update_button1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), update_button1.getFont().getSize()));
-                } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                    update_button1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), update_button1.getFont().getSize()));
-                }
-            } catch (Exception e){
-                //e.printStackTrace();
-            }
+            update_button1.setFont(DefaultFont);
             update_button1.setLayoutX(300);
             update_button1.setLayoutY(10);
             update_button1.setOnAction(e -> update_stage.close());
             update_root.getChildren().add(update_button1);
 
             Label update_label1 = new Label(Function.langData.get("update-notify"));
-            try {
-                if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                    update_label1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), 16));
-                } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                    update_label1.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), 16));
-                }
-            } catch (Exception e){
-                //e.printStackTrace();
-            }
+            update_label1.setFont(Size16Font);
             update_label1.setLayoutX(5);
             update_label1.setLayoutY(5);
             update_root.getChildren().add(update_label1);
 
             Label update_label2 = new Label(Function.langData.get("update-found"));
-            try {
-                if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                    update_label2.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), update_label2.getFont().getSize()));
-                } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                    update_label2.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), update_label2.getFont().getSize()));
-                }
-            } catch (Exception e){
-                //e.printStackTrace();
-            }
+            update_label2.setFont(DefaultFont);
             update_label2.setLayoutX(10);
             update_label2.setLayoutY(40);
             update_root.getChildren().add(update_label2);
 
             Label update_label3 = new Label(Function.langData.get("update-now-version").replaceAll("#nowver#", Function.Version));
-            try {
-                if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                    update_label3.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), update_label3.getFont().getSize()));
-                } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                    update_label3.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), update_label3.getFont().getSize()));
-                }
-            } catch (Exception e){
-                //e.printStackTrace();
-            }
+            update_label3.setFont(DefaultFont);
             update_label3.setLayoutX(10);
             update_label3.setLayoutY(80);
             update_root.getChildren().add(update_label3);
 
             Label update_label4 = new Label(Function.langData.get("update-new-version").replaceAll("#newver#", Function.new_version));
-            try {
-                if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                    update_label4.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), update_label4.getFont().getSize()));
-                } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                    update_label4.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), update_label4.getFont().getSize()));
-                }
-            } catch (Exception e){
-                //e.printStackTrace();
-            }
+            update_label4.setFont(DefaultFont);
             update_label4.setLayoutX(10);
             update_label4.setLayoutY(100);
             update_root.getChildren().add(update_label4);
@@ -1141,15 +946,7 @@ public class GUI extends Application {
             if (Function.ntSystem != null){
                 // Windowsの場合のアップデートバッチ用のボタン
                 Button update_button2 = new Button(Function.langData.get("update"));
-                try {
-                    if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
-                        update_button2.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), update_button2.getFont().getSize()));
-                    } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
-                        update_button2.setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), update_button2.getFont().getSize()));
-                    }
-                } catch (Exception e){
-                    //e.printStackTrace();
-                }
+                update_button2.setFont(DefaultFont);
                 update_button2.setLayoutX(10);
                 update_button2.setLayoutY(120);
                 update_button2.setOnAction(e -> {

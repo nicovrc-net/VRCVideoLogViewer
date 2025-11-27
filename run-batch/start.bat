@@ -35,18 +35,20 @@ if exist "./tools/" (
 	)
 
 	if exist "./fonts" (
-	    if exist "./fonts/NotoSansCJK-Regular.ttc" (
-	        echo Font OK
-	    ) else (
-	        if exist "./fonts/NotoSansCJK-Regular.ttf" (
-        	    echo Font OK
-        	) else (
-        	    curl -L "https://github.com/googlefonts/noto-cjk/raw/main/Sans/Variable/OTC/NotoSansCJK-VF.ttf.ttc" --output ./fonts/NotoSansCJK-Regular.ttc
-        	)
-	    )
+	    if exist "./fonts/NotoSansJP-Medium.ttf" (
+            echo Font OK
+        ) else (
+            curl -L "https://fonts.gstatic.com/s/notosansjp/v55/-F6jfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFCMj75vY0rw-oME.ttf" --output ./fonts/NotoSansJP-Medium.ttf
+            curl -L "https://fonts.gstatic.com/s/notosanskr/v38/PbyxFmXiEBPT4ITbgNA5Cgms3VYcOA-vvnIzztgyeLTq8H4hfeE.ttf" --output ./fonts/NotoSansKR-Medium.ttf
+            curl -L "https://fonts.gstatic.com/s/notosanssc/v39/k3kCo84MPvpLmixcA63oeAL7Iqp5IZJF9bmaG-3FnYxNbPzS5HE.ttf" --output ./fonts/NotoSansSC-Medium.ttf
+            curl -L "https://fonts.gstatic.com/s/notosanstc/v38/-nFuOG829Oofr2wohFbTp9ifNAn722rq0MXz75Ky_CpOtma3uNQ.ttf" --output ./fonts/NotoSansTC-Medium.ttf
+        )
 	) else (
 	    mkdir fonts
-	    curl -L "https://github.com/googlefonts/noto-cjk/raw/main/Sans/Variable/OTC/NotoSansCJK-VF.ttf.ttc" --output ./fonts/NotoSansCJK-Regular.ttc
+	    curl -L "https://fonts.gstatic.com/s/notosansjp/v55/-F6jfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFCMj75vY0rw-oME.ttf" --output ./fonts/NotoSansJP-Medium.ttf
+        curl -L "https://fonts.gstatic.com/s/notosanskr/v38/PbyxFmXiEBPT4ITbgNA5Cgms3VYcOA-vvnIzztgyeLTq8H4hfeE.ttf" --output ./fonts/NotoSansKR-Medium.ttf
+        curl -L "https://fonts.gstatic.com/s/notosanssc/v39/k3kCo84MPvpLmixcA63oeAL7Iqp5IZJF9bmaG-3FnYxNbPzS5HE.ttf" --output ./fonts/NotoSansSC-Medium.ttf
+        curl -L "https://fonts.gstatic.com/s/notosanstc/v38/-nFuOG829Oofr2wohFbTp9ifNAn722rq0MXz75Ky_CpOtma3uNQ.ttf" --output ./fonts/NotoSansTC-Medium.ttf
 	)
 	
 	echo Starting...
@@ -73,7 +75,10 @@ if exist "./tools/" (
 	.\tools\7z2501\7za.exe x -o./tools/ImageMagick-7.1.2-8-portable-Q16-x64 ./tools/ImageMagick-7.1.2-8-portable-Q16-x64.7z
 
 	mkdir fonts
-	curl -L "https://github.com/googlefonts/noto-cjk/raw/main/Sans/Variable/OTC/NotoSansCJK-VF.ttf.ttc" --output ./fonts/NotoSansCJK-Regular.ttc
+	curl -L "https://fonts.gstatic.com/s/notosansjp/v55/-F6jfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFCMj75vY0rw-oME.ttf" --output ./fonts/NotoSansJP-Medium.ttf
+    curl -L "https://fonts.gstatic.com/s/notosanskr/v38/PbyxFmXiEBPT4ITbgNA5Cgms3VYcOA-vvnIzztgyeLTq8H4hfeE.ttf" --output ./fonts/NotoSansKR-Medium.ttf
+    curl -L "https://fonts.gstatic.com/s/notosanssc/v39/k3kCo84MPvpLmixcA63oeAL7Iqp5IZJF9bmaG-3FnYxNbPzS5HE.ttf" --output ./fonts/NotoSansSC-Medium.ttf
+    curl -L "https://fonts.gstatic.com/s/notosanstc/v38/-nFuOG829Oofr2wohFbTp9ifNAn722rq0MXz75Ky_CpOtma3uNQ.ttf" --output ./fonts/NotoSansTC-Medium.ttf
 	
 	echo Starting...
 	
