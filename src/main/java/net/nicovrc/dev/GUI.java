@@ -438,6 +438,7 @@ public class GUI extends Application {
                     CheckBox setting_checkbox8 = new CheckBox();
                     if (Function.ntSystem != null){
                         Label setting_label8 = new Label(Function.langData.get("setting-autostart"));
+                        setting_label8.setFont(DefaultFont);
                         setting_label8.setLayoutX(5);
                         setting_label8.setLayoutY(175);
                         setting_root.getChildren().add(setting_label8);
