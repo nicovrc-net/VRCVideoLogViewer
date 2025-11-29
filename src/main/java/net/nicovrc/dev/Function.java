@@ -186,18 +186,30 @@ public class Function {
             if (video_error2.find()){
                 String group = video_error2.group(7);
                 if (group.startsWith("Error: ")){
-                    logData.getLast().setErrorMessage(group);
+                    if (logData.getLast().getErrorMessage() == null || logData.getLast().getErrorMessage().isEmpty()){
+                        logData.getLast().setErrorMessage(group);
+                    } else {
+                        logData.getLast().setErrorMessage(logData.getLast().getErrorMessage() + "\n" + group);
+                    }
                 }
             }
 
             if (image_error.find()){
                 //System.out.println(image_error.group(7) + " : " + image_error.group(8));
-                errorList.put(image_error.group(7), image_error.group(8));
+                if (errorList.get(image_error.group(7)) == null || errorList.get(image_error.group(7)).isEmpty()) {
+                    errorList.put(image_error.group(7), image_error.group(8));
+                } else {
+                    errorList.put(image_error.group(7), errorList.get(image_error.group(7)) + "\n" + image_error.group(8));
+                }
             }
 
             if (string_error.find()){
                 //System.out.println(string_error.group(7) + " : " + string_error.group(8));
-                errorList.put(string_error.group(7), string_error.group(8));
+                if (errorList.get(string_error.group(7)) == null || errorList.get(string_error.group(7)).isEmpty()) {
+                    errorList.put(string_error.group(7), string_error.group(8));
+                } else {
+                    errorList.put(string_error.group(7), errorList.get(image_error.group(7)) + "\n" + string_error.group(8));
+                }
             }
 
             if (video.find()){
