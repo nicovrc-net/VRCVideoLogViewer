@@ -274,6 +274,7 @@ jobs:
           body: |
             - Linux版Steamの設定パスを自動取得するように
             - 表示フォントをNoto Fontに変更
+            - バグ修正
           draft: false
           prerelease: false
 
