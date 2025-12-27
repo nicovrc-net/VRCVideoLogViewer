@@ -1,5 +1,5 @@
 pkgname=VRCVideoLogViewer
-pkgver=1.1.0
+pkgver=1.1.1
 pkgrel=1
 pkgdesc="A tool for parsing VRChat logs to collect links to videos, images, and text content."
 arch=('x86_64')
@@ -47,7 +47,7 @@ package() {
     install -dm755 "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
     ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
 
-    ln -s /usr/share/fonts/noto-cjk/ ./fonts
+    ln -s /usr/share/fonts/noto-cjk/ "$pkgdir/usr/share/$pkgname/./fonts"
 
     ln -s "$pkgdir/usr/share/$pkgname/start_forLinux.sh" "/$pkgdir/usr/bin/$pkgname"
 
