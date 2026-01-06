@@ -269,7 +269,7 @@ public class Main {
         }
 
         if (isWindowsBatchStart){
-            file = new File("./tools/ImageMagick-7.1.2-8-portable-Q16-x64.7z");
+            file = new File("./tools/ImageMagick-7.1.2-12-portable-Q16-x64.7z");
             file.delete();
         }
 

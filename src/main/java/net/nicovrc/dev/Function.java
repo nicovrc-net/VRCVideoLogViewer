@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 public class Function {
 
-    public static final String Version = "1.1.1";
+    public static final String Version = "1.1.2";
 
     public static final String UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0 VRCVideoLogViewer/"+Version;
     public static final String Unity_UserAgent = "UnityPlayer/2022.3.22f1-DWR (UnityWebRequest/1.0, libcurl/8.5.0-DEV)";
@@ -378,7 +378,7 @@ public class Function {
 
         final Process exec0;
         if (ntSystem != null){
-            exec0 = runtime.exec(new String[]{".\\tools\\ImageMagick-7.1.2-8-portable-Q16-x64\\magick.exe", "./temp/"+filename+".webp", "./temp/"+filename+".png"});
+            exec0 = runtime.exec(new String[]{".\\tools\\ImageMagick-7.1.2-12-portable-Q16-x64\\magick.exe", "./temp/"+filename+".webp", "./temp/"+filename+".png"});
         } else {
             exec0 = runtime.exec(new String[]{"./tools/ImageMagick/magick", "./temp/"+filename+".webp", "./temp/"+filename+".png"});
         }
