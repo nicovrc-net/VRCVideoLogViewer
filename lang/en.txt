@@ -3,6 +3,10 @@ lang_name="English"
 
 # startup
 start-message="VRCVideoLogViewer Ver #version# started"
+imagemagick-check="Checking for ImageMagick"
+imagemagick-notfound="Not found: Downloading ImageMagick"
+notofont-check="Checking for Noto Font"
+notofont-notfound="Not found: Downloading Noto Font"
 update-check="Check for updates"
 update-found="Update found."
 update-notfound="No updates found. (Current: #nowver# Latest: #newver#)"

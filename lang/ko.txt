@@ -3,6 +3,10 @@ lang_name="한국어"
 
 # 시작 시
 start-message="VRCVideoLogViewer Ver #version# 시작"
+imagemagick-check="ImageMagick 존재 여부 확인"
+imagemagick-notfound="없음: ImageMagick 다운로드 중"
+notofont-check="Noto Font 존재 여부 확인"
+notofont-notfound="없음: Noto Font 다운로드 중"
 update-check="업데이트 확인"
 update-found="업데이트를 찾았습니다."
 update-notfound="업데이트가 없습니다. (현재: #nowver# 최신: #newver#)"

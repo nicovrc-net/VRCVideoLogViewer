@@ -3,6 +3,10 @@ lang_name="简体中文"
 
 # 启动时
 start-message="VRCVideoLogViewer 版本 #version# 已启动"
+imagemagick-check="检查 ImageMagick 是否存在"
+imagemagick-notfound="未找到：正在下载 ImageMagick"
+notofont-check="检查 Noto Font 是否存在"
+notofont-notfound="未找到：正在下载 Noto Font"
 update-check="检查更新"
 update-found="发现更新。"
 update-notfound="未发现更新。 (当前: #nowver# 最新: #newver#)"

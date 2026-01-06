@@ -3,6 +3,10 @@ lang_name="日本語"
 
 # 起動時
 start-message="VRCVideoLogViewer Ver #version#起動"
+imagemagick-check="ImageMagickの存在チェック"
+imagemagick-notfound="存在しない : ImageMagickをダウンロードします"
+notofont-check="Noto Fontの存在チェック"
+notofont-notfound="存在しない : Noto Fontのダウンロード"
 update-check="アップデート確認"
 update-found="アップデートが見つかりました。"
 update-notfound="アップデートはありませんでした。 (現在: #nowver# 最新: #newver#)"
