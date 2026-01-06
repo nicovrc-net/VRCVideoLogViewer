@@ -27,11 +27,11 @@ if exist "./tools/" (
 		.\tools\7z2501\7za.exe x -o./tools/ ./tools/openjfx-21.0.9_windows-x64_bin-sdk.zip
 	)
 	
-	if exist "./tools/ImageMagick-7.1.2-8-portable-Q16-x64" (
+	if exist "./tools/ImageMagick-7.1.2-12-portable-Q16-x64" (
 		echo ImageMagick OK
 	) else (
-		curl https://imagemagick.org/archive/binaries/ImageMagick-7.1.2-11-portable-Q16-x64.7z --output ./tools/ImageMagick-7.1.2-11-portable-Q16-x64.7z
-		.\tools\7z2501\7za.exe x -o./tools/ImageMagick-7.1.2-8-portable-Q16-x64 ./tools/ImageMagick-7.1.2-11-portable-Q16-x64.7z
+		curl https://imagemagick.org/archive/binaries/ImageMagick-7.1.2-12-portable-Q16-x64.7z --output ./tools/ImageMagick-7.1.2-12-portable-Q16-x64.7z
+		.\tools\7z2501\7za.exe x -o./tools/ImageMagick-7.1.2-12-portable-Q16-x64 ./tools/ImageMagick-7.1.2-12-portable-Q16-x64.7z
 	)
 
 	if exist "./fonts" (
@@ -71,8 +71,8 @@ if exist "./tools/" (
 	curl https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_windows-x64_bin-sdk.zip --output ./tools/openjfx-21.0.9_windows-x64_bin-sdk.zip
 	.\tools\7z2501\7za.exe x -o./tools/ ./tools/openjfx-21.0.9_windows-x64_bin-sdk.zip
 	
-	curl https://imagemagick.org/archive/binaries/ImageMagick-7.1.2-11-portable-Q16-x64.7z --output ./tools/ImageMagick-7.1.2-11-portable-Q16-x64.7z
-	.\tools\7z2501\7za.exe x -o./tools/ImageMagick-7.1.2-8-portable-Q16-x64 ./tools/ImageMagick-7.1.2-11-portable-Q16-x64.7z
+	curl https://imagemagick.org/archive/binaries/ImageMagick-7.1.2-12-portable-Q16-x64.7z --output ./tools/ImageMagick-7.1.2-12-portable-Q16-x64.7z
+	.\tools\7z2501\7za.exe x -o./tools/ImageMagick-7.1.2-12-portable-Q16-x64 ./tools/ImageMagick-7.1.2-12-portable-Q16-x64.7z
 
 	mkdir fonts
 	curl -L "https://fonts.gstatic.com/s/notosansjp/v55/-F6jfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFCMj75vY0rw-oME.ttf" --output ./fonts/NotoSansJP-Medium.ttf
