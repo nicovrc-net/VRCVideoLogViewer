@@ -37,34 +37,7 @@ if [ -d ./tools ]; then
 		mv ./javafx-sdk-21.0.9 ./tools
 		
 	fi
-	
-	if [ -d ./tools/ImageMagick ]; then
-		echo "ImageMagick OK"
-	else
-		mkdir ./tools/ImageMagick
-		curl https://imagemagick.org/archive/binaries/magick --output ./tools/ImageMagick/magick
-		chmod +x ./tools/ImageMagick/magick
-	fi
 
-	if [ -f ./fonts/NotoSansCJK-Regular.ttc ]; then
-		echo "Font OK"
-	else
-	  if [ -f ./fonts/NotoSansCJK-Regular.ttf ]; then
-	    echo "Font OK"
-	  else
-	    if [ -d /usr/share/fonts/noto-cjk/ ]; then
-	      ln -s /usr/share/fonts/noto-cjk/ ./fonts
-	    else
-	      if [ -d /usr/share/fonts/opentype/noto/ ]; then
-	        ln -s /usr/share/fonts/opentype/noto/ ./fonts
-	      else
-	        mkdir -p ./fonts
-	        curl https://github.com/googlefonts/noto-cjk/raw/main/Sans/Variable/OTC/NotoSansCJK-VF.ttf.ttc --output ./fonts/NotoSansCJK-Regular.ttc
-	      fi
-	    fi
-	  fi
-	fi
-	
 	echo "Starting..."
 	./tools/jdk-21.0.2/bin/java --module-path "./tools/javafx-sdk-21.0.9/lib" --add-modules javafx.controls,javafx.fxml -jar ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
 else 
@@ -89,21 +62,6 @@ else
 	curl https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_linux-x64_bin-sdk.zip --output ./tools/openjfx-21.0.9_linux-x64_bin-sdk.zip
 	./tools/7z2501/7zz x ./tools/openjfx-21.0.9_linux-x64_bin-sdk.zip
 	mv ./javafx-sdk-21.0.9 ./tools
-	
-	mkdir ./tools/ImageMagick
-	curl https://imagemagick.org/archive/binaries/magick --output ./tools/ImageMagick/magick
-	chmod +x ./tools/ImageMagick/magick
-
-	if [ -d /usr/share/fonts/noto-cjk/ ]; then
-	  ln -s /usr/share/fonts/noto-cjk/ ./fonts
-	else
-	  if [ -d /usr/share/fonts/opentype/noto/ ]; then
-	    ln -s /usr/share/fonts/opentype/noto/ ./fonts
-	  else
-	    mkdir -p ./fonts
-	    curl https://github.com/googlefonts/noto-cjk/raw/main/Sans/Variable/OTC/NotoSansCJK-VF.ttf.ttc --output ./fonts/NotoSansCJK-Regular.ttc
-	  fi
-	fi
 
 	echo "Starting..."
 	./tools/jdk-21.0.2/bin/java --module-path "./tools/javafx-sdk-21.0.9/lib" --add-modules javafx.controls,javafx.fxml -jar ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
