@@ -20,24 +20,23 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.*;
 import java.util.regex.Matcher;
 
 public class GUI extends Application {
 
     private static boolean isGUI = true;
+    private final HttpClient client;
 
-    public GUI(boolean isGUI){
+    public GUI(boolean isGUI, HttpClient client){
         this.isGUI = isGUI;
+        this.client = client;
     }
 
     @Override
     public void start(Stage stage) throws Exception {
 
         File file = new File(Function.config.getLogFolderPass());
-
-
         String TempFontLang = "JP";
         if (Function.langData.get("lang_name").equals("한국어")) {
             TempFontLang = "KR";
@@ -802,12 +801,7 @@ public class GUI extends Application {
                             }
                             case "Image" -> {
                                 Image fxImage = null;
-                                try (HttpClient client = HttpClient.newBuilder()
-                                        .version(HttpClient.Version.HTTP_2)
-                                        .followRedirects(HttpClient.Redirect.NORMAL)
-                                        .connectTimeout(Duration.ofSeconds(5))
-                                        .build()) {
-
+                                try {
                                     HttpRequest request = HttpRequest.newBuilder()
                                             .uri(new URI(data.getURL()))
                                             //.uri(new URI("https://i2i.nicovrc.net/?url=https://nicovrc.net/VRChat_2024-08-16_03-59-02.141_3840x2160.png"))
@@ -825,8 +819,8 @@ public class GUI extends Application {
                                     }
 
                                     fxImage = new Image(new ByteArrayInputStream(input));
-                                } catch (Exception e) {
-                                    // e.printStackTrace();
+                                } catch (Exception e){
+                                    throw new RuntimeException(e);
                                 }
 
                                 Platform.runLater(()->detail_root.getChildren().remove(detail_label1_6));
@@ -845,12 +839,7 @@ public class GUI extends Application {
 
                                 String str = null;
 
-                                try (HttpClient client = HttpClient.newBuilder()
-                                        .version(HttpClient.Version.HTTP_2)
-                                        .followRedirects(HttpClient.Redirect.NORMAL)
-                                        .connectTimeout(Duration.ofSeconds(5))
-                                        .build()) {
-
+                                try {
                                     HttpRequest request = HttpRequest.newBuilder()
                                             .uri(new URI(data.getURL()))
                                             //.uri(new URI("https://i2i.nicovrc.net/?url=https://nicovrc.net/VRChat_2024-08-16_03-59-02.141_3840x2160.png"))
@@ -862,9 +851,8 @@ public class GUI extends Application {
 
                                     HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
                                     str = send.body();
-
-                                } catch (Exception e) {
-                                    // e.printStackTrace();
+                                } catch (Exception e){
+                                    throw new RuntimeException(e);
                                 }
 
                                 Platform.runLater(()->detail_root.getChildren().remove(detail_label1_6));
@@ -1005,5 +993,6 @@ public class GUI extends Application {
                 //e.printStackTrace();
             }
         });
+
     }
 }

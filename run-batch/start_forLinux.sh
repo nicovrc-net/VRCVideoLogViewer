@@ -20,26 +20,28 @@ if [ -d ./tools ]; then
 		chmod +x ./tools/7z2501/7zz
 	fi
 	
-	if [ -d ./tools/jdk-21.0.2 ]; then
+	if [ -d ./tools/jdk-21 ]; then
 		echo "OpenJDK21 OK"
 	else
 		curl https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz --output ./tools/openjdk-21.0.2_linux-x64_bin.tar.gz
 		tar -zxvf ./tools/openjdk-21.0.2_linux-x64_bin.tar.gz
 		mv ./jdk-21.0.2 ./tools
-		chmod +x ./tools/jdk-21.0.2/bin/java
+		mv ./tools/jdk-21.0.2 ./tools/jdk-21
+		chmod +x ./tools/jdk-21/bin/java
 	fi
 
-	if [ -d ./tools/javafx-sdk-21.0.9 ]; then
+	if [ -d ./tools/javafx-sdk-21.0.10 ]; then
 		echo "OpenFX OK"
 	else
-		curl https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_linux-x64_bin-sdk.zip --output ./tools/openjfx-21.0.9_linux-x64_bin-sdk.zip
-		./tools/7z/7zz x ./tools/openjfx-21.0.9_linux-x64_bin-sdk.zip
-		mv ./javafx-sdk-21.0.9 ./tools
+		curl https://download2.gluonhq.com/openjfx/21.0.10/openjfx-21.0.10_linux-x64_bin-sdk.zip --output ./tools/openjfx-21.0.10_linux-x64_bin-sdk.zip
+		./tools/7z/7zz x ./tools/openjfx-21.0.10_linux-x64_bin-sdk.zip
+		mv ./javafx-sdk-21.0.10 ./tools
+		mv ./tools/javafx-sdk-21.0.10 ./tools/javafx-sdk-21
 		
 	fi
 
 	echo "Starting..."
-	./tools/jdk-21.0.2/bin/java --module-path "./tools/javafx-sdk-21.0.9/lib" --add-modules javafx.controls,javafx.fxml -jar ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
+	./tools/jdk-21/bin/java --module-path "./tools/javafx-sdk-21/lib" --add-modules javafx.controls,javafx.fxml -jar ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
 else 
 	mkdir ./tools
 	
@@ -57,13 +59,15 @@ else
 	curl https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz --output ./tools/openjdk-21.0.2_linux-x64_bin.tar.gz
 	tar -zxvf ./tools/openjdk-21.0.2_linux-x64_bin.tar.gz
 	mv ./jdk-21.0.2 ./tools
-	chmod +x ./tools/jdk-21.0.2/bin/java
+	mv ./tools/jdk-21.0.2 ./tools/jdk-21
+	chmod +x ./tools/jdk-21/bin/java
 
-	curl https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_linux-x64_bin-sdk.zip --output ./tools/openjfx-21.0.9_linux-x64_bin-sdk.zip
-	./tools/7z2501/7zz x ./tools/openjfx-21.0.9_linux-x64_bin-sdk.zip
-	mv ./javafx-sdk-21.0.9 ./tools
+	curl https://download2.gluonhq.com/openjfx/21.0.10/openjfx-21.0.10_linux-x64_bin-sdk.zip --output ./tools/openjfx-21.0.10_linux-x64_bin-sdk.zip
+	./tools/7z2501/7zz x ./tools/openjfx-21.0.10_linux-x64_bin-sdk.zip
+	mv ./javafx-sdk-21.0.10 ./tools
+	mv ./tools/javafx-sdk-21.0.10 ./tools/javafx-sdk-21
 
 	echo "Starting..."
-	./tools/jdk-21.0.2/bin/java --module-path "./tools/javafx-sdk-21.0.9/lib" --add-modules javafx.controls,javafx.fxml -jar ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
+	./tools/jdk-21/bin/java --module-path "./tools/javafx-sdk-21.0.10/lib" --add-modules javafx.controls,javafx.fxml -jar ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
 	
 fi

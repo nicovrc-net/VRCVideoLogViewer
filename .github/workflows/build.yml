@@ -241,10 +241,10 @@ jobs:
           mkdir -p ./deb-package/usr/share/VRCVideoLogViewer/tools
           mkdir -p ./deb-package/usr/share/VRCVideoLogViewer/tools/7z2501
           
-          mkdir -p ./deb-package/usr/share/VRCVideoLogViewer/tools/jdk-21.0.2/bin
-          ln -s /usr/lib/jvm/java-21-openjdk-amd64/bin/java ./deb-package/usr/share/VRCVideoLogViewer/tools/jdk-21.0.2/bin/java
+          mkdir -p ./deb-package/usr/share/VRCVideoLogViewer/tools/jdk-21/bin
+          ln -s /usr/lib/jvm/java-21-openjdk-amd64/bin/java ./deb-package/usr/share/VRCVideoLogViewer/tools/jdk-21/bin/java
           
-          echo -e "#!/bin/bash\ncurl https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_linux-x64_bin-sdk.zip --output /usr/share/VRCVideoLogViewer/tools/openjfx-21.0.9_linux-x64_bin-sdk.zip\nunzip /usr/share/VRCVideoLogViewer/tools/openjfx-21.0.9_linux-x64_bin-sdk.zip -d /usr/share/VRCVideoLogViewer/tools/" > ./deb-package/DEBIAN/postinst
+          echo -e "#!/bin/bash\ncurl https://download2.gluonhq.com/openjfx/21.0.10/openjfx-21.0.10_linux-x64_bin-sdk.zip --output /usr/share/VRCVideoLogViewer/tools/openjfx-21.0.10_linux-x64_bin-sdk.zip\nunzip /usr/share/VRCVideoLogViewer/tools/openjfx-21.0.10_linux-x64_bin-sdk.zip -d /usr/share/VRCVideoLogViewer/tools/" > ./deb-package/DEBIAN/postinst
           chmod +x ./deb-package/DEBIAN/postinst
           
           mkdir -p ./deb-package/usr/share/VRCVideoLogViewer/tools/ImageMagick

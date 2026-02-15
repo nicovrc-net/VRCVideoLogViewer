@@ -1,5 +1,5 @@
 pkgname=VRCVideoLogViewer
-pkgver=1.1.1
+pkgver=1.2.0
 pkgrel=1
 pkgdesc="A tool for parsing VRChat logs to collect links to videos, images, and text content."
 arch=('x86_64')
@@ -7,7 +7,7 @@ url="https://github.com/nicovrc-net/VRCVideoLogViewer"
 license=('MIT')
 depends=('jdk21-openjdk' 'imagemagick' 'noto-fonts-cjk')
 makedepends=('git' 'curl')
-source=( "$pkgname::git+https://github.com/nicovrc-net/VRCVideoLogViewer.git#branch=release" "7z2501-linux-x64.tar.xz::https://www.7-zip.org/a/7z2501-linux-x64.tar.xz" "openjfx-21.0.9_linux-x64_bin-sdk.zip::https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_linux-x64_bin-sdk.zip")
+source=( "$pkgname::git+https://github.com/nicovrc-net/VRCVideoLogViewer.git#branch=release" "7z2501-linux-x64.tar.xz::https://www.7-zip.org/a/7z2501-linux-x64.tar.xz" "openjfx-21.0.10_linux-x64_bin-sdk.zip::https://download2.gluonhq.com/openjfx/21.0.10/openjfx-21.0.10_linux-x64_bin-sdk.zip")
 sha256sums=('SKIP' 'SKIP' 'SKIP')
 
 options=('!debug')
@@ -38,11 +38,12 @@ package() {
     install -Dm644 "build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar" "$pkgdir/usr/share/$pkgname/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar"
 
     install -d "$pkgdir/usr/share/$pkgname/tools/7z2501"
-    install -d "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin"
-    ln -s /usr/lib/jvm/java-21-openjdk/bin/java "$pkgdir/usr/share/$pkgname/tools/jdk-21.0.2/bin/java"
+    install -d "$pkgdir/usr/share/$pkgname/tools/jdk-21/bin"
+    ln -s /usr/lib/jvm/java-21-openjdk/bin/java "$pkgdir/usr/share/$pkgname/tools/jdk-21/bin/java"
 
-    install -d "$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21.0.9"
-    ./7z2501/7zz x -o"$pkgdir/usr/share/$pkgname/tools" "$srcdir/openjfx-21.0.9_linux-x64_bin-sdk.zip"
+    install -d "$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21"
+    ./7z2501/7zz x -o"$pkgdir/usr/share/$pkgname/tools" "$srcdir/openjfx-21.0.10_linux-x64_bin-sdk.zip"
+    mv "$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21.0.10" "$pkgdir/usr/share/$pkgname/tools/javafx-sdk-21"
 
     install -dm755 "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
     ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"

@@ -197,152 +197,149 @@ public class Main {
             file = new File("./lang/ja.txt");
         }
 
-        String langText = null;
-        if (file.exists()){
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))){
-                String str;
-                StringBuilder sb = new StringBuilder();
-                while ((str = reader.readLine()) != null) {
-                    sb.append(str).append("\n");
-                }
-                langText = sb.toString();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        } else {
-            try (HttpClient client = HttpClient.newBuilder()
-                    .version(HttpClient.Version.HTTP_2)
-                    .followRedirects(HttpClient.Redirect.ALWAYS)
-                    .connectTimeout(Duration.ofSeconds(5))
-                    .build()) {
-
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(new URI("https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/ja.txt"))
-                        .headers("User-Agent", Function.UserAgent)
-                        .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                        .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
-                        .GET()
-                        .build();
-                HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-                langText = send.body();
-
-                FileWriter file1 = new FileWriter("./lang/ja.txt");
-                PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-                pw.print(langText);
-                pw.close();
-                file1.close();
-                pw = null;
-                file1 = null;
-            } catch (Exception e){
-                // e.printStackTrace();
-            }
-        }
-
-        for (String str : langText.split("\n")) {
-            Matcher matcher = Function.matcher_langData.matcher(str);
-            //System.out.println("debug : " + str);
-            if (matcher.find()){
-                //System.out.println("debug : " + matcher.group(1) + " / " + matcher.group(2));
-                Function.langData.add(matcher.group(1), matcher.group(2));
-            }
-        }
-
-        System.out.println("[Info] "+Function.langData.get("start-message").replaceAll("#version#", Function.Version));
-        final boolean isWindowsBatchStart = Function.ntSystem != null;
-
-        file = new File("./tools/openjdk-21.0.2_windows-x64_bin.zip");
-        if (file.exists()){
-            file.delete();
-        }
-        file = new File("./tools/openjdk-21.0.2_linux-x64_bin.tar.gz");
-        if (file.exists()){
-            file.delete();
-        }
-        file = new File("./tools/openjfx-21.0.9_windows-x64_bin-sdk.zip");
-        if (file.exists()){
-            file.delete();
-        }
-        file = new File("./tools/openjfx-21.0.9_linux-x64_bin-sdk.zip");
-        if (file.exists()){
-            file.delete();
-        }
-
-        if (isWindowsBatchStart){
-            file = new File("./tools/ImageMagick-7.1.2-12-portable-Q16-x64.7z");
-            file.delete();
-        }
-
-        System.out.println("[Info] "+Function.langData.get("update-check"));
-
         try (HttpClient client = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_2)
                 .followRedirects(HttpClient.Redirect.ALWAYS)
                 .connectTimeout(Duration.ofSeconds(5))
                 .build()) {
 
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI("https://github.com/nicovrc-net/VRCVideoLogViewer/releases.atom"))
-                    .headers("User-Agent", Function.UserAgent)
-                    .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                    .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
-                    .GET()
-                    .build();
-            HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-            //System.out.println(send.body());
-            Matcher matcher = Function.matcher_version.matcher(send.body());
-            if (matcher.find()){
-                Function.new_version = matcher.group(2);
-            }
-        } catch (Exception e){
-            e.printStackTrace();
-            Function.timer1.cancel();
-            Function.timer2.cancel();
-            return;
-        }
-
-        try {
-
-            file = new File("./");
-            final String CurrentFolderPass = file.getCanonicalPath();
-
-            file = new File("./tools/VRCVideoLogViewer.zip");
+            String langText = null;
             if (file.exists()){
-                file.delete();
-            }
-            file = new File("./tools/VRCVideoLogViewer");
-            if (file.exists()){
-                for (File listFile : file.listFiles()) {
-                    listFile.delete();
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))){
+                    String str;
+                    StringBuilder sb = new StringBuilder();
+                    while ((str = reader.readLine()) != null) {
+                        sb.append(str).append("\n");
+                    }
+                    langText = sb.toString();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                file.delete();
-            }
 
-            Function.isUpdate = !Function.Version.equals(Function.new_version);
+            } else {
+                try {
+                    HttpRequest request = HttpRequest.newBuilder()
+                            .uri(new URI("https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/ja.txt"))
+                            .headers("User-Agent", Function.UserAgent)
+                            .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                            .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                            .GET()
+                            .build();
+                    HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+                    langText = send.body();
 
-            if (Function.isUpdate){
-                System.out.println("[Info] " + Function.langData.get("update-found"));
-                if (Function.ntSystem != null){
-                    File update_file = new File("./tools/update1.bat");
-                    if (update_file.exists()){
-                        update_file.delete();
-                    }
-                    update_file = new File("./tools/update2.bat");
-                    if (update_file.exists()){
-                        update_file.delete();
-                    }
-
-                    FileWriter file1 = new FileWriter("./tools/update1.bat");
+                    FileWriter file1 = new FileWriter("./lang/ja.txt");
                     PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-                    pw.print("start ./tools/update2.bat".replaceAll("\\./", CurrentFolderPass+"/"));
+                    pw.print(langText);
                     pw.close();
                     file1.close();
                     pw = null;
                     file1 = null;
+                } catch (Exception e){
+                    throw new RuntimeException(e);
+                }
+            }
 
-                    file1 = new FileWriter("./tools/update2.bat");
-                    pw = new PrintWriter(new BufferedWriter(file1));
-                    String str = """
+            for (String str : langText.split("\n")) {
+                Matcher matcher = Function.matcher_langData.matcher(str);
+                //System.out.println("debug : " + str);
+                if (matcher.find()){
+                    //System.out.println("debug : " + matcher.group(1) + " / " + matcher.group(2));
+                    Function.langData.add(matcher.group(1), matcher.group(2));
+                }
+            }
+
+            System.out.println("[Info] "+Function.langData.get("start-message").replaceAll("#version#", Function.Version));
+            final boolean isWindowsBatchStart = Function.ntSystem != null;
+
+            file = new File("./tools/openjdk-21.0.2_windows-x64_bin.zip");
+            if (file.exists()){
+                file.delete();
+            }
+            file = new File("./tools/openjdk-21.0.2_linux-x64_bin.tar.gz");
+            if (file.exists()){
+                file.delete();
+            }
+            file = new File("./tools/openjfx-21.0.10_windows-x64_bin-sdk.zip");
+            if (file.exists()){
+                file.delete();
+            }
+            file = new File("./tools/openjfx-21.0.10_linux-x64_bin-sdk.zip");
+            if (file.exists()){
+                file.delete();
+            }
+
+            if (isWindowsBatchStart){
+                file = new File("./tools/ImageMagick-7.1.2-12-portable-Q16-x64.7z");
+                file.delete();
+            }
+
+            System.out.println("[Info] "+Function.langData.get("update-check"));
+
+            try {
+
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(new URI("https://github.com/nicovrc-net/VRCVideoLogViewer/releases.atom"))
+                        .headers("User-Agent", Function.UserAgent)
+                        .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                        .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                        .GET()
+                        .build();
+                HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+                //System.out.println(send.body());
+                Matcher matcher = Function.matcher_version.matcher(send.body());
+                if (matcher.find()){
+                    Function.new_version = matcher.group(2);
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+                Function.timer1.cancel();
+                Function.timer2.cancel();
+                return;
+            }
+
+            try {
+
+                file = new File("./");
+                final String CurrentFolderPass = file.getCanonicalPath();
+
+                file = new File("./tools/VRCVideoLogViewer.zip");
+                if (file.exists()){
+                    file.delete();
+                }
+                file = new File("./tools/VRCVideoLogViewer");
+                if (file.exists()){
+                    for (File listFile : file.listFiles()) {
+                        listFile.delete();
+                    }
+                    file.delete();
+                }
+
+                Function.isUpdate = !Function.Version.equals(Function.new_version);
+
+                if (Function.isUpdate){
+                    System.out.println("[Info] " + Function.langData.get("update-found"));
+                    if (Function.ntSystem != null){
+                        File update_file = new File("./tools/update1.bat");
+                        if (update_file.exists()){
+                            update_file.delete();
+                        }
+                        update_file = new File("./tools/update2.bat");
+                        if (update_file.exists()){
+                            update_file.delete();
+                        }
+
+                        FileWriter file1 = new FileWriter("./tools/update1.bat");
+                        PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
+                        pw.print("start ./tools/update2.bat".replaceAll("\\./", CurrentFolderPass+"/"));
+                        pw.close();
+                        file1.close();
+                        pw = null;
+                        file1 = null;
+
+                        file1 = new FileWriter("./tools/update2.bat");
+                        pw = new PrintWriter(new BufferedWriter(file1));
+                        String str = """
                         curl https://github.com/nicovrc-net/VRCVideoLogViewer/releases/download/#ver#/VRCVideoLogViewer.zip -L --output ./tools/VRCVideoLogViewer.zip
                         tar -xf ./tools/VRCVideoLogViewer.zip -C ./tools\\
                         del ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
@@ -356,140 +353,144 @@ public class Main {
                         move ./lang\\ko.txt ./lang
                         exit
                         """;
-                    pw.print(str.replaceAll("#ver#", Function.new_version).replaceAll("\\./", CurrentFolderPass.replaceAll("/", "\\\\\\\\")+"\\\\"));
+                        pw.print(str.replaceAll("#ver#", Function.new_version).replaceAll("\\./", CurrentFolderPass.replaceAll("/", "\\\\\\\\")+"\\\\"));
+                        pw.close();
+                        file1.close();
+                        pw = null;
+                        file1 = null;
+                    }
+                } else {
+                    System.out.println("[Info] "+Function.langData.get("update-notfound").replaceAll("#nowver#", Function.Version).replaceAll("#newver#", Function.new_version));
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+                Function.timer1.cancel();
+                Function.timer2.cancel();
+                return;
+            }
+
+            System.out.println("[Info] "+Function.langData.get("config-check"));
+            file = new File("./config.yml");
+
+            if (!file.exists()){
+                System.out.println("[Info] "+Function.langData.get("config-autocreate"));
+
+                try {
+                    FileWriter file1 = new FileWriter("./config.yml");
+                    PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
+                    pw.print(Function.configText);
                     pw.close();
                     file1.close();
                     pw = null;
                     file1 = null;
+                } catch (Exception e){
+                    e.printStackTrace();
                 }
-            } else {
-                System.out.println("[Info] "+Function.langData.get("update-notfound").replaceAll("#nowver#", Function.Version).replaceAll("#newver#", Function.new_version));
             }
-        } catch (Exception e){
-            e.printStackTrace();
-            Function.timer1.cancel();
-            Function.timer2.cancel();
-            return;
-        }
-
-        System.out.println("[Info] "+Function.langData.get("config-check"));
-        file = new File("./config.yml");
-
-        if (!file.exists()){
-            System.out.println("[Info] "+Function.langData.get("config-autocreate"));
 
             try {
-                FileWriter file1 = new FileWriter("./config.yml");
-                PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-                pw.print(Function.configText);
-                pw.close();
-                file1.close();
-                pw = null;
-                file1 = null;
+                final YamlMapping yamlMapping = Yaml.createYamlInput(new File("./config.yml")).readYamlMapping();
+                try {
+                    Function.config.setLang(yamlMapping.string("lang"));
+                } catch (Exception e){
+                    Function.config.setLang("ja");
+                }
+                Function.config.setLogFolderPass(yamlMapping.string("logfolder"));
+                Function.config.setDebugOutput(yamlMapping.bool("debugOutput"));
+                Function.config.setOldLogCheck(yamlMapping.bool("oldLogCheck"));
+                Function.config.setVideoPlayer(yamlMapping.bool("VideoPlayer"));
+                Function.config.setImageDownloader(yamlMapping.bool("ImageDownloader"));
+                Function.config.setStringDownloader(yamlMapping.bool("StringDownloader"));
+                Function.config.setAutoStaring(yamlMapping.bool("isAutoStaring"));
+                Function.config.setAutoStaringMode(yamlMapping.string("AutoStaringMode"));
             } catch (Exception e){
-                e.printStackTrace();
+                // e.printStackTrace();
+
             }
-        }
 
-        try {
-            final YamlMapping yamlMapping = Yaml.createYamlInput(new File("./config.yml")).readYamlMapping();
-            try {
-                Function.config.setLang(yamlMapping.string("lang"));
-            } catch (Exception e){
-                Function.config.setLang("ja");
-            }
-            Function.config.setLogFolderPass(yamlMapping.string("logfolder"));
-            Function.config.setDebugOutput(yamlMapping.bool("debugOutput"));
-            Function.config.setOldLogCheck(yamlMapping.bool("oldLogCheck"));
-            Function.config.setVideoPlayer(yamlMapping.bool("VideoPlayer"));
-            Function.config.setImageDownloader(yamlMapping.bool("ImageDownloader"));
-            Function.config.setStringDownloader(yamlMapping.bool("StringDownloader"));
-            Function.config.setAutoStaring(yamlMapping.bool("isAutoStaring"));
-            Function.config.setAutoStaringMode(yamlMapping.string("AutoStaringMode"));
-        } catch (Exception e){
-            // e.printStackTrace();
+            if (Function.config.getLogFolderPass().isEmpty()){
 
-        }
+                try {
+                    if (Function.config.isDebugOutput()){
+                        System.out.println("[Info] "+Function.langData.get("logfolder-autoget"));
+                    }
+                    String LocalAppData = System.getenv().get("LOCALAPPDATA");
+                    String LinuxUserHome = System.getenv().get("HOME");
+                    if (Function.ntSystem != null){
+                        file = new File("C:\\Users\\"+Function.ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
+                    } else if (Function.unixSystem != null) {
+                        file = new File("/home/"+Function.unixSystem.getUsername()+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
+                    }
 
-        if (Function.config.getLogFolderPass().isEmpty()){
+                    String path = file.getCanonicalPath();
+                    if (file.exists()) {
+                        Function.config.setLogFolderPass(path);
 
-            try {
-                if (Function.config.isDebugOutput()){
-                    System.out.println("[Info] "+Function.langData.get("logfolder-autoget"));
-                }
-                String LocalAppData = System.getenv().get("LOCALAPPDATA");
-                String LinuxUserHome = System.getenv().get("HOME");
-                if (Function.ntSystem != null){
-                    file = new File("C:\\Users\\"+Function.ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
-                } else if (Function.unixSystem != null) {
-                    file = new File("/home/"+Function.unixSystem.getUsername()+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
-                }
-
-                String path = file.getCanonicalPath();
-                if (file.exists()) {
-                    Function.config.setLogFolderPass(path);
-
-                    if (Function.config.isDebugOutput()) {
-                        if (Function.ntSystem != null){
-                            System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path.replaceAll(Pattern.quote("\\"), "/").replaceAll("/", "\\\\\\\\")));
-                        } else {
-                            System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path));
+                        if (Function.config.isDebugOutput()) {
+                            if (Function.ntSystem != null){
+                                System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path.replaceAll(Pattern.quote("\\"), "/").replaceAll("/", "\\\\\\\\")));
+                            } else {
+                                System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path));
+                            }
                         }
-                    }
-                } else if (Function.ntSystem != null && new File(LocalAppData+"Low\\VRChat\\VRChat").exists()) {
-                    file = new File(LocalAppData + "Low\\VRChat\\VRChat");
-                    path = file.getCanonicalPath();
+                    } else if (Function.ntSystem != null && new File(LocalAppData+"Low\\VRChat\\VRChat").exists()) {
+                        file = new File(LocalAppData + "Low\\VRChat\\VRChat");
+                        path = file.getCanonicalPath();
 
-                    Function.config.setLogFolderPass(path);
-                    System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path.replaceAll(Pattern.quote("\\"), "/").replaceAll("/", "\\\\\\\\")));
-                } else if (new File(LinuxUserHome+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat").exists()){
-                    file = new File(LinuxUserHome+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
-                    path = file.getCanonicalPath();
+                        Function.config.setLogFolderPass(path);
+                        System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path.replaceAll(Pattern.quote("\\"), "/").replaceAll("/", "\\\\\\\\")));
+                    } else if (new File(LinuxUserHome+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat").exists()){
+                        file = new File(LinuxUserHome+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
+                        path = file.getCanonicalPath();
 
-                    Function.config.setLogFolderPass(path);
-                    System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path));
-                } else if (!LinuxUserHome.isEmpty()) {
-                    file = new File(LinuxUserHome+"/.steampath");
-
-                    ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "ls -al "+file.getCanonicalPath());
-                    Process process = pb.start();
-                    process.waitFor();
-
-                    String s = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-                    //System.out.println(s);
-
-                    Matcher matcher = matcher_ls.matcher(s);
-                    if (matcher.find()){
-                        path = matcher.group(2).replaceAll("/sdk32/steam", "/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
-                        file = new File(path);
-                    }
-
-                    if (file.exists()){
                         Function.config.setLogFolderPass(path);
                         System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path));
+                    } else if (!LinuxUserHome.isEmpty()) {
+                        file = new File(LinuxUserHome+"/.steampath");
+
+                        ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "ls -al "+file.getCanonicalPath());
+                        Process process = pb.start();
+                        process.waitFor();
+
+                        String s = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+                        //System.out.println(s);
+
+                        Matcher matcher = matcher_ls.matcher(s);
+                        if (matcher.find()){
+                            path = matcher.group(2).replaceAll("/sdk32/steam", "/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
+                            file = new File(path);
+                        }
+
+                        if (file.exists()){
+                            Function.config.setLogFolderPass(path);
+                            System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path));
+                        } else {
+                            System.out.println("[Info] " + Function.langData.get("logfolder-autoget-fail"));
+                        }
+
                     } else {
                         System.out.println("[Info] " + Function.langData.get("logfolder-autoget-fail"));
                     }
-
-                } else {
-                    System.out.println("[Info] " + Function.langData.get("logfolder-autoget-fail"));
+                } catch (Exception e) {
+                    //e.printStackTrace();
                 }
-            } catch (Exception e) {
-                //e.printStackTrace();
+
+
             }
 
+            Platform.startup(() -> {
+                try {
+                    GUI gui = new GUI(true, client);
+                    gui.start(new Stage());
+                    gui.stop();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
 
         }
 
-        Platform.startup(() -> {
-            try {
-                GUI gui = new GUI(true);
-                gui.start(new Stage());
-                gui.stop();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
+
     }
 
 }
