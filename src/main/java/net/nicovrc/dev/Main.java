@@ -277,27 +277,27 @@ public class Main {
             try {
                 if (!file.exists()){
                     file.mkdir();
-                    if (isWindowsBatchStart){
-                        file = new File("./fonts/NotoSansJP-Medium.ttf");
-                        if (!file.exists()){
-                            DownloadFonts(client,"./fonts/NotoSansJP-Medium.ttf");
-                        }
-                        file = new File("./fonts/NotoSansKR-Medium.ttf");
-                        if (!file.exists()){
-                            DownloadFonts(client,"./fonts/NotoSansKR-Medium.ttf");
-                        }
-                        file = new File("./fonts/NotoSansSC-Medium.ttf");
-                        if (!file.exists()){
-                            DownloadFonts(client,"./fonts/NotoSansSC-Medium.ttf");
-                        }
-                        file = new File("./fonts/NotoSansTC-Medium.ttf");
-                        if (!file.exists()){
-                            DownloadFonts(client,"./fonts/NotoSansTC-Medium.ttf");
-                        }
-                    } else {
-                        // https://github.com/notofonts/noto-cjk/raw/main/Sans/Variable/OTC/NotoSansCJK-VF.ttf.ttc
-                        DownloadFonts(client,"./fonts/NotoSansCJK-Regular.ttc");
+                }
+                if (isWindowsBatchStart){
+                    file = new File("./fonts/NotoSansJP-Medium.ttf");
+                    if (!file.exists()){
+                        DownloadFonts(client,"./fonts/NotoSansJP-Medium.ttf");
                     }
+                    file = new File("./fonts/NotoSansKR-Medium.ttf");
+                    if (!file.exists()){
+                        DownloadFonts(client,"./fonts/NotoSansKR-Medium.ttf");
+                    }
+                    file = new File("./fonts/NotoSansSC-Medium.ttf");
+                    if (!file.exists()){
+                        DownloadFonts(client,"./fonts/NotoSansSC-Medium.ttf");
+                    }
+                    file = new File("./fonts/NotoSansTC-Medium.ttf");
+                    if (!file.exists()){
+                        DownloadFonts(client,"./fonts/NotoSansTC-Medium.ttf");
+                    }
+                } else {
+                    // https://github.com/notofonts/noto-cjk/raw/main/Sans/Variable/OTC/NotoSansCJK-VF.ttf.ttc
+                    DownloadFonts(client,"./fonts/NotoSansCJK-Regular.ttc");
                 }
             } catch (Exception e){
                 throw new RuntimeException(e);
