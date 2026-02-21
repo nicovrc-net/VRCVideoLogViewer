@@ -84,6 +84,9 @@ public class Function {
     private static final Pattern matcher_VideoLog2 = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Video Playback\\] Resolving URL '(.+)'");
     private static final Pattern matcher_ImageLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Image Download\\] Attempting to load image from URL '(.+)'");
     private static final Pattern matcher_StringLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[String Download\\] Attempting to load String from URL '(.+)'");
+    private static final Pattern matcher_worldid = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Behaviour\\] Destination requested: (.+):(\\d+)~region\\((.+)\\)");
+    private static final Pattern matcher_worldid2 = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Behaviour\\] Destination requested: (.+):(\\d+)~group\\((.+)~groupAccessType((.+))~region\\((.+)\\)");
+    private static final Pattern matcher_worldid3 = Pattern.compile("2026.02.20 12:09:41 Debug      -  [Behaviour] Destination fetching: (.+):(\\d+)~hidden\\((.+)\\)~region\\((.+)\\)");
 
     private static final Pattern matcher_VideoErrorLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Warning    -  \\[Video Playback\\] (.+)");
     private static final Pattern matcher_VideoErrorLog2 = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Error      -  \\[AVProVideo\\] (.+)");
@@ -173,99 +176,179 @@ public class Function {
     public static List<LogData> getLogForURL(String logText) throws Exception{
         ArrayList<LogData> logData = new ArrayList<>();
         HashMap<String, String> errorList = new HashMap<>();
+        try (HttpClient client = HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_2)
+                .followRedirects(HttpClient.Redirect.ALWAYS)
+                .connectTimeout(Duration.ofSeconds(5))
+                .build()) {
 
-        for (String s : logText.split("\n")) {
-            Matcher video = matcher_VideoLog.matcher(s);
-            Matcher video2 = matcher_VideoLog2.matcher(s);
-            Matcher image = matcher_ImageLog.matcher(s);
-            Matcher string = matcher_StringLog.matcher(s);
+            for (String s : logText.split("\n")) {
+                Matcher video = matcher_VideoLog.matcher(s);
+                Matcher video2 = matcher_VideoLog2.matcher(s);
+                Matcher image = matcher_ImageLog.matcher(s);
+                Matcher string = matcher_StringLog.matcher(s);
+                Matcher worldId1 = matcher_worldid.matcher(s);
+                Matcher worldId2 = matcher_worldid2.matcher(s);
+                Matcher worldId3 = matcher_worldid3.matcher(s);
 
-            Matcher video_error = matcher_VideoErrorLog.matcher(s);
-            Matcher video_error2 = matcher_VideoErrorLog2.matcher(s);
-            Matcher image_error = matcher_ImageErrorLog.matcher(s);
-            Matcher string_error = matcher_StringErrorLog.matcher(s);
+                Matcher video_error = matcher_VideoErrorLog.matcher(s);
+                Matcher video_error2 = matcher_VideoErrorLog2.matcher(s);
+                Matcher image_error = matcher_ImageErrorLog.matcher(s);
+                Matcher string_error = matcher_StringErrorLog.matcher(s);
 
-            LogData data = new LogData();
-            if (video_error.find()){
-                logData.getLast().setErrorMessage(video_error.group(7));
-            }
-            if (video_error2.find()){
-                String group = video_error2.group(7);
-                if (group.startsWith("Error: ")){
-                    if (logData.getLast().getErrorMessage() == null || logData.getLast().getErrorMessage().isEmpty()){
-                        logData.getLast().setErrorMessage(group);
-                    } else {
-                        logData.getLast().setErrorMessage(logData.getLast().getErrorMessage() + "\n" + group);
+                LogData data = new LogData();
+                if (video_error.find()){
+                    logData.getLast().setErrorMessage(video_error.group(7));
+                }
+                if (video_error2.find()){
+                    String group = video_error2.group(7);
+                    if (group.startsWith("Error: ")){
+                        if (logData.getLast().getErrorMessage() == null || logData.getLast().getErrorMessage().isEmpty()){
+                            logData.getLast().setErrorMessage(group);
+                        } else {
+                            logData.getLast().setErrorMessage(logData.getLast().getErrorMessage() + "\n" + group);
+                        }
                     }
                 }
-            }
 
-            if (image_error.find()){
-                //System.out.println(image_error.group(7) + " : " + image_error.group(8));
-                if (errorList.get(image_error.group(7)) == null || errorList.get(image_error.group(7)).isEmpty()) {
-                    errorList.put(image_error.group(7), image_error.group(8));
-                } else {
-                    errorList.put(image_error.group(7), errorList.get(image_error.group(7)) + "\n" + image_error.group(8));
+                if (image_error.find()){
+                    //System.out.println(image_error.group(7) + " : " + image_error.group(8));
+                    if (errorList.get(image_error.group(7)) == null || errorList.get(image_error.group(7)).isEmpty()) {
+                        errorList.put(image_error.group(7), image_error.group(8));
+                    } else {
+                        errorList.put(image_error.group(7), errorList.get(image_error.group(7)) + "\n" + image_error.group(8));
+                    }
                 }
-            }
 
-            if (string_error.find()){
-                //System.out.println(string_error.group(7) + " : " + string_error.group(8));
-                if (errorList.get(string_error.group(7)) == null || errorList.get(string_error.group(7)).isEmpty()) {
-                    errorList.put(string_error.group(7), string_error.group(8));
-                } else {
-                    errorList.put(string_error.group(7), errorList.get(image_error.group(7)) + "\n" + string_error.group(8));
+                if (string_error.find()){
+                    //System.out.println(string_error.group(7) + " : " + string_error.group(8));
+                    if (errorList.get(string_error.group(7)) == null || errorList.get(string_error.group(7)).isEmpty()) {
+                        errorList.put(string_error.group(7), string_error.group(8));
+                    } else {
+                        errorList.put(string_error.group(7), errorList.get(image_error.group(7)) + "\n" + string_error.group(8));
+                    }
                 }
-            }
 
-            if (video.find()){
-                String tempDate = video.group(1)+"."+video.group(2)+"."+video.group(3)+" "+video.group(4)+":"+video.group(5)+":"+video.group(6);
-                data.setLogDate(logDate.parse(tempDate));
-                data.setURL(video.group(7));
-                data.setErrorMessage(null);
-                data.setURLType("Video");
-                logData.add(data);
-            }
-
-            if (video2.find()){
-                String tempDate = video2.group(1)+"."+video2.group(2)+"."+video2.group(3)+" "+video2.group(4)+":"+video2.group(5)+":"+video2.group(6);
-                data.setLogDate(logDate.parse(tempDate));
-                data.setURL(video2.group(7));
-                data.setErrorMessage(null);
-                data.setURLType("Video");
-                logData.add(data);
-            }
-
-            if (image.find()){
-                String tempDate = image.group(1)+"."+image.group(2)+"."+image.group(3)+" "+image.group(4)+":"+image.group(5)+":"+image.group(6);
-                data.setLogDate(logDate.parse(tempDate));
-                data.setURL(image.group(7));
-                //System.out.println(image.group(7) + " : " + errorList.get(image.group(7)));
-                if (errorList.get(image.group(7)) != null){
-                    data.setErrorMessage(errorList.get(image.group(7)));
-                    errorList.remove(image.group(7));
-                } else {
+                if (video.find()){
+                    String tempDate = video.group(1)+"."+video.group(2)+"."+video.group(3)+" "+video.group(4)+":"+video.group(5)+":"+video.group(6);
+                    data.setLogDate(logDate.parse(tempDate));
+                    data.setURL(video.group(7));
                     data.setErrorMessage(null);
+                    data.setURLType("Video");
+                    logData.add(data);
                 }
-                data.setURLType("Image");
-                logData.add(data);
-            }
-            if (string.find()){
-                String tempDate = string.group(1)+"."+string.group(2)+"."+string.group(3)+" "+string.group(4)+":"+string.group(5)+":"+string.group(6);
-                data.setLogDate(logDate.parse(tempDate));
-                data.setURL(string.group(7));
-                //System.out.println(string.group(7) + " : " + errorList.get(string.group(7)));
-                if (errorList.get(string.group(7)) != null){
-                    data.setErrorMessage(errorList.get(string.group(7)));
-                    errorList.remove(string.group(7));
-                } else {
+
+                if (video2.find()){
+                    String tempDate = video2.group(1)+"."+video2.group(2)+"."+video2.group(3)+" "+video2.group(4)+":"+video2.group(5)+":"+video2.group(6);
+                    data.setLogDate(logDate.parse(tempDate));
+                    data.setURL(video2.group(7));
                     data.setErrorMessage(null);
+                    data.setURLType("Video");
+                    logData.add(data);
                 }
-                data.setURLType("String");
-                logData.add(data);
+
+                if (image.find()){
+                    String tempDate = image.group(1)+"."+image.group(2)+"."+image.group(3)+" "+image.group(4)+":"+image.group(5)+":"+image.group(6);
+                    data.setLogDate(logDate.parse(tempDate));
+                    data.setURL(image.group(7));
+                    //System.out.println(image.group(7) + " : " + errorList.get(image.group(7)));
+                    if (errorList.get(image.group(7)) != null){
+                        data.setErrorMessage(errorList.get(image.group(7)));
+                        errorList.remove(image.group(7));
+                    } else {
+                        data.setErrorMessage(null);
+                    }
+                    data.setURLType("Image");
+                    logData.add(data);
+                }
+                if (string.find()){
+                    String tempDate = string.group(1)+"."+string.group(2)+"."+string.group(3)+" "+string.group(4)+":"+string.group(5)+":"+string.group(6);
+                    data.setLogDate(logDate.parse(tempDate));
+                    data.setURL(string.group(7));
+                    //System.out.println(string.group(7) + " : " + errorList.get(string.group(7)));
+                    if (errorList.get(string.group(7)) != null){
+                        data.setErrorMessage(errorList.get(string.group(7)));
+                        errorList.remove(string.group(7));
+                    } else {
+                        data.setErrorMessage(null);
+                    }
+                    data.setURLType("String");
+                    logData.add(data);
+                }
+                if (worldId1.find()){
+                    HttpRequest request = HttpRequest.newBuilder()
+                            .uri(new URI("https://api.vrchat.cloud/api/1/worlds/"+worldId1.group(7)))
+                            .headers("User-Agent", Function.UserAgent)
+                            .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                            .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                            .GET()
+                            .build();
+
+                    HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+                    //System.out.println(send.body());
+                    JsonElement json = Function.gson.fromJson(send.body(), JsonElement.class);
+                    if (json.getAsJsonObject().has("name")){
+                        data.setWorldName(json.getAsJsonObject().get("name").getAsString().replaceAll("\u2024", "."));
+                    }
+
+                    String tempDate = worldId1.group(1)+"."+worldId1.group(2)+"."+worldId1.group(3)+" "+worldId1.group(4)+":"+worldId1.group(5)+":"+worldId1.group(6);
+                    data.setLogDate(logDate.parse(tempDate));
+                    data.setInstanceType("public");
+                    data.setInstanceId(worldId1.group(8));
+                    data.setURL("https://vrchat.com/home/world/"+worldId1.group(7));
+                    data.setURLType("World");
+                    logData.add(data);
+                }
+                if (worldId2.find()){
+                    HttpRequest request = HttpRequest.newBuilder()
+                            .uri(new URI("https://api.vrchat.cloud/api/1/worlds/"+worldId2.group(7)))
+                            .headers("User-Agent", Function.UserAgent)
+                            .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                            .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                            .GET()
+                            .build();
+
+                    HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+                    //System.out.println(send.body());
+                    JsonElement json = Function.gson.fromJson(send.body(), JsonElement.class);
+                    if (json.getAsJsonObject().has("name")){
+                        data.setWorldName(json.getAsJsonObject().get("name").getAsString().replaceAll("\u2024", "."));
+                    }
+
+                    String tempDate = worldId2.group(1)+"."+worldId2.group(2)+"."+worldId2.group(3)+" "+worldId2.group(4)+":"+worldId2.group(5)+":"+worldId2.group(6);
+                    data.setLogDate(logDate.parse(tempDate));
+                    data.setURL("https://vrchat.com/home/world/"+worldId2.group(7));
+                    data.setURLType("World");
+                    data.setInstanceType("group");
+                    data.setInstanceId(worldId2.group(8));
+                    logData.add(data);
+                }
+                if (worldId3.find()){
+                    HttpRequest request = HttpRequest.newBuilder()
+                            .uri(new URI("https://api.vrchat.cloud/api/1/worlds/"+worldId3.group(7)))
+                            .headers("User-Agent", Function.UserAgent)
+                            .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                            .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                            .GET()
+                            .build();
+
+                    HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+                    //System.out.println(send.body());
+                    JsonElement json = Function.gson.fromJson(send.body(), JsonElement.class);
+                    if (json.getAsJsonObject().has("name")){
+                        data.setWorldName(json.getAsJsonObject().get("name").getAsString().replaceAll("\u2024", "."));
+                    }
+
+                    String tempDate = worldId3.group(1)+"."+worldId3.group(2)+"."+worldId3.group(3)+" "+worldId3.group(4)+":"+worldId3.group(5)+":"+worldId3.group(6);
+                    data.setLogDate(logDate.parse(tempDate));
+                    data.setURL("https://vrchat.com/home/world/"+worldId3.group(7));
+                    data.setURLType("World");
+                    data.setInstanceType("group");
+                    data.setInstanceId(worldId3.group(8));
+                    logData.add(data);
+                }
             }
         }
-
         return logData;
     }
 

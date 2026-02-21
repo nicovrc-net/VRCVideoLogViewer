@@ -29,6 +29,7 @@ gui-print="Displaying GUI!"
 
 # main screen
 setting="Settings"
+world="Moved to #worldname# (#worldid#)"
 
 # common
 exit="Close"

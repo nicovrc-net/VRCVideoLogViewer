@@ -5,6 +5,9 @@ import java.util.Date;
 public class LogData {
 
     private Date logDate;
+    private String WorldName;
+    private String InstanceType;
+    private String InstanceId;
     private String URL;
     private String ErrorMessage;
     private String URLType;
@@ -39,5 +42,29 @@ public class LogData {
 
     public void setURLType(String URLType) {
         this.URLType = URLType;
+    }
+
+    public String getWorldName() {
+        return WorldName;
+    }
+
+    public void setWorldName(String worldName) {
+        WorldName = worldName;
+    }
+
+    public String getInstanceId() {
+        return InstanceId;
+    }
+
+    public void setInstanceId(String instanceId) {
+        InstanceId = instanceId;
+    }
+
+    public String getInstanceType() {
+        return InstanceType;
+    }
+
+    public void setInstanceType(String instanceType) {
+        InstanceType = instanceType;
     }
 }

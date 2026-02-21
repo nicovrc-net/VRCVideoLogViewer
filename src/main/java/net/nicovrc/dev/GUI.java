@@ -256,7 +256,11 @@ public class GUI extends Application {
                         lastLogData.setURLType(logData.getURLType());
 
                         //LogData.add(logData);
-                        final String str = "[" + Function.log_sdf.format(logData.getLogDate()) + "] " + logData.getURL() + " (" + logData.getURLType() + ")";
+                        String str = "[" + Function.log_sdf.format(logData.getLogDate()) + "] " + logData.getURL() + " (" + logData.getURLType() + ")";
+                        if (logData.getURLType().equals("world")){
+                            //System.out.println("debug : " + Function.langData.get("world"));
+                            str = "[" + Function.log_sdf.format(logData.getLogDate()) + "] " + Function.langData.get("world").replaceAll("#worldid#", logData.getURL().replaceAll("https://vrchat\\.com/home/world/", "")).replaceAll("#worldname#", logData.getWorldName());
+                        }
                         Function.logDataList.put(str, logData);
                         items.add(str);
                         listView.refresh();
@@ -873,6 +877,11 @@ public class GUI extends Application {
                                         detail_textArea2.setWrapText(false);
                                         Platform.runLater(()-> detail_root.getChildren().add(detail_textArea2));
                                     }
+                                }
+
+                                case "World" -> {
+                                    // TODO: 内部のデータの持ち方を変えてから実装する
+                                    detail_stage.close();
                                 }
                             }
                         }

@@ -29,6 +29,7 @@ gui-print="显示 GUI！"
 
 # 主界面
 setting="设置"
+world="已移动到 「#worldname# (#worldid#)」"
 
 # 界面通用
 exit="关闭"

@@ -29,6 +29,7 @@ gui-print="GUI 표시!"
 
 # 메인 화면
 setting="설정"
+world="#worldname# (#worldid#)로 이동했습니다."
 
 # 화면 공통
 exit="닫기"

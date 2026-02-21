@@ -29,6 +29,7 @@ gui-print="GUI表示！"
 
 # メイン画面
 setting="設定"
+world="#worldname# (#worldid#)に移動しました。"
 
 # 画面共通
 exit="閉じる"
