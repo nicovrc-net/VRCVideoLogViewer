@@ -191,11 +191,6 @@ jobs:
               echo "OpenJDK OK"
               if [ -d ./tools/javafx-sdk-21 ]; then
                 echo "JavaFX OK"
-                if [ -d ./tools/ImageMagick ]; then
-                  echo "ImageMagick OK"
-                else
-                  exit 1
-                fi
               else
                 exit 1
               fi
