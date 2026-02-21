@@ -183,6 +183,10 @@ public class Function {
                 .build()) {
 
             for (String s : logText.split("\n")) {
+
+                boolean isWorld = false;
+                boolean isAdd = false;
+
                 Matcher video = matcher_VideoLog.matcher(s);
                 Matcher video2 = matcher_VideoLog2.matcher(s);
                 Matcher image = matcher_ImageLog.matcher(s);
@@ -235,7 +239,7 @@ public class Function {
                     data.setURL(video.group(7));
                     data.setErrorMessage(null);
                     data.setURLType("Video");
-                    logData.add(data);
+                    isAdd = true;
                 }
 
                 if (video2.find()){
@@ -244,7 +248,7 @@ public class Function {
                     data.setURL(video2.group(7));
                     data.setErrorMessage(null);
                     data.setURLType("Video");
-                    logData.add(data);
+                    isAdd = true;
                 }
 
                 if (image.find()){
@@ -259,7 +263,7 @@ public class Function {
                         data.setErrorMessage(null);
                     }
                     data.setURLType("Image");
-                    logData.add(data);
+                    isAdd = true;
                 }
                 if (string.find()){
                     String tempDate = string.group(1)+"."+string.group(2)+"."+string.group(3)+" "+string.group(4)+":"+string.group(5)+":"+string.group(6);
@@ -273,9 +277,10 @@ public class Function {
                         data.setErrorMessage(null);
                     }
                     data.setURLType("String");
-                    logData.add(data);
+                    isAdd = true;
                 }
                 if (worldId1.find()){
+                    isWorld = true;
                     HttpRequest request = HttpRequest.newBuilder()
                             .uri(new URI("https://api.vrchat.cloud/api/1/worlds/"+worldId1.group(7)))
                             .headers("User-Agent", Function.UserAgent)
@@ -297,9 +302,10 @@ public class Function {
                     data.setInstanceId(worldId1.group(8));
                     data.setURL("https://vrchat.com/home/world/"+worldId1.group(7));
                     data.setURLType("World");
-                    logData.add(data);
+                    isAdd = true;
                 }
                 if (worldId2.find()){
+                    isWorld = true;
                     HttpRequest request = HttpRequest.newBuilder()
                             .uri(new URI("https://api.vrchat.cloud/api/1/worlds/"+worldId2.group(7)))
                             .headers("User-Agent", Function.UserAgent)
@@ -321,9 +327,10 @@ public class Function {
                     data.setURLType("World");
                     data.setInstanceType("group");
                     data.setInstanceId(worldId2.group(8));
-                    logData.add(data);
+                    isAdd = true;
                 }
                 if (worldId3.find()){
+                    isWorld = true;
                     HttpRequest request = HttpRequest.newBuilder()
                             .uri(new URI("https://api.vrchat.cloud/api/1/worlds/"+worldId3.group(7)))
                             .headers("User-Agent", Function.UserAgent)
@@ -345,6 +352,17 @@ public class Function {
                     data.setURLType("World");
                     data.setInstanceType("group");
                     data.setInstanceId(worldId3.group(8));
+                    isAdd = true;
+                }
+
+                if (!isWorld){
+                    data.setViewText("[" + Function.log_sdf.format(data.getLogDate()) + "] " + data.getURL() + " (" + data.getURLType() + ")");
+                } else {
+                    data.setViewText("[" + log_sdf.format(data.getLogDate()) + "] " + langData.get("world").replaceAll("#worldid#", data.getURL().replaceAll("https://vrchat\\.com/home/world/", "")).replaceAll("#worldname#", data.getWorldName()));
+                }
+
+                if (isAdd){
+                    data.setLogId(UUID.randomUUID().toString()+"-"+new Date().getTime());
                     logData.add(data);
                 }
             }

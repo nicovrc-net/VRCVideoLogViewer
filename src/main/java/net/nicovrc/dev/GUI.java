@@ -256,13 +256,8 @@ public class GUI extends Application {
                         lastLogData.setURLType(logData.getURLType());
 
                         //LogData.add(logData);
-                        String str = "[" + Function.log_sdf.format(logData.getLogDate()) + "] " + logData.getURL() + " (" + logData.getURLType() + ")";
-                        if (logData.getURLType().equals("world")){
-                            //System.out.println("debug : " + Function.langData.get("world"));
-                            str = "[" + Function.log_sdf.format(logData.getLogDate()) + "] " + Function.langData.get("world").replaceAll("#worldid#", logData.getURL().replaceAll("https://vrchat\\.com/home/world/", "")).replaceAll("#worldname#", logData.getWorldName());
-                        }
-                        Function.logDataList.put(str, logData);
-                        items.add(str);
+                        Function.logDataList.put(logData.getViewText(), logData);
+                        items.add(logData.getViewText());
                         listView.refresh();
                         listView.scrollTo(items.size());
                     }

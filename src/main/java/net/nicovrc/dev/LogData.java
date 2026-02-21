@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class LogData {
 
+    private String LogId;
     private Date logDate;
     private String WorldName;
     private String InstanceType;
@@ -11,6 +12,15 @@ public class LogData {
     private String URL;
     private String ErrorMessage;
     private String URLType;
+    private String ViewText;
+
+    public String getLogId() {
+        return LogId;
+    }
+
+    public void setLogId(String logId) {
+        LogId = logId;
+    }
 
     public Date getLogDate() {
         return logDate;
@@ -66,5 +76,13 @@ public class LogData {
 
     public void setInstanceType(String instanceType) {
         InstanceType = instanceType;
+    }
+
+    public String getViewText() {
+        return ViewText;
+    }
+
+    public void setViewText(String viewText) {
+        ViewText = viewText;
     }
 }
