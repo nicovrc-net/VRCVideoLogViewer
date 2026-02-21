@@ -30,7 +30,7 @@ if [ -d ./tools ]; then
 		chmod +x ./tools/jdk-21/bin/java
 	fi
 
-	if [ -d ./tools/javafx-sdk-21.0.10 ]; then
+	if [ -d ./tools/javafx-sdk-21 ]; then
 		echo "OpenFX OK"
 	else
 		curl https://download2.gluonhq.com/openjfx/21.0.10/openjfx-21.0.10_linux-x64_bin-sdk.zip --output ./tools/openjfx-21.0.10_linux-x64_bin-sdk.zip

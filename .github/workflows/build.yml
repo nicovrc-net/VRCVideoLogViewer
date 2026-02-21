@@ -187,9 +187,9 @@ jobs:
           sleep 15s
           if [ -d ./tools ]; then
             echo "Tools Folder OK"
-            if [ -d ./tools/jdk-21.0.2 ]; then
+            if [ -d ./tools/jdk-21 ]; then
               echo "OpenJDK OK"
-              if [ -d ./tools/javafx-sdk-21.0.9 ]; then
+              if [ -d ./tools/javafx-sdk-21 ]; then
                 echo "JavaFX OK"
                 if [ -d ./tools/ImageMagick ]; then
                   echo "ImageMagick OK"
