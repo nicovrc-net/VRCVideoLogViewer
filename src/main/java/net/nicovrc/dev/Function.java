@@ -23,6 +23,7 @@ public class Function {
 
     public static final String Version = "1.2.0";
 
+    public static final Gson gson = new Gson();
     public static final String UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0 VRCVideoLogViewer/"+Version;
     public static final String Unity_UserAgent = "UnityPlayer/2022.3.22f1-DWR (UnityWebRequest/1.0, libcurl/8.5.0-DEV)";
     public static final String HTTP_x_unity_version = "2022.3.22f1-DWR";
@@ -301,7 +302,7 @@ public class Function {
 
             HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
             try {
-                JsonElement json = new Gson().fromJson(send.body(), JsonElement.class);
+                JsonElement json = gson.fromJson(send.body(), JsonElement.class);
 
                 if (!json.isJsonObject() || json.getAsJsonObject().has("ErrorMessage")){
                     data.setVideoTitle("取得失敗");

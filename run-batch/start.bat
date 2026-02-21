@@ -25,7 +25,7 @@ if exist "./tools/" (
 	) else (
 		curl https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_windows-x64_bin.zip --output ./tools/openjdk-21.0.2_windows-x64_bin.zip
 		.\tools\7z2501\7za.exe x -o./tools/ ./tools/openjdk-21.0.2_windows-x64_bin.zip
-		move .\tools\jdk-21.0.2\ .\tools\jdk-21\
+		move .\tools\jdk-21.0.2 .\tools\jdk-21
 	)
 	
 	if exist "./tools/javafx-sdk-21" (
