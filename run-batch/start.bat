@@ -33,7 +33,7 @@ if exist "./tools/" (
 	) else (
 		curl https://download2.gluonhq.com/openjfx/21.0.10/openjfx-21.0.10_windows-x64_bin-sdk.zip --output ./tools/openjfx-21.0.10_windows-x64_bin-sdk.zip
 		.\tools\7z2501\7za.exe x -o./tools/ ./tools/openjfx-21.0.10_windows-x64_bin-sdk.zip
-		move ./tools/javafx-sdk-21.0.9 ./tools/javafx-sdk-21
+		move ./tools/javafx-sdk-21.0.10 ./tools/javafx-sdk-21
 	)
 
 	echo Starting...
@@ -53,8 +53,10 @@ if exist "./tools/" (
 	curl https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_windows-x64_bin.zip --output ./tools/openjdk-21.0.2_windows-x64_bin.zip
 	.\tools\7z2501\7za.exe x -o./tools/ ./tools/openjdk-21.0.2_windows-x64_bin.zip
 	
-	curl https://download2.gluonhq.com/openjfx/21.0.9/openjfx-21.0.9_windows-x64_bin-sdk.zip --output ./tools/openjfx-21.0.9_windows-x64_bin-sdk.zip
-	.\tools\7z2501\7za.exe x -o./tools/ ./tools/openjfx-21.0.9_windows-x64_bin-sdk.zip
+	curl https://download2.gluonhq.com/openjfx/21.0.10/openjfx-21.0.10_windows-x64_bin-sdk.zip --output ./tools/openjfx-21.0.10_windows-x64_bin-sdk.zip
+	.\tools\7z2501\7za.exe x -o./tools/ ./tools/openjfx-21.0.10_windows-x64_bin-sdk.zip
+    move .\tools\jdk-21.0.2 .\tools\jdk-21
+    move ./tools/javafx-sdk-21.0.10 ./tools/javafx-sdk-21
 
 	echo Starting...
 	
