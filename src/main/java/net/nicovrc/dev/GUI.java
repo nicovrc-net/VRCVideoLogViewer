@@ -20,17 +20,16 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.*;
 import java.util.regex.Matcher;
 
 public class GUI extends Application {
 
     private static boolean isGUI = true;
-    private final HttpClient client;
 
-    public GUI(boolean isGUI, HttpClient client){
+    public GUI(boolean isGUI){
         this.isGUI = isGUI;
-        this.client = client;
     }
 
     @Override
@@ -767,109 +766,117 @@ public class GUI extends Application {
                             detail_stage.setScene(detail_scene);
                             detail_stage.show();
                         });
-                        switch (data.getURLType()) {
-                            case "Video" -> {
-                                //System.out.println("debug 0");
-                                VideoData videoData = Function.getVideoData(data.getURL());
-                                //System.out.println("debug 1");
-                                Image fxImage = videoData.getThumbnail() != null ? new Image(new ByteArrayInputStream(videoData.getThumbnail())) : null;
-                                //System.out.println("debug 2");
+                        try (HttpClient client = HttpClient.newBuilder()
+                                .version(HttpClient.Version.HTTP_2)
+                                .followRedirects(HttpClient.Redirect.ALWAYS)
+                                .connectTimeout(Duration.ofSeconds(5))
+                                .build()) {
 
-                                Platform.runLater(()->detail_label1_6.setText(Function.langData.get("video-title")));
+                            switch (data.getURLType()) {
+                                case "Video" -> {
+                                    //System.out.println("debug 0");
+                                    VideoData videoData = Function.getVideoData(data.getURL());
+                                    //System.out.println("debug 1");
+                                    Image fxImage = videoData.getThumbnail() != null ? new Image(new ByteArrayInputStream(videoData.getThumbnail())) : null;
+                                    //System.out.println("debug 2");
 
-                                TextField detail_field2 = new TextField();
-                                detail_field2.setFont(DefaultFont);
-                                detail_field2.setLayoutX(10);
-                                detail_field2.setLayoutY(380);
-                                detail_field2.setEditable(false);
-                                detail_field2.setFocusTraversable(false);
-                                detail_field2.setText(videoData.getVideoTitle());
-                                detail_field2.setPrefWidth(700);
-                                Platform.runLater(()->detail_root.getChildren().add(detail_field2));
+                                    Platform.runLater(()->detail_label1_6.setText(Function.langData.get("video-title")));
 
-                                if (fxImage != null) {
-                                    //System.out.println("debug 3");
+                                    TextField detail_field2 = new TextField();
+                                    detail_field2.setFont(DefaultFont);
+                                    detail_field2.setLayoutX(10);
+                                    detail_field2.setLayoutY(380);
+                                    detail_field2.setEditable(false);
+                                    detail_field2.setFocusTraversable(false);
+                                    detail_field2.setText(videoData.getVideoTitle());
+                                    detail_field2.setPrefWidth(700);
+                                    Platform.runLater(()->detail_root.getChildren().add(detail_field2));
 
-                                    ImageView detail_imageView = new ImageView(fxImage);
-                                    detail_imageView.setLayoutX(10);
-                                    detail_imageView.setLayoutY(420);
-                                    detail_imageView.setFitHeight(300);
-                                    detail_imageView.setPreserveRatio(true);
-                                    Platform.runLater(()->detail_root.getChildren().add(detail_imageView));
-                                }
+                                    if (fxImage != null) {
+                                        //System.out.println("debug 3");
 
-                            }
-                            case "Image" -> {
-                                Image fxImage = null;
-                                try {
-                                    HttpRequest request = HttpRequest.newBuilder()
-                                            .uri(new URI(data.getURL()))
-                                            //.uri(new URI("https://i2i.nicovrc.net/?url=https://nicovrc.net/VRChat_2024-08-16_03-59-02.141_3840x2160.png"))
-                                            .headers("User-Agent", Function.UserAgent)
-                                            .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                                            .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
-                                            .GET()
-                                            .build();
-
-                                    HttpResponse<byte[]> send = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-
-                                    byte[] input = send.body();
-                                    if (send.headers().firstValue("content-type").isPresent() && send.headers().firstValue("content-type").get().endsWith("webp")){
-                                        input = Function.Webp2PngConverter(input);
+                                        ImageView detail_imageView = new ImageView(fxImage);
+                                        detail_imageView.setLayoutX(10);
+                                        detail_imageView.setLayoutY(420);
+                                        detail_imageView.setFitHeight(300);
+                                        detail_imageView.setPreserveRatio(true);
+                                        Platform.runLater(()->detail_root.getChildren().add(detail_imageView));
                                     }
 
-                                    fxImage = new Image(new ByteArrayInputStream(input));
-                                } catch (Exception e){
-                                    throw new RuntimeException(e);
                                 }
+                                case "Image" -> {
+                                    Image fxImage = null;
+                                    try {
+                                        HttpRequest request = HttpRequest.newBuilder()
+                                                .uri(new URI(data.getURL()))
+                                                //.uri(new URI("https://i2i.nicovrc.net/?url=https://nicovrc.net/VRChat_2024-08-16_03-59-02.141_3840x2160.png"))
+                                                .headers("User-Agent", Function.UserAgent)
+                                                .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                                                .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                                                .GET()
+                                                .build();
 
-                                Platform.runLater(()->detail_root.getChildren().remove(detail_label1_6));
-                                if (fxImage != null) {
+                                        HttpResponse<byte[]> send = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
 
-                                    ImageView detail_imageView = new ImageView(fxImage);
-                                    detail_imageView.setLayoutX(10);
-                                    detail_imageView.setLayoutY(360);
-                                    detail_imageView.setFitHeight(350);
-                                    detail_imageView.setPreserveRatio(true);
-                                    Platform.runLater(()->detail_root.getChildren().add(detail_imageView));
+                                        byte[] input = send.body();
+                                        if (send.headers().firstValue("content-type").isPresent() && send.headers().firstValue("content-type").get().endsWith("webp")){
+                                            input = Function.Webp2PngConverter(input);
+                                        }
+
+                                        fxImage = new Image(new ByteArrayInputStream(input));
+                                    } catch (Exception e){
+                                        throw new RuntimeException(e);
+                                    }
+
+                                    Platform.runLater(()->detail_root.getChildren().remove(detail_label1_6));
+                                    if (fxImage != null) {
+
+                                        ImageView detail_imageView = new ImageView(fxImage);
+                                        detail_imageView.setLayoutX(10);
+                                        detail_imageView.setLayoutY(360);
+                                        detail_imageView.setFitHeight(350);
+                                        detail_imageView.setPreserveRatio(true);
+                                        Platform.runLater(()->detail_root.getChildren().add(detail_imageView));
+                                    }
+
                                 }
+                                case "String" -> {
 
-                            }
-                            case "String" -> {
+                                    String str = null;
 
-                                String str = null;
+                                    try {
+                                        HttpRequest request = HttpRequest.newBuilder()
+                                                .uri(new URI(data.getURL()))
+                                                //.uri(new URI("https://i2i.nicovrc.net/?url=https://nicovrc.net/VRChat_2024-08-16_03-59-02.141_3840x2160.png"))
+                                                .headers("User-Agent", Function.Unity_UserAgent)
+                                                .headers("Accept", "*/*")
+                                                .headers("x-unity-version", Function.HTTP_x_unity_version)
+                                                .GET()
+                                                .build();
 
-                                try {
-                                    HttpRequest request = HttpRequest.newBuilder()
-                                            .uri(new URI(data.getURL()))
-                                            //.uri(new URI("https://i2i.nicovrc.net/?url=https://nicovrc.net/VRChat_2024-08-16_03-59-02.141_3840x2160.png"))
-                                            .headers("User-Agent", Function.Unity_UserAgent)
-                                            .headers("Accept", "*/*")
-                                            .headers("x-unity-version", Function.HTTP_x_unity_version)
-                                            .GET()
-                                            .build();
+                                        HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+                                        str = send.body();
+                                    } catch (Exception e){
+                                        throw new RuntimeException(e);
+                                    }
 
-                                    HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-                                    str = send.body();
-                                } catch (Exception e){
-                                    throw new RuntimeException(e);
-                                }
+                                    Platform.runLater(()->detail_root.getChildren().remove(detail_label1_6));
+                                    if (str != null) {
 
-                                Platform.runLater(()->detail_root.getChildren().remove(detail_label1_6));
-                                if (str != null) {
-
-                                    TextArea detail_textArea2 = new TextArea();
-                                    detail_textArea2.setFont(DefaultFont);
-                                    detail_textArea2.setLayoutX(10);
-                                    detail_textArea2.setLayoutY(360);
-                                    detail_textArea2.setText(str);
-                                    detail_textArea2.setPrefSize(700, 300);
-                                    detail_textArea2.setEditable(false);
-                                    detail_textArea2.setWrapText(false);
-                                    Platform.runLater(()-> detail_root.getChildren().add(detail_textArea2));
+                                        TextArea detail_textArea2 = new TextArea();
+                                        detail_textArea2.setFont(DefaultFont);
+                                        detail_textArea2.setLayoutX(10);
+                                        detail_textArea2.setLayoutY(360);
+                                        detail_textArea2.setText(str);
+                                        detail_textArea2.setPrefSize(700, 300);
+                                        detail_textArea2.setEditable(false);
+                                        detail_textArea2.setWrapText(false);
+                                        Platform.runLater(()-> detail_root.getChildren().add(detail_textArea2));
+                                    }
                                 }
                             }
                         }
+
                     }
                 });
             }

@@ -282,21 +282,19 @@ public class Main {
 
 
             }
-
-            Platform.startup(() -> {
-                try {
-                    GUI gui = new GUI(true, client);
-                    gui.start(new Stage());
-                    gui.stop();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
+        Platform.startup(() -> {
+            try {
+                GUI gui = new GUI(true);
+                gui.start(new Stage());
+                gui.stop();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
 
     }
 
