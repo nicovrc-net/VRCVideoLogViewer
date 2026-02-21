@@ -2,6 +2,8 @@ package net.nicovrc.dev;
 
 import com.amihaiemil.eoyaml.Yaml;
 import com.amihaiemil.eoyaml.YamlMapping;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.sun.security.auth.module.NTSystem;
 import com.sun.security.auth.module.UnixSystem;
 import javafx.application.Platform;
@@ -59,7 +61,7 @@ public class Main {
                 }
 
                 if (!isAutoStaring){
-                    System.out.println("debug : 自動起動オフ");
+                    //System.out.println("debug : 自動起動オフ");
                     return;
                 }
 
@@ -269,8 +271,45 @@ public class Main {
                 file.delete();
             }
 
+            // フォント存在チェック
+            file = new File("./fonts");
+
+            try {
+                if (!file.exists()){
+                    if (isWindowsBatchStart){
+                        file = new File("./fonts/NotoSansJP-Medium.ttf");
+                        if (!file.exists()){
+                            DownloadFonts(client,"./fonts/NotoSansJP-Medium.ttf");
+                        }
+                        file = new File("./fonts/NotoSansKR-Medium.ttf");
+                        if (!file.exists()){
+                            DownloadFonts(client,"./fonts/NotoSansKR-Medium.ttf");
+                        }
+                        file = new File("./fonts/NotoSansSC-Medium.ttf");
+                        if (!file.exists()){
+                            DownloadFonts(client,"./fonts/NotoSansSC-Medium.ttf");
+                        }
+                        file = new File("./fonts/NotoSansTC-Medium.ttf");
+                        if (!file.exists()){
+                            DownloadFonts(client,"./fonts/NotoSansTC-Medium.ttf");
+                        }
+                    } else {
+                        // https://github.com/notofonts/noto-cjk/raw/main/Sans/Variable/OTC/NotoSansCJK-VF.ttf.ttc
+                        DownloadFonts(client,"./fonts/NotoSansCJK-Regular.ttc");
+                    }
+                }
+            } catch (Exception e){
+                throw new RuntimeException(e);
+            }
+
             if (isWindowsBatchStart){
                 file = new File("./tools/ImageMagick-7.1.2-12-portable-Q16-x64.7z");
+                file.delete();
+
+                file = new File("./tools/update1.bat");
+                file.delete();
+
+                file = new File("./tools/update2.bat");
                 file.delete();
             }
 
@@ -490,6 +529,64 @@ public class Main {
 
         }
 
+
+    }
+
+    private static void DownloadFonts(HttpClient client, String downloadFilename) throws Exception {
+
+        boolean isJsonDownload = false;
+        if (downloadFilename.equals("./fonts/NotoSansJP-Medium.ttf") || downloadFilename.equals("./fonts/NotoSansKR-Medium.ttf") || downloadFilename.equals("./fonts/NotoSansSC-Medium.ttf") || downloadFilename.equals("./fonts/NotoSansTC-Medium.ttf")){
+            isJsonDownload = true;
+        }
+
+        HttpRequest request = null;
+        if (isJsonDownload){
+            request = HttpRequest.newBuilder()
+                    .uri(new URI("https://fonts.google.com/download/list?family=Noto%20Sans%20JP%2CNoto%20Sans%20KR%2CNoto%20Sans%20SC%2CNoto%20Sans%20TC"))
+                    .headers("User-Agent", Function.UserAgent)
+                    .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                    .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                    .GET()
+                    .build();
+            HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            //System.out.println("---");
+            //System.out.println(send.body());
+            //System.out.println("---");
+            JsonElement json = Function.gson.fromJson(send.body(), JsonElement.class);
+
+            JsonArray array = json.getAsJsonObject().get("manifest").getAsJsonObject().get("fileRefs").getAsJsonArray();
+            for (int i = 0; i < array.size(); i++){
+                if  (array.get(i).getAsJsonObject().get("filename").getAsString().replaceAll("Noto_Sans_JP/static/", "").equals(downloadFilename.replaceAll("\\./fonts/", ""))){
+                    request = HttpRequest.newBuilder()
+                            .uri(new URI(array.get(i).getAsJsonObject().get("url").getAsString()))
+                            .headers("User-Agent", Function.UserAgent)
+                            .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                            .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                            .GET()
+                            .build();
+
+                    HttpResponse<byte[]> send2 = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+                    FileOutputStream stream = new FileOutputStream(downloadFilename);
+                    stream.write(send2.body());
+                    stream.close();
+                    stream = null;
+                }
+            }
+
+        } else {
+            request = HttpRequest.newBuilder()
+                    .uri(new URI("https://github.com/notofonts/noto-cjk/raw/main/Sans/Variable/OTC/NotoSansCJK-VF.ttf.ttc"))
+                    .headers("User-Agent", Function.UserAgent)
+                    .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                    .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                    .GET()
+                    .build();
+            HttpResponse<byte[]> send = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            FileOutputStream stream = new FileOutputStream(downloadFilename);
+            stream.write(send.body());
+            stream.close();
+            stream = null;
+        }
 
     }
 
