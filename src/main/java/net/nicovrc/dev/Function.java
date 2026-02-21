@@ -301,6 +301,7 @@ public class Function {
                     data.setInstanceType("public");
                     data.setInstanceId(worldId1.group(8));
                     data.setURL("https://vrchat.com/home/world/"+worldId1.group(7));
+                    data.setWorldId(worldId1.group(7));
                     data.setURLType("World");
                     isAdd = true;
                 }
@@ -324,6 +325,7 @@ public class Function {
                     String tempDate = worldId2.group(1)+"."+worldId2.group(2)+"."+worldId2.group(3)+" "+worldId2.group(4)+":"+worldId2.group(5)+":"+worldId2.group(6);
                     data.setLogDate(logDate.parse(tempDate));
                     data.setURL("https://vrchat.com/home/world/"+worldId2.group(7));
+                    data.setWorldId(worldId2.group(7));
                     data.setURLType("World");
                     data.setInstanceType("group");
                     data.setInstanceId(worldId2.group(8));
@@ -349,19 +351,21 @@ public class Function {
                     String tempDate = worldId3.group(1)+"."+worldId3.group(2)+"."+worldId3.group(3)+" "+worldId3.group(4)+":"+worldId3.group(5)+":"+worldId3.group(6);
                     data.setLogDate(logDate.parse(tempDate));
                     data.setURL("https://vrchat.com/home/world/"+worldId3.group(7));
+                    data.setWorldId(worldId3.group(7));
                     data.setURLType("World");
                     data.setInstanceType("group");
                     data.setInstanceId(worldId3.group(8));
                     isAdd = true;
                 }
 
-                if (!isWorld){
-                    data.setViewText("[" + Function.log_sdf.format(data.getLogDate()) + "] " + data.getURL() + " (" + data.getURLType() + ")");
-                } else {
-                    data.setViewText("[" + log_sdf.format(data.getLogDate()) + "] " + langData.get("world").replaceAll("#worldid#", data.getURL().replaceAll("https://vrchat\\.com/home/world/", "")).replaceAll("#worldname#", data.getWorldName()));
-                }
-
                 if (isAdd){
+                    //System.out.println("debug : " + data.getLogDate());
+                    if (!isWorld){
+                        data.setViewText("[" + log_sdf.format(data.getLogDate()) + "] " + data.getURL() + " (" + data.getURLType() + ")");
+                    } else {
+                        data.setViewText("[" + log_sdf.format(data.getLogDate()) + "] " + langData.get("world").replaceAll("#worldid#", data.getWorldId()).replaceAll("#worldname#", data.getWorldName()));
+                    }
+
                     data.setLogId(UUID.randomUUID().toString()+"-"+new Date().getTime());
                     logData.add(data);
                 }

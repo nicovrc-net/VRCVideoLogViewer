@@ -6,6 +6,7 @@ public class LogData {
 
     private String LogId;
     private Date logDate;
+    private String WorldId;
     private String WorldName;
     private String InstanceType;
     private String InstanceId;
@@ -52,6 +53,14 @@ public class LogData {
 
     public void setURLType(String URLType) {
         this.URLType = URLType;
+    }
+
+    public String getWorldId(){
+        return WorldId;
+    }
+
+    public void setWorldId(String worldId) {
+        WorldId = worldId;
     }
 
     public String getWorldName() {

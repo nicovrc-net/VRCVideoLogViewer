@@ -876,7 +876,7 @@ public class GUI extends Application {
 
                                 case "World" -> {
                                     // TODO: 内部のデータの持ち方を変えてから実装する
-                                    detail_stage.close();
+                                    Platform.runLater(()-> detail_stage.close());
                                 }
                             }
                         }
