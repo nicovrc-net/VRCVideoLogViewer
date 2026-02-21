@@ -901,7 +901,7 @@ public class Function {
                 Matcher matcher = matcher_ImageMagickLast.matcher(send.body());
                 if (matcher.find()){
                     //System.out.println(matcher.group(0));
-                    String str = matcher.group(0);
+                    final String str = matcher.group(0);
                     request = HttpRequest.newBuilder()
                             .uri(new URI(str))
                             .headers("User-Agent", Function.UserAgent)
@@ -916,29 +916,22 @@ public class Function {
                     stream.close();
                     stream = null;
 
+                    //System.out.println("debug1");
+
                     FileWriter file1 = new FileWriter("./tools/im1.bat");
                     PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
 
-                    file = new File("./");
-                    final String CurrentFolderPass = file.getCanonicalPath();
-
-                    pw.print("start ./tools/im2.bat".replaceAll("\\./", CurrentFolderPass+"/"));
-                    pw.close();
-                    file1.close();
-                    pw = null;
-                    file1 = null;
-
-                    file1 = new FileWriter("./tools/im2.bat");
-                    pw = new PrintWriter(new BufferedWriter(file1));
                     String str2 = """
-                        .\\tools\\7z2501\\7za.exe x -o./tools/ ./tools/#file#
+                        .\\tools\\7z2501\\7za.exe x -o./tools/ImageMagick ./tools/#file#
                         exit
                         """;
-                    pw.print(str2.replaceAll("#file#", str.split("/")[str.split("/").length - 1]).replaceAll("\\./", CurrentFolderPass.replaceAll("/", "\\\\\\\\")+"\\\\"));
+                    pw.print(str2.replaceAll("#file#", str.split("/")[str.split("/").length - 1]));
                     pw.close();
                     file1.close();
                     pw = null;
                     file1 = null;
+
+                    //System.out.println("debug3");
 
                     final Runtime runtime = Runtime.getRuntime();
                     Process exec0 = runtime.exec(new String[]{"./tools/im1.bat"});
@@ -955,55 +948,10 @@ public class Function {
                     });
                     exec0.waitFor();
 
-                    file = new File("./tools/im2.bat");
-                    file.delete();
-
-                    file = new File("./tools/"+str.split("/")[str.split("/").length - 1]);
-                    file.delete();
-
-                    String str3 = null;
-                    file = new File("./tools");
-
-                    for (File file2 : file.listFiles()) {
-                        if (file2.getName().startsWith("ImageMagick-")){
-                            str3 = file2.getName();
-                            break;
-                        }
-                    }
-
-                    if (str3 != null){
-                        file1 = new FileWriter("./tools/im2.bat");
-                        pw = new PrintWriter(new BufferedWriter(file1));
-                        str2 = """
-                        move ./tools\\#name# ./tools\\ImageMagick
-                        exit
-                        """;
-                        pw.print(str2.replaceAll("#name#", str3).replaceAll("\\./", CurrentFolderPass.replaceAll("/", "\\\\\\\\")+"\\\\"));
-                        pw.close();
-                        file1.close();
-                        pw = null;
-                        file1 = null;
-
-                        Process exec1 = runtime.exec(new String[]{"./tools/im1.bat"});
-                        Thread.ofVirtual().start(() -> {
-                            try {
-                                Thread.sleep(15000L);
-                            } catch (Exception ex) {
-                                //ex.printStackTrace();
-                            }
-
-                            if (exec1.isAlive()) {
-                                exec1.destroy();
-                            }
-                        });
-                        exec1.waitFor();
-
-                    }
-
                     file = new File("./tools/im1.bat");
                     file.delete();
 
-                    file = new File("./tools/im2.bat");
+                    file = new File("./tools/"+ str.split("/")[str.split("/").length - 1]);
                     file.delete();
 
                 }
