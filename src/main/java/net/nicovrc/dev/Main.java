@@ -2,13 +2,10 @@ package net.nicovrc.dev;
 
 import com.amihaiemil.eoyaml.Yaml;
 import com.amihaiemil.eoyaml.YamlMapping;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.sun.security.auth.module.NTSystem;
 import com.sun.security.auth.module.UnixSystem;
 import javafx.application.Platform;
 import javafx.stage.Stage;
-import net.nicovrc.dev.data.ConfigData;
 
 import java.io.*;
 import java.net.URI;
@@ -17,7 +14,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,130 +40,10 @@ public class Main {
 
         if (args.length == 1){
             if (args[0].equals("--start-Windows")){
-                boolean isAutoStaring = false;
-                String AutoStaringMode = "";
-                if (new File("./config.yml").exists()){
-                    try {
-                        final YamlMapping yamlMapping = Yaml.createYamlInput(new File("./config.yml")).readYamlMapping();
-                        isAutoStaring = yamlMapping.bool("isAutoStaring");
-                        AutoStaringMode = yamlMapping.string("AutoStaringMode");
-                    } catch (Exception e){
-                        // e.printStackTrace();
-                        isAutoStaring = false;
-                        AutoStaringMode = "";
-                    }
-                } else {
-                    return;
-                }
-
-                if (!isAutoStaring){
-                    //System.out.println("debug : 自動起動オフ");
-                    return;
-                }
-
-                if (AutoStaringMode.equals("Windows")){
-                    //System.out.println("debug : 自動起動 : Windows");
-                    try {
-                        final Runtime runtime = Runtime.getRuntime();
-                        if (new File("./auto-start.bat").exists()){
-                            new File("./auto-start.bat").delete();
-                        }
-
-                        FileWriter file1 = new FileWriter("./auto-start.bat");
-                        PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-                        pw.print("start .\\start.bat");
-                        pw.close();
-                        file1.close();
-                        pw = null;
-                        file1 = null;
-
-                        final Process exec0 = runtime.exec(new String[]{".\\auto-start.bat"});
-                        Thread.ofVirtual().start(() -> {
-                            try {
-                                Thread.sleep(5000L);
-                            } catch (Exception ex) {
-                                //ex.printStackTrace();
-                            }
-
-                            if (exec0.isAlive()) {
-                                exec0.destroy();
-                            }
-                        });
-                        exec0.waitFor();
-                        new File("./auto-start.bat").delete();
-                    } catch (Exception e){
-                        // e.printStackTrace();
-                    }
-                    return;
-                }
-
-                if (AutoStaringMode.equals("VRChat")){
-                    try {
-                        //System.out.println("debug : 自動起動 : VRChat");
-                        ConfigData config = new ConfigData();
-                        if (new File("./config.yml").exists()){
-                            final YamlMapping yamlMapping = Yaml.createYamlInput(new File("./config.yml")).readYamlMapping();
-                            config.setLogFolderPass(yamlMapping.string("logfolder"));
-                        }
-                        List<String> list = Function.ListSort(Function.getFileList(config.getLogFolderPass()));
-                        final String last = list.getLast();
-
-                        while (last.equals(Function.ListSort(Function.getFileList(config.getLogFolderPass())).getLast())){
-                            try {
-                                //System.out.println(last);
-                                //System.out.println(Function.ListSort(Function.getFileList(config.getLogFolderPass())).getLast());
-                                Thread.sleep(1000L);
-                            } catch (Exception ex) {
-                                //ex.printStackTrace();
-                                return;
-                            }
-                        }
-                        config = null;
-
-                        //System.out.println("debug");
-                        File file = new File("C:\\Users\\" + Function.ntSystem.getName() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
-                        if (!file.exists()){
-                            String AppData = System.getenv().get("APPDATA");
-                            file = new File(AppData+"\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
-                        }
-                        if (!file.exists()){
-                            return;
-                        }
-                        //System.out.println("debug2");
-
-                        if (new File("./auto-start.bat").exists()){
-                            new File("./auto-start.bat").delete();
-                        }
-
-                        FileWriter file1 = new FileWriter("./auto-start.bat");
-                        PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-                        pw.print("start .\\start.bat\r\ncd /d \""+file.getCanonicalPath().replaceAll("\\\\", "/").replaceAll("/", "\\\\")+"\"\r\nstart .\\vrcvideologviewer.bat");
-                        pw.close();
-                        file1.close();
-                        pw = null;
-                        file1 = null;
-
-                        final Runtime runtime = Runtime.getRuntime();
-                        final Process exec0 = runtime.exec(new String[]{".\\auto-start.bat"});
-                        Thread.ofVirtual().start(() -> {
-                            try {
-                                Thread.sleep(5000L);
-                            } catch (Exception ex) {
-                                //ex.printStackTrace();
-                            }
-
-                            if (exec0.isAlive()) {
-                                exec0.destroy();
-                            }
-                        });
-                        exec0.waitFor();
-                        runtime.exit(0);
-
-                        new File("./auto-start.bat").delete();
-
-                    } catch (Exception e){
-                        //e.printStackTrace();
-                    }
+                try {
+                    Function.StartUp();
+                } catch (Exception e){
+                    e.printStackTrace();
                 }
                 return;
             }
@@ -194,126 +70,15 @@ public class Main {
             }
         }
 
-        file = new File("./lang/"+lang+".txt");
-        if (!file.exists()){
-            file = new File("./lang/ja.txt");
-        }
-
         try (HttpClient client = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_2)
                 .followRedirects(HttpClient.Redirect.ALWAYS)
                 .connectTimeout(Duration.ofSeconds(5))
                 .build()) {
 
-            String langText = null;
-            if (file.exists()){
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))){
-                    String str;
-                    StringBuilder sb = new StringBuilder();
-                    while ((str = reader.readLine()) != null) {
-                        sb.append(str).append("\n");
-                    }
-                    langText = sb.toString();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            } else {
-                try {
-                    HttpRequest request = HttpRequest.newBuilder()
-                            .uri(new URI("https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/ja.txt"))
-                            .headers("User-Agent", Function.UserAgent)
-                            .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                            .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
-                            .GET()
-                            .build();
-                    HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-                    langText = send.body();
-
-                    FileWriter file1 = new FileWriter("./lang/ja.txt");
-                    PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-                    pw.print(langText);
-                    pw.close();
-                    file1.close();
-                    pw = null;
-                    file1 = null;
-                } catch (Exception e){
-                    throw new RuntimeException(e);
-                }
-            }
-
-            for (String str : langText.split("\n")) {
-                Matcher matcher = Function.matcher_langData.matcher(str);
-                //System.out.println("debug : " + str);
-                if (matcher.find()){
-                    //System.out.println("debug : " + matcher.group(1) + " / " + matcher.group(2));
-                    Function.langData.add(matcher.group(1), matcher.group(2));
-                }
-            }
+            Function.Main_Init(client, lang);
 
             System.out.println("[Info] "+Function.langData.get("start-message").replaceAll("#version#", Function.Version));
-            final boolean isWindowsBatchStart = Function.ntSystem != null;
-
-            file = new File("./tools/openjdk-21.0.2_windows-x64_bin.zip");
-            if (file.exists()){
-                file.delete();
-            }
-            file = new File("./tools/openjdk-21.0.2_linux-x64_bin.tar.gz");
-            if (file.exists()){
-                file.delete();
-            }
-            file = new File("./tools/openjfx-21.0.10_windows-x64_bin-sdk.zip");
-            if (file.exists()){
-                file.delete();
-            }
-            file = new File("./tools/openjfx-21.0.10_linux-x64_bin-sdk.zip");
-            if (file.exists()){
-                file.delete();
-            }
-
-            // フォント存在チェック
-            file = new File("./fonts");
-
-            try {
-                if (!file.exists()){
-                    file.mkdir();
-                }
-                if (isWindowsBatchStart){
-                    file = new File("./fonts/NotoSansJP-Medium.ttf");
-                    if (!file.exists()){
-                        DownloadFonts(client,"./fonts/NotoSansJP-Medium.ttf");
-                    }
-                    file = new File("./fonts/NotoSansKR-Medium.ttf");
-                    if (!file.exists()){
-                        DownloadFonts(client,"./fonts/NotoSansKR-Medium.ttf");
-                    }
-                    file = new File("./fonts/NotoSansSC-Medium.ttf");
-                    if (!file.exists()){
-                        DownloadFonts(client,"./fonts/NotoSansSC-Medium.ttf");
-                    }
-                    file = new File("./fonts/NotoSansTC-Medium.ttf");
-                    if (!file.exists()){
-                        DownloadFonts(client,"./fonts/NotoSansTC-Medium.ttf");
-                    }
-                } else {
-                    // https://github.com/notofonts/noto-cjk/raw/main/Sans/Variable/OTC/NotoSansCJK-VF.ttf.ttc
-                    DownloadFonts(client,"./fonts/NotoSansCJK-Regular.ttc");
-                }
-            } catch (Exception e){
-                throw new RuntimeException(e);
-            }
-
-            if (isWindowsBatchStart){
-                file = new File("./tools/ImageMagick-7.1.2-12-portable-Q16-x64.7z");
-                file.delete();
-
-                file = new File("./tools/update1.bat");
-                file.delete();
-
-                file = new File("./tools/update2.bat");
-                file.delete();
-            }
-
             System.out.println("[Info] "+Function.langData.get("update-check"));
 
             try {
@@ -528,66 +293,10 @@ public class Main {
                 }
             });
 
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
-
-    }
-
-    private static void DownloadFonts(HttpClient client, String downloadFilename) throws Exception {
-
-        boolean isJsonDownload = false;
-        if (downloadFilename.equals("./fonts/NotoSansJP-Medium.ttf") || downloadFilename.equals("./fonts/NotoSansKR-Medium.ttf") || downloadFilename.equals("./fonts/NotoSansSC-Medium.ttf") || downloadFilename.equals("./fonts/NotoSansTC-Medium.ttf")){
-            isJsonDownload = true;
-        }
-
-        HttpRequest request = null;
-        if (isJsonDownload){
-            request = HttpRequest.newBuilder()
-                    .uri(new URI("https://fonts.google.com/download/list?family=Noto%20Sans%20JP%2CNoto%20Sans%20KR%2CNoto%20Sans%20SC%2CNoto%20Sans%20TC"))
-                    .headers("User-Agent", Function.UserAgent)
-                    .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                    .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
-                    .GET()
-                    .build();
-            HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-            //System.out.println("---");
-            //System.out.println(send.body());
-            //System.out.println("---");
-            JsonElement json = Function.gson.fromJson(send.body(), JsonElement.class);
-
-            JsonArray array = json.getAsJsonObject().get("manifest").getAsJsonObject().get("fileRefs").getAsJsonArray();
-            for (int i = 0; i < array.size(); i++){
-                if  (array.get(i).getAsJsonObject().get("filename").getAsString().split("/")[2].equals(downloadFilename.replaceAll("\\./fonts/", ""))){
-                    request = HttpRequest.newBuilder()
-                            .uri(new URI(array.get(i).getAsJsonObject().get("url").getAsString()))
-                            .headers("User-Agent", Function.UserAgent)
-                            .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                            .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
-                            .GET()
-                            .build();
-
-                    HttpResponse<byte[]> send2 = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-                    FileOutputStream stream = new FileOutputStream(downloadFilename);
-                    stream.write(send2.body());
-                    stream.close();
-                    stream = null;
-                }
-            }
-
-        } else {
-            request = HttpRequest.newBuilder()
-                    .uri(new URI("https://github.com/notofonts/noto-cjk/raw/main/Sans/Variable/OTC/NotoSansCJK-VF.ttf.ttc"))
-                    .headers("User-Agent", Function.UserAgent)
-                    .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                    .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
-                    .GET()
-                    .build();
-            HttpResponse<byte[]> send = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-            FileOutputStream stream = new FileOutputStream(downloadFilename);
-            stream.write(send.body());
-            stream.close();
-            stream = null;
-        }
 
     }
 

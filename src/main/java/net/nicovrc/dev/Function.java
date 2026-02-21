@@ -1,6 +1,9 @@
 package net.nicovrc.dev;
 
+import com.amihaiemil.eoyaml.Yaml;
+import com.amihaiemil.eoyaml.YamlMapping;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.sun.security.auth.module.NTSystem;
 import com.sun.security.auth.module.UnixSystem;
@@ -86,6 +89,8 @@ public class Function {
     private static final Pattern matcher_VideoErrorLog2 = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Error      -  \\[AVProVideo\\] (.+)");
     private static final Pattern matcher_ImageErrorLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[Image Download\\] A web request exception occurred while loading image from URL '(.+)'\\. Exception: (.+)");
     private static final Pattern matcher_StringErrorLog = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+) (\\d+):(\\d+):(\\d+) Debug      -  \\[String Download\\] A web request exception occurred while loading string from URL '(.+)'\\. Exception: (.+)");
+
+    private static final Pattern matcher_ImageMagickLast = Pattern.compile("https://imagemagick\\.org/archive/binaries/ImageMagick-(\\d+)\\.(\\d+)\\.(\\d+)-(\\d+)-portable-Q16-x64\\.7z");
 
     private static final SimpleDateFormat logDate = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 
@@ -379,7 +384,7 @@ public class Function {
 
         final Process exec0;
         if (ntSystem != null){
-            exec0 = runtime.exec(new String[]{".\\tools\\ImageMagick-7.1.2-12-portable-Q16-x64\\magick.exe", "./temp/"+filename+".webp", "./temp/"+filename+".png"});
+            exec0 = runtime.exec(new String[]{".\\tools\\ImageMagick\\magick.exe", "./temp/"+filename+".webp", "./temp/"+filename+".png"});
         } else {
             exec0 = runtime.exec(new String[]{"./tools/ImageMagick/magick", "./temp/"+filename+".webp", "./temp/"+filename+".png"});
         }
@@ -538,7 +543,7 @@ public class Function {
 
             String batText = """
                     cd /d #path#
-                    start #path#/tools/jdk-21.0.2/bin/javaw.exe -jar ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar --start-Windows
+                    start #path#/tools/jdk-21/bin/javaw.exe -jar ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar --start-Windows
                     """;
 
             // C:\Users\xxx\AppData\Roaming
@@ -597,6 +602,439 @@ public class Function {
             }
         }
 
+    }
+
+    public static void StartUp() throws Exception {
+
+        boolean isAutoStaring = false;
+        String AutoStaringMode = "";
+        if (new File("./config.yml").exists()){
+            try {
+                final YamlMapping yamlMapping = Yaml.createYamlInput(new File("./config.yml")).readYamlMapping();
+                isAutoStaring = yamlMapping.bool("isAutoStaring");
+                AutoStaringMode = yamlMapping.string("AutoStaringMode");
+            } catch (Exception e){
+                // e.printStackTrace();
+                isAutoStaring = false;
+                AutoStaringMode = "";
+            }
+        } else {
+            return;
+        }
+
+        if (!isAutoStaring){
+            //System.out.println("debug : 自動起動オフ");
+            return;
+        }
+
+        if (AutoStaringMode.equals("Windows")){
+            final Runtime runtime = Runtime.getRuntime();
+            if (new File("./auto-start.bat").exists()){
+                new File("./auto-start.bat").delete();
+            }
+
+            FileWriter file1 = new FileWriter("./auto-start.bat");
+            PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
+            pw.print("start .\\start.bat");
+            pw.close();
+            file1.close();
+            pw = null;
+            file1 = null;
+
+            final Process exec0 = runtime.exec(new String[]{".\\auto-start.bat"});
+            Thread.ofVirtual().start(() -> {
+                try {
+                    Thread.sleep(5000L);
+                } catch (Exception ex) {
+                    //ex.printStackTrace();
+                }
+
+                if (exec0.isAlive()) {
+                    exec0.destroy();
+                }
+            });
+            exec0.waitFor();
+            new File("./auto-start.bat").delete();
+            return;
+        }
+
+        if (AutoStaringMode.equals("VRChat")){
+            //System.out.println("debug : 自動起動 : VRChat");
+            ConfigData config = new ConfigData();
+            if (new File("./config.yml").exists()){
+                final YamlMapping yamlMapping = Yaml.createYamlInput(new File("./config.yml")).readYamlMapping();
+                config.setLogFolderPass(yamlMapping.string("logfolder"));
+            }
+            List<String> list = Function.ListSort(Function.getFileList(config.getLogFolderPass()));
+            final String last = list.getLast();
+
+            while (last.equals(Function.ListSort(Function.getFileList(config.getLogFolderPass())).getLast())){
+                try {
+                    //System.out.println(last);
+                    //System.out.println(Function.ListSort(Function.getFileList(config.getLogFolderPass())).getLast());
+                    Thread.sleep(1000L);
+                } catch (Exception ex) {
+                    //ex.printStackTrace();
+                    return;
+                }
+            }
+            config = null;
+
+            //System.out.println("debug");
+            File file = new File("C:\\Users\\" + Function.ntSystem.getName() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
+            if (!file.exists()){
+                String AppData = System.getenv().get("APPDATA");
+                file = new File(AppData+"\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
+            }
+            if (!file.exists()){
+                return;
+            }
+            //System.out.println("debug2");
+
+            if (new File("./auto-start.bat").exists()){
+                new File("./auto-start.bat").delete();
+            }
+
+            FileWriter file1 = new FileWriter("./auto-start.bat");
+            PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
+            pw.print("start .\\start.bat\r\ncd /d \""+file.getCanonicalPath().replaceAll("\\\\", "/").replaceAll("/", "\\\\")+"\"\r\nstart .\\vrcvideologviewer.bat");
+            pw.close();
+            file1.close();
+            pw = null;
+            file1 = null;
+
+            final Runtime runtime = Runtime.getRuntime();
+            final Process exec0 = runtime.exec(new String[]{".\\auto-start.bat"});
+            Thread.ofVirtual().start(() -> {
+                try {
+                    Thread.sleep(5000L);
+                } catch (Exception ex) {
+                    //ex.printStackTrace();
+                }
+
+                if (exec0.isAlive()) {
+                    exec0.destroy();
+                }
+            });
+            exec0.waitFor();
+            runtime.exit(0);
+
+            new File("./auto-start.bat").delete();
+
+        }
+    }
+
+    public static void DownloadFonts(HttpClient client, String downloadFilename) throws Exception {
+
+        boolean isJsonDownload = false;
+        if (downloadFilename.equals("./fonts/NotoSansJP-Medium.ttf") || downloadFilename.equals("./fonts/NotoSansKR-Medium.ttf") || downloadFilename.equals("./fonts/NotoSansSC-Medium.ttf") || downloadFilename.equals("./fonts/NotoSansTC-Medium.ttf")){
+            isJsonDownload = true;
+        }
+
+        HttpRequest request = null;
+        if (isJsonDownload){
+            request = HttpRequest.newBuilder()
+                    .uri(new URI("https://fonts.google.com/download/list?family=Noto%20Sans%20JP%2CNoto%20Sans%20KR%2CNoto%20Sans%20SC%2CNoto%20Sans%20TC"))
+                    .headers("User-Agent", Function.UserAgent)
+                    .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                    .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                    .GET()
+                    .build();
+            HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            //System.out.println("---");
+            //System.out.println(send.body());
+            //System.out.println("---");
+            JsonElement json = Function.gson.fromJson(send.body(), JsonElement.class);
+
+            JsonArray array = json.getAsJsonObject().get("manifest").getAsJsonObject().get("fileRefs").getAsJsonArray();
+
+            for (JsonElement element : array.asList()) {
+                String filename = element.getAsJsonObject().get("filename").getAsString();
+
+                if  (filename.split("/")[filename.split("/").length - 1].equals(downloadFilename.replaceAll("\\./fonts/", ""))){
+                    request = HttpRequest.newBuilder()
+                            .uri(new URI(element.getAsJsonObject().get("url").getAsString()))
+                            .headers("User-Agent", Function.UserAgent)
+                            .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                            .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                            .GET()
+                            .build();
+
+                    HttpResponse<byte[]> send2 = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+                    FileOutputStream stream = new FileOutputStream(downloadFilename);
+                    stream.write(send2.body());
+                    stream.close();
+                    stream = null;
+                }
+            }
+
+        } else {
+            request = HttpRequest.newBuilder()
+                    .uri(new URI("https://github.com/notofonts/noto-cjk/raw/main/Sans/Variable/OTC/NotoSansCJK-VF.ttf.ttc"))
+                    .headers("User-Agent", Function.UserAgent)
+                    .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                    .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                    .GET()
+                    .build();
+            HttpResponse<byte[]> send = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            FileOutputStream stream = new FileOutputStream(downloadFilename);
+            stream.write(send.body());
+            stream.close();
+            stream = null;
+        }
+
+    }
+
+    public static void Main_Init(HttpClient client, String lang) throws Exception {
+        File file = null;
+        String langText = null;
+        file = new File("./lang/"+lang+".txt");
+        if (!file.exists()){
+            file = new File("./lang/ja.txt");
+        }
+
+        if (file.exists()){
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))){
+                String str;
+                StringBuilder sb = new StringBuilder();
+                while ((str = reader.readLine()) != null) {
+                    sb.append(str).append("\n");
+                }
+                langText = sb.toString();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        } else {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(new URI("https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/ja.txt"))
+                    .headers("User-Agent", Function.UserAgent)
+                    .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                    .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                    .GET()
+                    .build();
+            HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            langText = send.body();
+
+            FileWriter file1 = new FileWriter("./lang/ja.txt");
+            PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
+            pw.print(langText);
+            pw.close();
+            file1.close();
+            pw = null;
+            file1 = null;
+        }
+
+        for (String str : langText.split("\n")) {
+            Matcher matcher = Function.matcher_langData.matcher(str);
+            //System.out.println("debug : " + str);
+            if (matcher.find()){
+                //System.out.println("debug : " + matcher.group(1) + " / " + matcher.group(2));
+                Function.langData.add(matcher.group(1), matcher.group(2));
+            }
+        }
+
+        final boolean isWindowsBatchStart = Function.ntSystem != null;
+
+        file = new File("./tools/openjdk-21.0.2_windows-x64_bin.zip");
+        if (file.exists()){
+            file.delete();
+        }
+        file = new File("./tools/openjdk-21.0.2_linux-x64_bin.tar.gz");
+        if (file.exists()){
+            file.delete();
+        }
+        file = new File("./tools/openjfx-21.0.10_windows-x64_bin-sdk.zip");
+        if (file.exists()){
+            file.delete();
+        }
+        file = new File("./tools/openjfx-21.0.10_linux-x64_bin-sdk.zip");
+        if (file.exists()){
+            file.delete();
+        }
+
+        // フォント存在チェック
+        file = new File("./fonts");
+
+        if (!file.exists()){
+            file.mkdir();
+        }
+        if (isWindowsBatchStart){
+            file = new File("./fonts/NotoSansJP-Medium.ttf");
+            if (!file.exists()){
+                DownloadFonts(client,"./fonts/NotoSansJP-Medium.ttf");
+            }
+            file = new File("./fonts/NotoSansKR-Medium.ttf");
+            if (!file.exists()){
+                DownloadFonts(client,"./fonts/NotoSansKR-Medium.ttf");
+            }
+            file = new File("./fonts/NotoSansSC-Medium.ttf");
+            if (!file.exists()){
+                DownloadFonts(client,"./fonts/NotoSansSC-Medium.ttf");
+            }
+            file = new File("./fonts/NotoSansTC-Medium.ttf");
+            if (!file.exists()){
+                DownloadFonts(client,"./fonts/NotoSansTC-Medium.ttf");
+            }
+        } else {
+            file = new File("./fonts/NotoSansCJK-Regular.ttc");
+            if (!file.exists()){
+                DownloadFonts(client,"./fonts/NotoSansCJK-Regular.ttc");
+            }
+        }
+
+        // ImageMagic存在チェック
+        // https://imagemagick.org/script/download.php
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI("https://imagemagick.org/script/download.php"))
+                .headers("User-Agent", Function.UserAgent)
+                .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                .GET()
+                .build();
+        HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+
+        //System.out.println(send.body());
+        if (isWindowsBatchStart) {
+            file = new File(".\\tools\\ImageMagick\\magick.exe");
+            if (!file.exists()) {
+                Matcher matcher = matcher_ImageMagickLast.matcher(send.body());
+                if (matcher.find()){
+                    //System.out.println(matcher.group(0));
+                    String str = matcher.group(0);
+                    request = HttpRequest.newBuilder()
+                            .uri(new URI(str))
+                            .headers("User-Agent", Function.UserAgent)
+                            .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                            .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                            .GET()
+                            .build();
+                    HttpResponse<byte[]> send2 = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+
+                    FileOutputStream stream = new FileOutputStream("./tools/"+str.split("/")[str.split("/").length - 1]);
+                    stream.write(send2.body());
+                    stream.close();
+                    stream = null;
+
+                    FileWriter file1 = new FileWriter("./tools/im1.bat");
+                    PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
+
+                    file = new File("./");
+                    final String CurrentFolderPass = file.getCanonicalPath();
+
+                    pw.print("start ./tools/im2.bat".replaceAll("\\./", CurrentFolderPass+"/"));
+                    pw.close();
+                    file1.close();
+                    pw = null;
+                    file1 = null;
+
+                    file1 = new FileWriter("./tools/im2.bat");
+                    pw = new PrintWriter(new BufferedWriter(file1));
+                    String str2 = """
+                        .\\tools\\7z2501\\7za.exe x -o./tools/ ./tools/#file#
+                        exit
+                        """;
+                    pw.print(str2.replaceAll("#file#", str.split("/")[str.split("/").length - 1]).replaceAll("\\./", CurrentFolderPass.replaceAll("/", "\\\\\\\\")+"\\\\"));
+                    pw.close();
+                    file1.close();
+                    pw = null;
+                    file1 = null;
+
+                    final Runtime runtime = Runtime.getRuntime();
+                    Process exec0 = runtime.exec(new String[]{"./tools/im1.bat"});
+                    Thread.ofVirtual().start(() -> {
+                        try {
+                            Thread.sleep(15000L);
+                        } catch (Exception ex) {
+                            //ex.printStackTrace();
+                        }
+
+                        if (exec0.isAlive()) {
+                            exec0.destroy();
+                        }
+                    });
+                    exec0.waitFor();
+
+                    file = new File("./tools/im2.bat");
+                    file.delete();
+
+                    file = new File("./tools/"+str.split("/")[str.split("/").length - 1]);
+                    file.delete();
+
+                    String str3 = null;
+                    file = new File("./tools");
+
+                    for (File file2 : file.listFiles()) {
+                        if (file2.getName().startsWith("ImageMagick-")){
+                            str3 = file2.getName();
+                            break;
+                        }
+                    }
+
+                    if (str3 != null){
+                        file1 = new FileWriter("./tools/im2.bat");
+                        pw = new PrintWriter(new BufferedWriter(file1));
+                        str2 = """
+                        move ./tools\\#name# ./tools\\ImageMagick
+                        exit
+                        """;
+                        pw.print(str2.replaceAll("#name#", str3).replaceAll("\\./", CurrentFolderPass.replaceAll("/", "\\\\\\\\")+"\\\\"));
+                        pw.close();
+                        file1.close();
+                        pw = null;
+                        file1 = null;
+
+                        Process exec1 = runtime.exec(new String[]{"./tools/im1.bat"});
+                        Thread.ofVirtual().start(() -> {
+                            try {
+                                Thread.sleep(15000L);
+                            } catch (Exception ex) {
+                                //ex.printStackTrace();
+                            }
+
+                            if (exec1.isAlive()) {
+                                exec1.destroy();
+                            }
+                        });
+                        exec1.waitFor();
+
+                    }
+
+                    file = new File("./tools/im1.bat");
+                    file.delete();
+
+                    file = new File("./tools/im2.bat");
+                    file.delete();
+
+                }
+            }
+        } else {
+            file = new File("./tools/ImageMagick/magick");
+            if (!file.exists()){
+                request = HttpRequest.newBuilder()
+                        .uri(new URI("https://imagemagick.org/archive/binaries/magick"))
+                        .headers("User-Agent", Function.UserAgent)
+                        .headers("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                        .headers("Accept-Language", "ja,en;q=0.7,en-US;q=0.3")
+                        .GET()
+                        .build();
+
+                HttpResponse<byte[]> send2 = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+
+                FileOutputStream stream = new FileOutputStream("./tools/ImageMagick/magick");
+                stream.write(send2.body());
+                stream.close();
+                stream = null;
+            }
+        }
+
+        if (isWindowsBatchStart){
+            file = new File("./tools/update1.bat");
+            file.delete();
+
+            file = new File("./tools/update2.bat");
+            file.delete();
+        }
     }
 
 }
