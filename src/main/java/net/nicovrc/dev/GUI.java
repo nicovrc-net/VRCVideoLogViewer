@@ -627,6 +627,11 @@ public class GUI extends Application {
                             return;
                         }
 
+                        // TODO: そのうち実装する
+                        if (data.getURLType().equals("World")){
+                            return;
+                        }
+
                         Platform.runLater(()->{
                             detail_stage.setResizable(false);
                             detail_stage.setMaximized(false);
@@ -872,11 +877,6 @@ public class GUI extends Application {
                                         detail_textArea2.setWrapText(false);
                                         Platform.runLater(()-> detail_root.getChildren().add(detail_textArea2));
                                     }
-                                }
-
-                                case "World" -> {
-                                    // TODO: 内部のデータの持ち方を変えてから実装する
-                                    Platform.runLater(()-> detail_stage.close());
                                 }
                             }
                         }
