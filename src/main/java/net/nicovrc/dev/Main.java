@@ -276,6 +276,7 @@ public class Main {
 
             try {
                 if (!file.exists()){
+                    file.mkdir();
                     if (isWindowsBatchStart){
                         file = new File("./fonts/NotoSansJP-Medium.ttf");
                         if (!file.exists()){
