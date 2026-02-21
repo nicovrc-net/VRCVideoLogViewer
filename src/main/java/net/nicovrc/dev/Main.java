@@ -557,7 +557,7 @@ public class Main {
 
             JsonArray array = json.getAsJsonObject().get("manifest").getAsJsonObject().get("fileRefs").getAsJsonArray();
             for (int i = 0; i < array.size(); i++){
-                if  (array.get(i).getAsJsonObject().get("filename").getAsString().replaceAll("Noto_Sans_JP/static/", "").equals(downloadFilename.replaceAll("\\./fonts/", ""))){
+                if  (array.get(i).getAsJsonObject().get("filename").getAsString().split("/")[2].equals(downloadFilename.replaceAll("\\./fonts/", ""))){
                     request = HttpRequest.newBuilder()
                             .uri(new URI(array.get(i).getAsJsonObject().get("url").getAsString()))
                             .headers("User-Agent", Function.UserAgent)
