@@ -48,8 +48,6 @@ package() {
     install -dm755 "$pkgdir/usr/share/$pkgname/tools/ImageMagick"
     ln -s /usr/bin/magick "$pkgdir/usr/share/$pkgname/tools/ImageMagick/magick"
 
-    ln -s /usr/share/fonts/noto-cjk/ "$pkgdir/usr/share/$pkgname/fonts"
-
     ln -s "$pkgdir/usr/share/$pkgname/start_forLinux.sh" "/$pkgdir/usr/bin/$pkgname"
 
     find "$pkgdir/usr/share/$pkgname" -type f -exec file {} \; | grep ELF | cut -d: -f1 | while read -r elf; do
