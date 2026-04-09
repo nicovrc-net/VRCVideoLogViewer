@@ -112,7 +112,7 @@ jobs:
         shell: bash
       - name: Upload 7zip
         if: startsWith(github.ref, 'refs/tags/')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.0
         with:
           name: 7zip
           path: ./7z.tar.xz
@@ -125,31 +125,31 @@ jobs:
     steps:
       - name: Download 7zip
         if: startsWith(github.ref, 'refs/tags/')
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8.0.1
         with:
           name: 7zip
 
       - name: Download JarFile
         if: startsWith(github.ref, 'refs/tags/')
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8.0.1
         with:
           name: jar
 
       - name: Download LangFile
         if: startsWith(github.ref, 'refs/tags/')
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8.0.1
         with:
           name: lang
 
       - name: Download RunBatch File
         if: startsWith(github.ref, 'refs/tags/')
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8.0.1
         with:
           name: run_batch
 
       - name: Download PKGBUILD File
         if: startsWith(github.ref, 'refs/tags/')
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8.0.1
         with:
           name: PKGBUILD
 
@@ -203,7 +203,7 @@ jobs:
 
       - name: Download config File
         if: startsWith(github.ref, 'refs/tags/')
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8.0.1
         with:
           name: config
 
