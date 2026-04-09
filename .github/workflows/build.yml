@@ -20,15 +20,15 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.2
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5.2.0
         with:
           java-version: '21'
           distribution: 'temurin'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3.5.0
+        uses: gradle/actions/setup-gradle@v6.1.0
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
@@ -45,35 +45,35 @@ jobs:
 
       - name: Upload JarFile
         if: startsWith(github.ref, 'refs/tags/')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.0
         with:
           name: jar
           path: ./build/libs/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
 
       - name: Upload LangFile
         if: startsWith(github.ref, 'refs/tags/')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.0
         with:
           name: lang
           path: ./lang.tar.gz
 
       - name: Upload StartBatchFile
         if: startsWith(github.ref, 'refs/tags/')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.0
         with:
           name: run_batch
           path: ./run_batch.tar.gz
 
       - name: Upload ConfigFile
         if: startsWith(github.ref, 'refs/tags/')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.0
         with:
           name: config
           path: ./linux-package/config_for_package.txt
 
       - name: Upload PKGBUILD File
         if: startsWith(github.ref, 'refs/tags/')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.0
         with:
           name: PKGBUILD
           path: ./linux-package/PKGBUILD
@@ -83,15 +83,15 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.2
       - name: Set up JDK 24
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5.2.0
         with:
           java-version: '24'
           distribution: 'temurin'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3.5.0
+        uses: gradle/actions/setup-gradle@v6.1.0
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
@@ -107,8 +107,8 @@ jobs:
       - name: Download 7zip
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          wget https://www.7-zip.org/a/7z2501-linux-x64.tar.xz
-          mv 7z2501-linux-x64.tar.xz 7z.tar.xz
+          wget https://github.com/ip7z/7zip/releases/download/26.00/7z2600-linux-x64.tar.xz
+          mv 7z2600-linux-x64.tar.xz 7z.tar.xz
         shell: bash
       - name: Upload 7zip
         if: startsWith(github.ref, 'refs/tags/')
@@ -158,14 +158,14 @@ jobs:
         run: |
           tar -Jxvf ./7z.tar.xz
           mkdir ./tools
-          mkdir ./tools/7z2501
-          mv ./7zz ./tools/7z2501
-          mv ./7zzs ./tools/7z2501
-          mv ./History.txt ./tools/7z2501
-          mv ./License.txt ./tools/7z2501
-          mv ./MANUAL ./tools/7z2501
-          mv ./readme.txt ./tools/7z2501
-          chmod +x ./tools/7z2501/7zz
+          mkdir ./tools/7z2600
+          mv ./7zz ./tools/7z2600
+          mv ./7zzs ./tools/7z2600
+          mv ./History.txt ./tools/7z2600
+          mv ./License.txt ./tools/7z2600
+          mv ./MANUAL ./tools/7z2600
+          mv ./readme.txt ./tools/7z2600
+          chmod +x ./tools/7z2600/7zz
           
           tar -zxvf ./run_batch.tar.gz
           tar -zxvf ./lang.tar.gz
