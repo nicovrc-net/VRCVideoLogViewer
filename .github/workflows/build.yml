@@ -122,6 +122,7 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: write
+      packages: write
     steps:
       - name: Download 7zip
         if: startsWith(github.ref, 'refs/tags/')
