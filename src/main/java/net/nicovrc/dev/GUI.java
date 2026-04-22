@@ -953,7 +953,6 @@ public class GUI extends Application {
                     try {
                         final Runtime runtime = Runtime.getRuntime();
                         final Process exec0 = runtime.exec(new String[]{"./tools/update.bat"});
-                        stop();
                     } catch (Exception ex){
                         // ex.printStackTrace();
                     }
