@@ -176,7 +176,7 @@ jobs:
           mv ./run-batch/start_forLinux.sh ./tmp/start_forLinux.sh
           mv ./lang ./tmp
           mv ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar ./tmp
-          ./tools/7z2501/7zz a ./VRCVideoLogViewer.zip ./tmp/*
+          ./tools/7z2600/7zz a ./VRCVideoLogViewer.zip ./tmp/*
         shell: bash
 
       - name: Linux Bash Setup Test
