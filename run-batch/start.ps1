@@ -5,13 +5,13 @@ if ( -not (Test-Path '.\tools')){
 if ( -not (Test-Path './tools/jdk-21')) {
   Invoke-WebRequest -Uri https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_windows-x64_bin.zip -OutFile ./tools/openjdk-21.0.2_windows-x64_bin.zip
   Expand-Archive -Path ./tools/openjdk-21.0.2_windows-x64_bin.zip -DestinationPath ./tools/
-  Rename-Item .\tools\jdk-21.0.2 ./tools/jdk-21
+  Rename-Item .\tools\jdk-21.0.2 jdk-21
 }
 
 if ( -not (Test-Path './tools/javafx-sdk-21')) {
   Invoke-WebRequest -Uri https://download2.gluonhq.com/openjfx/21.0.10/openjfx-21.0.10_windows-x64_bin-sdk.zip -OutFile ./tools/openjfx-21.0.10_windows-x64_bin-sdk.zip
   Expand-Archive -Path ./tools/openjfx-21.0.10_windows-x64_bin-sdk.zip -DestinationPath ./tools/
-  Rename-Item .\tools\javafx-sdk-21.0.10 ./tools/javafx-sdk-21
+  Rename-Item .\tools\javafx-sdk-21.0.10 javafx-sdk-21
 }
 
 Write-Output "Starting..."
