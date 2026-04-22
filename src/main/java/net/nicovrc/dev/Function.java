@@ -24,10 +24,10 @@ import java.util.regex.Pattern;
 
 public class Function {
 
-    public static final String Version = "1.2.0";
+    public static final String Version = "1.2.1";
 
     public static final Gson gson = new Gson();
-    public static final String UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0 VRCVideoLogViewer/"+Version;
+    public static final String UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0 VRCVideoLogViewer/"+Version;
     public static final String Unity_UserAgent = "UnityPlayer/2022.3.22f1-DWR (UnityWebRequest/1.0, libcurl/8.5.0-DEV)";
     public static final String HTTP_x_unity_version = "2022.3.22f1-DWR";
 

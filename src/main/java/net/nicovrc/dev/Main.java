@@ -134,31 +134,40 @@ public class Main {
                             update_file.delete();
                         }
 
-                        FileWriter file1 = new FileWriter("./tools/update1.bat");
+                        FileWriter file1 = new FileWriter("./tools/update.bat");
                         PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-                        pw.print("start ./tools/update2.bat".replaceAll("\\./", CurrentFolderPass+"/"));
+                        pw.print("@echo off\npowershell -NoProfile -ExecutionPolicy Unrestricted .\\update.ps1\nexit");
                         pw.close();
                         file1.close();
                         pw = null;
                         file1 = null;
 
-                        file1 = new FileWriter("./tools/update2.bat");
+                        file1 = new FileWriter("./tools/update.ps1");
                         pw = new PrintWriter(new BufferedWriter(file1));
                         String str = """
-                        curl https://github.com/nicovrc-net/VRCVideoLogViewer/releases/download/#ver#/VRCVideoLogViewer.zip -L --output ./tools/VRCVideoLogViewer.zip
-                        tar -xf ./tools/VRCVideoLogViewer.zip -C ./tools\\
-                        del ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
-                        del ./start.bat
-                        move ./tools\\VRCVideoLogViewer-1.0-SNAPSHOT-all.jar ./
-                        move ./tools\\start.bat ./
-                        move ./lang\\ja.txt ./lang
-                        move ./lang\\en.txt ./lang
-                        move ./lang\\zh-Hans.txt ./lang
-                        move ./lang\\zh-Hant.txt ./lang
-                        move ./lang\\ko.txt ./lang
+                        Invoke-WebRequest -Uri https://github.com/nicovrc-net/VRCVideoLogViewer/releases/download/#ver#/VRCVideoLogViewer.zip -OutFile ./tools/VRCVideoLogViewer.zip
+                        Expand-Archive -Path ./tools/VRCVideoLogViewer.zip -DestinationPath ./tools/
+                        
+                        Remove-Item ./tools/VRCVideoLogViewer.zip
+                        
+                        Remove-Item ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
+                        Remove-Item ./start.bat
+                        if ((Test-Path './start.ps1')) {
+                          Remove-Item ./start.ps1
+                        }
+                        Remove-Item ./lang -Recurse -Force
+                        
+                        Move-Item -Path ./tools/VRCVideoLogViewer-1.0-SNAPSHOT-all.jar -Destination ./
+                        Move-Item -Path ./tools/start.bat -Destination ./
+                        Move-Item -Path ./tools/start.ps1 -Destination ./
+                        
+                        New-Item -ItemType Directory -Path ./lang
+                        Move-Item -Path ./tools/lang/* -Destination ./lang
+                        
+                        Remove-Item ./tools -Recurse -Force
                         exit
                         """;
-                        pw.print(str.replaceAll("#ver#", Function.new_version).replaceAll("\\./", CurrentFolderPass.replaceAll("/", "\\\\\\\\")+"\\\\"));
+                        pw.print(str.replaceAll("#ver#", Function.new_version));
                         pw.close();
                         file1.close();
                         pw = null;

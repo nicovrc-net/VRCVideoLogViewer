@@ -257,8 +257,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: v${{ github.ref }}
           body: |
-            - 一部ライブラリの存在チェックを起動前ではなく起動時にチェックするように
-            - ワールド名を表示するように
+            - 起動バッチとアップデートバッチをPowershell化
           draft: false
           prerelease: false
 

@@ -952,7 +952,7 @@ public class GUI extends Application {
                 update_button2.setOnAction(e -> {
                     try {
                         final Runtime runtime = Runtime.getRuntime();
-                        final Process exec0 = runtime.exec(new String[]{"./tools/update1.bat"});
+                        final Process exec0 = runtime.exec(new String[]{"./tools/update.bat"});
                         Thread.ofVirtual().start(() -> {
                             try {
                                 Thread.sleep(5000L);
@@ -965,11 +965,21 @@ public class GUI extends Application {
                             }
                         });
                         exec0.waitFor();
+
+                        if (new File("./tools/update.bat").exists()){
+                            new File("./tools/update.bat").delete();
+                        }
+
+                        if (new File("./tools/update.ps1").exists()){
+                            new File("./tools/update.ps1").delete();
+                        }
                     } catch (Exception ex){
                         // ex.printStackTrace();
                     }
                     update_stage.close();
                     stage.close();
+
+
                 });
                 update_root.getChildren().add(update_button2);
             }
@@ -987,6 +997,7 @@ public class GUI extends Application {
         if (Function.isUpdate){
             update_stage.show();
         }
+
         Thread.ofVirtual().start(()->{
             while (stage.isShowing() && Function.isTimerRun){
                 try {
