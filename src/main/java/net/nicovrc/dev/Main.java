@@ -136,7 +136,7 @@ public class Main {
 
                         FileWriter file1 = new FileWriter("./tools/update.bat");
                         PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-                        pw.print("@echo off\npowershell -NoProfile -ExecutionPolicy Unrestricted .\\update.ps1\nexit");
+                        pw.print("@echo off\npowershell -NoProfile -ExecutionPolicy Unrestricted .\\tools\\update.ps1\nexit");
                         pw.close();
                         file1.close();
                         pw = null;
