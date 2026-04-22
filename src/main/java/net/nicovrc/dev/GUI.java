@@ -953,26 +953,7 @@ public class GUI extends Application {
                     try {
                         final Runtime runtime = Runtime.getRuntime();
                         final Process exec0 = runtime.exec(new String[]{"./tools/update.bat"});
-                        Thread.ofVirtual().start(() -> {
-                            try {
-                                Thread.sleep(5000L);
-                            } catch (Exception ex) {
-                                //ex.printStackTrace();
-                            }
-
-                            if (exec0.isAlive()) {
-                                exec0.destroy();
-                            }
-                        });
-                        exec0.waitFor();
-
-                        if (new File("./tools/update.bat").exists()){
-                            new File("./tools/update.bat").delete();
-                        }
-
-                        if (new File("./tools/update.ps1").exists()){
-                            new File("./tools/update.ps1").delete();
-                        }
+                        stop();
                     } catch (Exception ex){
                         // ex.printStackTrace();
                     }

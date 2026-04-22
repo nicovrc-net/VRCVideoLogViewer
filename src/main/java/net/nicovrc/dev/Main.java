@@ -125,11 +125,11 @@ public class Main {
                 if (Function.isUpdate){
                     System.out.println("[Info] " + Function.langData.get("update-found"));
                     if (Function.ntSystem != null){
-                        File update_file = new File("./tools/update1.bat");
+                        File update_file = new File("./tools/update.bat");
                         if (update_file.exists()){
                             update_file.delete();
                         }
-                        update_file = new File("./tools/update2.bat");
+                        update_file = new File("./tools/update.ps1");
                         if (update_file.exists()){
                             update_file.delete();
                         }
@@ -145,6 +145,24 @@ public class Main {
                         file1 = new FileWriter("./tools/update.ps1");
                         pw = new PrintWriter(new BufferedWriter(file1));
                         String str = """
+                        
+                        $check = "True";
+                        while ($i -eq "True") {
+                        
+                          try {
+                            $fileStream = [System.IO.File]::Open(".\\tools\\jdk-21\\bin\\java.exe", 'Open', 'ReadWrite', 'None')
+                            $check = "False";
+                          } catch {
+                            $check = "True";
+                          } finally {
+                            if ($null -ne $fileStream) {
+                              $fileStream.Close()
+                            }
+                          }
+                        
+                        }
+                        
+                        
                         Invoke-WebRequest -Uri https://github.com/nicovrc-net/VRCVideoLogViewer/releases/download/#ver#/VRCVideoLogViewer.zip -OutFile ./tools/VRCVideoLogViewer.zip
                         Expand-Archive -Path ./tools/VRCVideoLogViewer.zip -DestinationPath ./tools/
                         
