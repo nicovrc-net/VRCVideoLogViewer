@@ -7,12 +7,13 @@ import com.sun.security.auth.module.UnixSystem;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 
-import java.io.*;
+import java.io.File;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -53,14 +54,12 @@ public class Main {
         }
 
         // 言語ファイル
-        File file = new File("./lang");
-        if (!file.exists()){
-            file.mkdir();
+        if (!Function.isFoundFolder("./lang")){
+            Function.createFolder("./lang");
         }
 
         if (args.length == 0){
-            file = new File("./config.yml");
-            if (file.exists()){
+            if (Function.isFoundFile("./config.yml")){
                 try {
                     final YamlMapping yamlMapping = Yaml.createYamlInput(new File("./config.yml")).readYamlMapping();
                     lang = yamlMapping.string("lang");
@@ -105,19 +104,14 @@ public class Main {
 
             try {
 
-                file = new File("./");
-                final String CurrentFolderPass = file.getCanonicalPath();
+                final String CurrentFolderPass = Function.getFullPath("./");
 
-                file = new File("./tools/VRCVideoLogViewer.zip");
-                if (file.exists()){
-                    file.delete();
+                if (Function.isFoundFile("./tools/VRCVideoLogViewer.zip")){
+                    Function.deleteFile("./tools/VRCVideoLogViewer.zip");
                 }
-                file = new File("./tools/VRCVideoLogViewer");
-                if (file.exists()){
-                    for (File listFile : file.listFiles()) {
-                        listFile.delete();
-                    }
-                    file.delete();
+
+                if (Function.isFoundFile("./tools/VRCVideoLogViewer")){
+                    Function.deleteFolder("./tools/VRCVideoLogViewer");
                 }
 
                 Function.isUpdate = !Function.Version.equals(Function.new_version);
@@ -134,16 +128,14 @@ public class Main {
                             update_file.delete();
                         }
 
-                        FileWriter file1 = new FileWriter("./tools/update.bat");
-                        PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-                        pw.print("@echo off\npowershell -NoProfile -ExecutionPolicy Unrestricted .\\tools\\update.ps1\nexit");
-                        pw.close();
-                        file1.close();
-                        pw = null;
-                        file1 = null;
+                        if (Function.isFoundFile("./tools/update.bat")){
+                            Function.deleteFile("./tools/update.bat");
+                        }
+                        Function.writeFile("./tools/update.bat", "@echo off\npowershell -NoProfile -ExecutionPolicy Unrestricted .\\tools\\update.ps1\nexit", StandardCharsets.UTF_8);
 
-                        file1 = new FileWriter("./tools/update.ps1");
-                        pw = new PrintWriter(new BufferedWriter(file1));
+                        if (Function.isFoundFile("./tools/update.ps1")){
+                            Function.deleteFile("./tools/update.ps1");
+                        }
                         String str = """
                         
                         $check = "True";
@@ -185,11 +177,8 @@ public class Main {
                         Remove-Item ./tools -Recurse -Force
                         exit
                         """;
-                        pw.print(str.replaceAll("#ver#", Function.new_version));
-                        pw.close();
-                        file1.close();
-                        pw = null;
-                        file1 = null;
+                        Function.writeFile("./tools/update.bat", str, StandardCharsets.UTF_8);
+
                     }
                 } else {
                     System.out.println("[Info] "+Function.langData.get("update-notfound").replaceAll("#nowver#", Function.Version).replaceAll("#newver#", Function.new_version));
@@ -202,22 +191,9 @@ public class Main {
             }
 
             System.out.println("[Info] "+Function.langData.get("config-check"));
-            file = new File("./config.yml");
-
-            if (!file.exists()){
+            if (!Function.isFoundFile("./config.yml")){
                 System.out.println("[Info] "+Function.langData.get("config-autocreate"));
-
-                try {
-                    FileWriter file1 = new FileWriter("./config.yml");
-                    PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-                    pw.print(Function.configText);
-                    pw.close();
-                    file1.close();
-                    pw = null;
-                    file1 = null;
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
+                Function.writeFile("./config.yml", Function.configText, StandardCharsets.UTF_8);
             }
 
             try {
@@ -248,14 +224,15 @@ public class Main {
                     }
                     String LocalAppData = System.getenv().get("LOCALAPPDATA");
                     String LinuxUserHome = System.getenv().get("HOME");
+                    String vrchatPass = null;
                     if (Function.ntSystem != null){
-                        file = new File("C:\\Users\\"+Function.ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat");
+                        vrchatPass = "C:\\Users\\"+Function.ntSystem.getName()+"\\AppData\\LocalLow\\VRChat\\VRChat";
                     } else if (Function.unixSystem != null) {
-                        file = new File("/home/"+Function.unixSystem.getUsername()+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
+                        vrchatPass = Function.unixSystem.getUsername()+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat";
                     }
 
-                    String path = file.getCanonicalPath();
-                    if (file.exists()) {
+                    String path = Function.getFullPath(vrchatPass);
+                    if (Function.isFoundFolder(path)) {
                         Function.config.setLogFolderPass(path);
 
                         if (Function.config.isDebugOutput()) {
@@ -266,21 +243,21 @@ public class Main {
                             }
                         }
                     } else if (Function.ntSystem != null && new File(LocalAppData+"Low\\VRChat\\VRChat").exists()) {
-                        file = new File(LocalAppData + "Low\\VRChat\\VRChat");
-                        path = file.getCanonicalPath();
+                        vrchatPass = LocalAppData + "Low\\VRChat\\VRChat";
+                        path = Function.getFullPath(vrchatPass);
 
                         Function.config.setLogFolderPass(path);
                         System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path.replaceAll(Pattern.quote("\\"), "/").replaceAll("/", "\\\\\\\\")));
                     } else if (new File(LinuxUserHome+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat").exists()){
-                        file = new File(LinuxUserHome+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
-                        path = file.getCanonicalPath();
+                        vrchatPass = LinuxUserHome+"/.steam/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat";
+                        path = Function.getFullPath(vrchatPass);
 
                         Function.config.setLogFolderPass(path);
                         System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path));
                     } else if (!LinuxUserHome.isEmpty()) {
-                        file = new File(LinuxUserHome+"/.steampath");
+                        vrchatPass = LinuxUserHome+"/.steampath";
 
-                        ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "ls -al "+file.getCanonicalPath());
+                        ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "ls -al "+Function.getFullPath(vrchatPass));
                         Process process = pb.start();
                         process.waitFor();
 
@@ -289,11 +266,11 @@ public class Main {
 
                         Matcher matcher = matcher_ls.matcher(s);
                         if (matcher.find()){
-                            path = matcher.group(2).replaceAll("/sdk32/steam", "/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
-                            file = new File(path);
+                            vrchatPass = matcher.group(2).replaceAll("/sdk32/steam", "/steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
+                            path = Function.getFullPath(vrchatPass);
                         }
 
-                        if (file.exists()){
+                        if (Function.isFoundFolder(vrchatPass)) {
                             Function.config.setLogFolderPass(path);
                             System.out.println("[Info] " + Function.langData.get("logfolder-autoget-success").replaceAll("#folder_pass#", path));
                         } else {

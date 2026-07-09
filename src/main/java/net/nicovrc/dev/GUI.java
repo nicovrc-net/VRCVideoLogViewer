@@ -14,7 +14,9 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import net.nicovrc.dev.data.ConfigData;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -35,7 +37,6 @@ public class GUI extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        File file = new File(Function.config.getLogFolderPass());
         String TempFontLang = "JP";
         if (Function.langData.get("lang_name").equals("한국어")) {
             TempFontLang = "KR";
@@ -47,29 +48,29 @@ public class GUI extends Application {
         final String FontLang = TempFontLang;
 
         Font tempFont1 = Font.getDefault();
-        if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
+        if (Function.isFoundFile("./fonts/NotoSansCJK-Regular.ttc")){
             tempFont1 = Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), Font.getDefault().getSize());
-        } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
+        } else if (Function.isFoundFile("./fonts/NotoSansCJK-Regular.ttf")){
             tempFont1 = Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), Font.getDefault().getSize());
-        } else if (new File("./fonts/NotoSans"+FontLang+"-Medium.ttf").exists()){
+        } else if (Function.isFoundFile("./fonts/NotoSans"+FontLang+"-Medium.ttf")){
             tempFont1 = Font.loadFont(new FileInputStream("./fonts/NotoSans"+FontLang+"-Medium.ttf"), Font.getDefault().getSize());
         }
 
         Font tempFont2 = new Font(24);
-        if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
+        if (Function.isFoundFile("./fonts/NotoSansCJK-Regular.ttc")){
             tempFont2 = Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), 24);
-        } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
+        } else if (Function.isFoundFile("./fonts/NotoSansCJK-Regular.ttf")){
             tempFont2 = Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), 24);
-        } else if (new File("./fonts/NotoSans"+FontLang+"-Medium.ttf").exists()){
+        } else if (Function.isFoundFile("./fonts/NotoSans"+FontLang+"-Medium.ttf")){
             tempFont2 = Font.loadFont(new FileInputStream("./fonts/NotoSans"+FontLang+"-Medium.ttf"), 24);
         }
 
         Font tempFont3 = new Font(16);
-        if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
+        if (Function.isFoundFile("./fonts/NotoSansCJK-Regular.ttc")){
             tempFont3 = Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), 16);
-        } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
+        } else if (Function.isFoundFile("./fonts/NotoSansCJK-Regular.ttf")){
             tempFont3 = Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), 16);
-        } else if (new File("./fonts/NotoSans"+FontLang+"-Medium.ttf").exists()){
+        } else if (Function.isFoundFile("./fonts/NotoSans"+FontLang+"-Medium.ttf")){
             tempFont3 = Font.loadFont(new FileInputStream("./fonts/NotoSans"+FontLang+"-Medium.ttf"), 16);
         }
         final Font DefaultFont = tempFont1;
@@ -78,7 +79,7 @@ public class GUI extends Application {
 
         boolean isFolderSet = false;
         Stage folder_stage = new Stage();
-        if (!file.exists()) {
+        if (!Function.isFoundFolder(Function.config.getLogFolderPass())) {
             isFolderSet = true;
             try {
                 AnchorPane root = new AnchorPane();
@@ -115,10 +116,10 @@ public class GUI extends Application {
                     chooser.setInitialDirectory(new File("./"));
 
 
-                    File file2 = chooser.showDialog(folder_stage);
-                    if (file2 != null) {
+                    File file = chooser.showDialog(folder_stage);
+                    if (file != null) {
                         try {
-                            field1.setText(file2.getCanonicalPath());
+                            field1.setText(file.getCanonicalPath());
                         } catch (Exception ex) {
                             //ex.printStackTrace();
                         }
@@ -174,8 +175,7 @@ public class GUI extends Application {
             System.out.println("[Info] " + Function.langData.get("logfolder-check"));
         }
         if (Function.config.getLogFolderPass() != null) {
-            file = new File(Function.config.getLogFolderPass());
-            if (!file.exists()) {
+            if (!Function.isFoundFolder(Function.config.getLogFolderPass())) {
                 System.out.println("[Error] " + Function.langData.get("logfolder-notfound"));
                 Function.timer1.cancel();
                 Function.timer2.cancel();
@@ -244,9 +244,7 @@ public class GUI extends Application {
             }
 
             for (String s : Function.logFileList) {
-                file = new File(Function.config.getLogFolderPass() + File.separator + s);
-
-                String text = Function.getTextForFile(file);
+                String text = Function.getTextForFile(Function.config.getLogFolderPass() + File.separator + s);
                 try {
                     List<LogData> log = Function.getLogForURL(text);
                     for (LogData logData : log) {
@@ -266,7 +264,7 @@ public class GUI extends Application {
                     //e.printStackTrace();
                     if (Function.config.isDebugOutput()) {
                         System.out.println("[Error] " + Function.langData.get("log-read-fail"));
-                        System.out.println("filename : " + file.getName());
+                        System.out.println("filename : " + s);
                         e.printStackTrace();
                     }
                 }
@@ -284,8 +282,7 @@ public class GUI extends Application {
                 final String lastLogFile = Function.temp_lastLogFile[0];
 
                 try {
-                    File f = new File(lastLogFile);
-                    for (LogData logData : Function.getLogForURL(Function.getTextForFile(f))) {
+                    for (LogData logData : Function.getLogForURL(Function.getTextForFile(lastLogFile))) {
                         String s = "[" + Function.log_sdf.format(logData.getLogDate()) + "] " + logData.getURL() + " (" + logData.getURLType() + ")";
                         if (logData.getLogDate().getTime() >= lastLogData.getLogDate().getTime() && Function.logDataList.get(s) == null) {
 
@@ -498,18 +495,8 @@ public class GUI extends Application {
                     final HashMap<String, String> langList = new HashMap<>();
 
                     for (String s : Function.iso639_1) {
-                        if (new File("./lang/"+s+".txt").exists()){
-                            String langText = null;
-                            try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("./lang/"+s+".txt")), StandardCharsets.UTF_8))){
-                                String str;
-                                StringBuilder sb = new StringBuilder();
-                                while ((str = reader.readLine()) != null) {
-                                    sb.append(str).append("\n");
-                                }
-                                langText = sb.toString();
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
-                            }
+                        if (Function.isFoundFile("./lang/"+s+".txt")){
+                            String langText = Function.getFileByText("./lang/"+s+".txt", StandardCharsets.UTF_8);
 
                             for (String str : langText.split("\n")) {
                                 Matcher matcher = Function.matcher_langData.matcher(str);
@@ -543,15 +530,15 @@ public class GUI extends Application {
                             } else {
                                 setText(item);
                                 try {
-                                    if (new File("./fonts/NotoSansCJK-Regular.ttc").exists()){
+                                    if (Function.isFoundFile("./fonts/NotoSansCJK-Regular.ttc")){
                                         setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttc"), Font.getDefault().getSize()));
-                                    } else if (new File("./fonts/NotoSansCJK-Regular.ttf").exists()){
+                                    } else if (Function.isFoundFile("./fonts/NotoSansCJK-Regular.ttf")){
                                         setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansCJK-Regular.ttf"), Font.getDefault().getSize()));
-                                    } else if ((item.equals("한국어")) && new File("./fonts/NotoSansKR-Medium.ttf").exists()){
+                                    } else if ((item.equals("한국어")) && Function.isFoundFile("./fonts/NotoSansKR-Medium.ttf")){
                                         setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansKR-Medium.ttf"), Font.getDefault().getSize()));
-                                    } else if ((item.equals("简体中文")) && new File("./fonts/NotoSansSC-Medium.ttf").exists()){
+                                    } else if ((item.equals("简体中文")) && Function.isFoundFile("./fonts/NotoSansSC-Medium.ttf")){
                                         setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansSC-Medium.ttf"), Font.getDefault().getSize()));
-                                    } else if ((item.equals("繁體中文")) && new File("./fonts/NotoSansTC-Medium.ttf").exists()){
+                                    } else if ((item.equals("繁體中文")) && Function.isFoundFile("./fonts/NotoSansTC-Medium.ttf")){
                                         setFont(Font.loadFont(new FileInputStream("./fonts/NotoSansTC-Medium.ttf"), Font.getDefault().getSize()));
                                     } else {
                                         setFont(DefaultFont);
@@ -679,13 +666,7 @@ public class GUI extends Application {
                                     final Process exec0;
                                     String batText = "start "+data.getURL();
                                     if (Function.ntSystem != null){
-                                        FileWriter file1 = new FileWriter("./temp.bat");
-                                        PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-                                        pw.print(batText);
-                                        pw.close();
-                                        file1.close();
-                                        pw = null;
-                                        file1 = null;
+                                        Function.writeFile("./temp.bat", batText, StandardCharsets.UTF_8);
                                         exec0 = Function.runtime.exec(new String[]{"./temp.bat"});
                                         Thread.ofVirtual().start(()->{
                                             try {
@@ -696,7 +677,7 @@ public class GUI extends Application {
                                             }
                                         });
                                         exec0.waitFor();
-                                        new File("./temp.bat").delete();
+                                        Function.deleteFile("./temp.bat");
                                     } else if (Function.unixSystem != null) {
                                         ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "xdg-open "+data.getURL());
                                         Process process = pb.start();

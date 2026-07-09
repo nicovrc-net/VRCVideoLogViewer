@@ -15,16 +15,21 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class Function {
 
-    public static final String Version = "1.2.1";
+    public static final String Version = "1.3.0";
 
     public static final Gson gson = new Gson();
     public static final String UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0 VRCVideoLogViewer/"+Version;
@@ -99,30 +104,123 @@ public class Function {
 
     public static final String[] iso639_1 = {"aa", "ab", "af", "ak", "sq", "am", "ar", "an", "hy", "as", "av", "ae", "ay", "az", "ba", "bm", "eu", "be", "bn", "bi", "bo", "bs", "br", "bg", "my", "ca", "cs", "ch", "ce", "zh-Hans", "zh-Hant", "cu", "cv", "kw", "co", "cr", "cy", "cs", "da", "de", "dv", "nl", "dz", "el", "en", "eo", "et", "eu", "ee", "fo", "fa", "fj", "fi", "fr", "fr", "fy", "ff", "ka", "de", "gd", "ga", "gl", "gv", "el", "gn", "gu", "ht", "ha", "he", "hz", "hi", "ho", "hr", "hu", "hy", "ig", "is", "io", "ii", "iu", "ie", "ia", "id", "ik", "is", "it", "jv", "ja", "kl", "kn", "ks", "ka", "kr", "kk", "km", "ki", "rw", "ky", "kv", "kg", "ko", "kj", "ku", "lo", "la", "lv", "li", "ln", "lt", "lb", "lu", "lg", "mk", "mh", "ml", "mi", "mr", "ms", "mk", "mg", "mt", "mn", "mi", "ms", "my", "na", "nv", "nr", "nd", "ng", "ne", "nl", "nn", "nb", "no", "ny", "oc", "oj", "or", "om", "os", "pa", "fa", "pi", "pl", "pt", "ps", "qu", "rm", "ro", "ro", "rn", "ru", "sg", "sa", "si", "sk", "sk", "sl", "se", "sm", "sn", "sd", "so", "st", "es", "sq", "sc", "sr", "ss", "su", "sw", "sv", "ty", "ta", "tt", "te", "tg", "tl", "th", "bo", "ti", "to", "tn", "ts", "tk", "tr", "tw", "ug", "uk", "ur", "uz", "ve", "vi", "vo", "cy", "wa", "wo", "xh", "yi", "yo", "za", "zh", "zu"};
 
+    public static boolean isFoundFile(String filePass) {
+        Path path = Paths.get(filePass);
+        return Files.exists(path);
+    }
 
-    public static String getTextForFile(File file){
-        String logText = null;
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))){
-            String str;
-            StringBuilder sb = new StringBuilder();
-            while ((str = reader.readLine()) != null) {
-                sb.append(str).append("\n");
+    public static boolean isFoundFolder(String folderPass) {
+        Path path = Paths.get(folderPass);
+        return Files.exists(path);
+    }
+
+    public static boolean createFolder(String filePass) {
+        if (!isFoundFile(filePass)) {
+            try {
+                Files.createDirectory(Path.of(filePass));
+                return true;
+            } catch (IOException e) {
+                return false;
             }
-            logText = sb.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static String getFileByText(String filePass, Charset charset) {
+
+        if (charset == null) {
+            charset = StandardCharsets.UTF_8;
         }
 
+        byte[] binary = getFileByBinary(filePass);
+        if (binary == null) {
+            return null;
+        }
+
+        return new String(binary, charset);
+    }
+
+    public static byte[] getFileByBinary(String filePass){
+        final Path path = Path.of(filePass);
+        try {
+            return Files.readAllBytes(path);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static boolean writeFile(String filePass, String content, Charset charset) {
+        return writeFile(filePass, content.getBytes(charset));
+    }
+
+    public static boolean writeFile(String filePass, byte[] content) {
+        Path path = Paths.get(filePass);
+
+        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(path))) {
+            out.write(content);
+            out.flush();
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public static boolean deleteFile(String filePass) {
+        Path path = Paths.get(filePass);
+        try {
+            Files.delete(path);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public static boolean deleteFolder(String folderPass) {
+        Path targetDir = Paths.get(folderPass);
+
+        try {
+            if (Files.exists(targetDir)) {
+                try (var paths = Files.walk(targetDir)) {
+                    paths.sorted(Comparator.reverseOrder())
+                            .forEach(path -> {
+                                try {
+                                    Files.delete(path);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                }
+                return true;
+            }
+        } catch (IOException e) {
+            //e.printStackTrace();
+            return false;
+        }
+
+        return false;
+    }
+
+    public static String getFullPath(String filePass) {
+        Path path = Paths.get(filePass);
+        return path.toAbsolutePath().toString();
+    }
+
+    public static String getTextForFile(String filePass){
+        String logText = getFileByText(filePass, StandardCharsets.UTF_8);
         return logText;
     }
 
     public static List<String> getFileList(String FolderPass) throws Exception {
         List<String> logFileList = new ArrayList<>();
-        File file = new File(FolderPass);
-        for (File f : file.listFiles()) {
-            if (f.getName().startsWith("output_log_")) {
-                logFileList.add(f.getName());
-            }
+
+        try (Stream<Path> stream = Files.list(Paths.get(FolderPass))) {
+            stream.forEach(p -> {
+                if (p.getFileName().toString().startsWith("output_log_")){
+                    logFileList.add(p.getFileName().toString());
+                }
+            });
+        } catch(IOException e) {
+            System.out.println(e);
         }
 
         return logFileList;
@@ -475,17 +573,17 @@ public class Function {
     }
 
     public static byte[] Webp2PngConverter(byte[] input) throws Exception {
+        byte[] output = null;
 
-        File file = new File("./temp");
-        if (!file.exists()){
-            file.mkdir();
+        if (!isFoundFolder("./temp")){
+            createFolder("./temp");
         }
 
         String filename = new Date().getTime()+"_"+ UUID.randomUUID().toString().split("-")[0];
-        FileOutputStream stream = new FileOutputStream("./temp/"+filename+".webp");
-        stream.write(input);
-        stream.close();
-        stream = null;
+        if (isFoundFile("./temp/"+filename+".webp")){
+            deleteFile("./temp/"+filename+".webp");
+        }
+        writeFile("./temp/"+filename+".webp", input);
 
         final Process exec0;
         if (ntSystem != null){
@@ -503,9 +601,9 @@ public class Function {
         });
         exec0.waitFor();
 
-        FileInputStream inputStream = new FileInputStream("");
-        byte[] output = inputStream.readAllBytes();
-        inputStream.close();
+        output = getFileByBinary("./temp/" + filename + ".png");
+        deleteFile("./temp/" + filename + ".webp");
+        deleteFile("./temp/" + filename + ".png");
 
         return output;
     }
@@ -619,19 +717,10 @@ public class Function {
         Function.config.setAutoStaring(config.isAutoStaring());
         Function.config.setAutoStaringMode(config.getAutoStaringMode());
 
-        try {
-            new File("./config.yml").delete();
-
-            FileWriter file1 = new FileWriter("./config.yml");
-            PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-            pw.print(configText);
-            pw.close();
-            file1.close();
-            pw = null;
-            file1 = null;
-        } catch (Exception e){
-            //e.printStackTrace();
+        if (isFoundFile("./config.yml")){
+            deleteFile("./config.yml");
         }
+        writeFile("./config.yml", configText, StandardCharsets.UTF_8);
 
         // TODO Linux環境での自動起動を調べてそのうち実装する
         if (ntSystem == null){
@@ -640,11 +729,7 @@ public class Function {
 
         if (config.isAutoStaring()){
             String path = "";
-            try {
-                path = new File("./").getCanonicalPath().replaceAll(Pattern.quote("\\"), "/").replaceAll("/", "\\\\\\\\");
-            } catch (IOException e) {
-                //e.printStackTrace();
-            }
+            path = getFullPath("./").replaceAll(Pattern.quote("\\"), "/").replaceAll("/", "\\\\\\\\");
 
             String batText = """
                     cd /d #path#
@@ -654,56 +739,35 @@ public class Function {
             // C:\Users\xxx\AppData\Roaming
             // C:\Users\xxx\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
 
-            File file = new File("C:\\Users\\" + ntSystem.getName() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
-            if (!file.exists()){
+            if (!isFoundFolder("C:\\Users\\" + ntSystem.getName() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")){
                 String AppData = System.getenv().get("APPDATA");
-                file = new File(AppData+"\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
+                path = AppData+"\\Microsoft\\Windows\\Start Menu\\Programs\\Startup";
             }
 
-            if (!file.exists()){
+            if (!isFoundFolder(path)){
                 return;
             }
 
-            try {
-                file = new File(file.getCanonicalPath()+"\\vrcvideologviewer.bat");
-            } catch (IOException e) {
-                //e.printStackTrace();
+            if (isFoundFile(getFullPath(path)+"\\vrcvideologviewer.bat")){
+                deleteFile(getFullPath(path)+"\\vrcvideologviewer.bat");
             }
 
-            if (file.exists()){
-                file.delete();
-            }
-
-            try {
-                FileWriter file1 = new FileWriter(file);
-                PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-                pw.print(batText.replaceAll("#path#", path));
-                pw.close();
-                file1.close();
-                pw = null;
-                file1 = null;
-            } catch (Exception e){
-                // e.printStackTrace();
-            }
+            writeFile(getFullPath(path)+"\\vrcvideologviewer.bat", batText.replaceAll("#path#", path), StandardCharsets.UTF_8);
 
         } else {
-            File file = new File("C:\\Users\\" + ntSystem.getName() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
-            if (!file.exists()){
+            String path = "C:\\Users\\" + ntSystem.getName() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup";
+            if (!isFoundFolder(path)){
                 String AppData = System.getenv().get("APPDATA");
-                file = new File(AppData+"\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
+                path = AppData+"\\Microsoft\\Windows\\Start Menu\\Programs\\Startup";
             }
-            if (!file.exists()){
+            if (!isFoundFile(path)){
                 return;
             }
 
-            try {
-                file = new File(file.getCanonicalPath().replaceAll(Pattern.quote("\\"), "/").replaceAll("/", "\\\\\\\\")+"\\vrcvideologviewer.bat");
-            } catch (IOException e) {
-                //e.printStackTrace();
-            }
+            path = getFullPath(path).replaceAll(Pattern.quote("\\"), "/").replaceAll("/", "\\\\\\\\")+"\\vrcvideologviewer.bat";
 
-            if (file.exists()){
-                file.delete();
+            if (isFoundFile(getFullPath(path))){
+                deleteFile(getFullPath(path));
             }
         }
 
@@ -713,7 +777,7 @@ public class Function {
 
         boolean isAutoStaring = false;
         String AutoStaringMode = "";
-        if (new File("./config.yml").exists()){
+        if (isFoundFile("./config.yml")){
             try {
                 final YamlMapping yamlMapping = Yaml.createYamlInput(new File("./config.yml")).readYamlMapping();
                 isAutoStaring = yamlMapping.bool("isAutoStaring");
@@ -734,17 +798,11 @@ public class Function {
 
         if (AutoStaringMode.equals("Windows")){
             final Runtime runtime = Runtime.getRuntime();
-            if (new File("./auto-start.bat").exists()){
-                new File("./auto-start.bat").delete();
+            if (isFoundFile("./auto-start.bat")){
+                deleteFile("./auto-start.bat");
             }
 
-            FileWriter file1 = new FileWriter("./auto-start.bat");
-            PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-            pw.print("start .\\start.bat");
-            pw.close();
-            file1.close();
-            pw = null;
-            file1 = null;
+            writeFile("./auto-start.bat", "start .\\start.bat", StandardCharsets.UTF_8);
 
             final Process exec0 = runtime.exec(new String[]{".\\auto-start.bat"});
             Thread.ofVirtual().start(() -> {
@@ -759,7 +817,7 @@ public class Function {
                 }
             });
             exec0.waitFor();
-            new File("./auto-start.bat").delete();
+            deleteFile("./auto-start.bat");
             return;
         }
 
@@ -786,27 +844,21 @@ public class Function {
             config = null;
 
             //System.out.println("debug");
-            File file = new File("C:\\Users\\" + Function.ntSystem.getName() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
-            if (!file.exists()){
+            String path = "C:\\Users\\" + Function.ntSystem.getName() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup";
+            if (!isFoundFolder("C:\\Users\\" + Function.ntSystem.getName() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")){
                 String AppData = System.getenv().get("APPDATA");
-                file = new File(AppData+"\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
+                path = AppData+"\\Microsoft\\Windows\\Start Menu\\Programs\\Startup";
             }
-            if (!file.exists()){
+            if (!isFoundFolder(path)){
                 return;
             }
             //System.out.println("debug2");
 
-            if (new File("./auto-start.bat").exists()){
-                new File("./auto-start.bat").delete();
+            if (isFoundFile("./auto-start.bat")){
+                deleteFile("./auto-start.bat");
             }
 
-            FileWriter file1 = new FileWriter("./auto-start.bat");
-            PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-            pw.print("start .\\start.bat\r\ncd /d \""+file.getCanonicalPath().replaceAll("\\\\", "/").replaceAll("/", "\\\\")+"\"\r\nstart .\\vrcvideologviewer.bat");
-            pw.close();
-            file1.close();
-            pw = null;
-            file1 = null;
+            writeFile("./auto-start.bat", "start .\\start.bat\r\ncd /d \""+getFullPath(path).replaceAll("\\\\", "/").replaceAll("/", "\\\\")+"\"\r\nstart .\\vrcvideologviewer.bat", StandardCharsets.UTF_8);
 
             final Runtime runtime = Runtime.getRuntime();
             final Process exec0 = runtime.exec(new String[]{".\\auto-start.bat"});
@@ -824,7 +876,7 @@ public class Function {
             exec0.waitFor();
             runtime.exit(0);
 
-            new File("./auto-start.bat").delete();
+            deleteFile("./auto-start.bat");
 
         }
     }
@@ -866,10 +918,7 @@ public class Function {
                             .build();
 
                     HttpResponse<byte[]> send2 = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-                    FileOutputStream stream = new FileOutputStream(downloadFilename);
-                    stream.write(send2.body());
-                    stream.close();
-                    stream = null;
+                    writeFile(downloadFilename, send2.body());
                 }
             }
 
@@ -882,34 +931,21 @@ public class Function {
                     .GET()
                     .build();
             HttpResponse<byte[]> send = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-            FileOutputStream stream = new FileOutputStream(downloadFilename);
-            stream.write(send.body());
-            stream.close();
-            stream = null;
+            writeFile(downloadFilename, send.body());
         }
 
     }
 
     public static void Main_Init(HttpClient client, String lang) throws Exception {
-        File file = null;
         String langText = null;
-        file = new File("./lang/"+lang+".txt");
-        if (!file.exists()){
-            file = new File("./lang/ja.txt");
+
+        String path = "./lang/"+lang+".txt";
+        if (!isFoundFile(path)) {
+            path = "./lang/ja.txt";
         }
 
-        if (file.exists()){
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))){
-                String str;
-                StringBuilder sb = new StringBuilder();
-                while ((str = reader.readLine()) != null) {
-                    sb.append(str).append("\n");
-                }
-                langText = sb.toString();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
+        if (isFoundFile(path)) {
+            langText = getFileByText(path, StandardCharsets.UTF_8);
         } else {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(new URI("https://raw.githubusercontent.com/nicovrc-net/VRCVideoLogViewer/refs/heads/release/lang/ja.txt"))
@@ -921,13 +957,7 @@ public class Function {
             HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
             langText = send.body();
 
-            FileWriter file1 = new FileWriter("./lang/ja.txt");
-            PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-            pw.print(langText);
-            pw.close();
-            file1.close();
-            pw = null;
-            file1 = null;
+            writeFile("./lang/ja.txt", langText, StandardCharsets.UTF_8);
         }
 
         for (String str : langText.split("\n")) {
@@ -941,49 +971,38 @@ public class Function {
 
         final boolean isWindowsBatchStart = Function.ntSystem != null;
 
-        file = new File("./tools/openjdk-21.0.2_windows-x64_bin.zip");
-        if (file.exists()){
-            file.delete();
+        if (isFoundFile("./tools/openjdk-21.0.2_windows-x64_bin.zip")) {
+            deleteFile("./tools/openjdk-21.0.2_windows-x64_bin");
         }
-        file = new File("./tools/openjdk-21.0.2_linux-x64_bin.tar.gz");
-        if (file.exists()){
-            file.delete();
+        if (isFoundFile("./tools/openjdk-21.0.2_linux-x64_bin.tar.gz")) {
+            deleteFile("./tools/openjdk-21.0.2_linux-x64_bin.tar.gz");
         }
-        file = new File("./tools/openjfx-21.0.10_windows-x64_bin-sdk.zip");
-        if (file.exists()){
-            file.delete();
+        if (isFoundFile("./tools/openjfx-21.0.10_windows-x64_bin-sdk.zip")) {
+            deleteFile("./tools/openjfx-21.0.10_windows-x64_bin-sdk.zip");
         }
-        file = new File("./tools/openjfx-21.0.10_linux-x64_bin-sdk.zip");
-        if (file.exists()){
-            file.delete();
+        if (isFoundFile("./tools/openjfx-21.0.10_linux-x64_bin-sdk.zip")) {
+            deleteFile("./tools/openjfx-21.0.10_linux-x64_bin-sdk.zip");
         }
 
         // フォント存在チェック
-        file = new File("./fonts");
-
-        if (!file.exists()){
-            file.mkdir();
+        if (!isFoundFolder("./fonts")) {
+            createFolder("./fonts");
         }
         if (isWindowsBatchStart){
-            file = new File("./fonts/NotoSansJP-Medium.ttf");
-            if (!file.exists()){
+            if (!isFoundFile("./fonts/NotoSansJP-Medium.ttf")) {
                 DownloadFonts(client,"./fonts/NotoSansJP-Medium.ttf");
             }
-            file = new File("./fonts/NotoSansKR-Medium.ttf");
-            if (!file.exists()){
+            if (!isFoundFile("./fonts/NotoSansKR-Medium.ttf")) {
                 DownloadFonts(client,"./fonts/NotoSansKR-Medium.ttf");
             }
-            file = new File("./fonts/NotoSansSC-Medium.ttf");
-            if (!file.exists()){
+            if (!isFoundFile("./fonts/NotoSansSC-Medium.ttf")) {
                 DownloadFonts(client,"./fonts/NotoSansSC-Medium.ttf");
             }
-            file = new File("./fonts/NotoSansTC-Medium.ttf");
-            if (!file.exists()){
+            if (!isFoundFile("./fonts/NotoSansTC-Medium.ttf")) {
                 DownloadFonts(client,"./fonts/NotoSansTC-Medium.ttf");
             }
         } else {
-            file = new File("./fonts/NotoSansCJK-Regular.ttc");
-            if (!file.exists()){
+            if (!isFoundFile("./fonts/NotoSansCJK-Regular.ttc")) {
                 DownloadFonts(client,"./fonts/NotoSansCJK-Regular.ttc");
             }
         }
@@ -1001,8 +1020,7 @@ public class Function {
 
         //System.out.println(send.body());
         if (isWindowsBatchStart) {
-            file = new File(".\\tools\\ImageMagick\\magick.exe");
-            if (!file.exists()) {
+            if (!isFoundFile(".\\tools\\ImageMagick\\magick.exe")) {
                 Matcher matcher = matcher_ImageMagickLast.matcher(send.body());
                 if (matcher.find()){
                     //System.out.println(matcher.group(0));
@@ -1015,26 +1033,15 @@ public class Function {
                             .GET()
                             .build();
                     HttpResponse<byte[]> send2 = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-
-                    FileOutputStream stream = new FileOutputStream("./tools/"+str.split("/")[str.split("/").length - 1]);
-                    stream.write(send2.body());
-                    stream.close();
-                    stream = null;
+                    writeFile("./tools/"+str.split("/")[str.split("/").length - 1], send2.body());
 
                     //System.out.println("debug1");
-
-                    FileWriter file1 = new FileWriter("./tools/im1.bat");
-                    PrintWriter pw = new PrintWriter(new BufferedWriter(file1));
-
                     String str2 = """
                         .\\tools\\7z2501\\7za.exe x -o./tools/ImageMagick ./tools/#file#
                         exit
                         """;
-                    pw.print(str2.replaceAll("#file#", str.split("/")[str.split("/").length - 1]));
-                    pw.close();
-                    file1.close();
-                    pw = null;
-                    file1 = null;
+
+                    writeFile("./tools/im1.bat", str2.replaceAll("#file#", str.split("/")[str.split("/").length - 1]), StandardCharsets.UTF_8);
 
                     //System.out.println("debug3");
 
@@ -1053,17 +1060,13 @@ public class Function {
                     });
                     exec0.waitFor();
 
-                    file = new File("./tools/im1.bat");
-                    file.delete();
-
-                    file = new File("./tools/"+ str.split("/")[str.split("/").length - 1]);
-                    file.delete();
+                    deleteFile("./tools/im1.bat");
+                    deleteFile("./tools/"+ str.split("/")[str.split("/").length - 1]);
 
                 }
             }
         } else {
-            file = new File("./tools/ImageMagick/magick");
-            if (!file.exists()){
+            if (!isFoundFile("./tools/ImageMagick/magick")) {
                 request = HttpRequest.newBuilder()
                         .uri(new URI("https://imagemagick.org/archive/binaries/magick"))
                         .headers("User-Agent", Function.UserAgent)
@@ -1073,20 +1076,13 @@ public class Function {
                         .build();
 
                 HttpResponse<byte[]> send2 = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-
-                FileOutputStream stream = new FileOutputStream("./tools/ImageMagick/magick");
-                stream.write(send2.body());
-                stream.close();
-                stream = null;
+                writeFile("./tools/ImageMagick/magick", send2.body());
             }
         }
 
         if (isWindowsBatchStart){
-            file = new File("./tools/update1.bat");
-            file.delete();
-
-            file = new File("./tools/update2.bat");
-            file.delete();
+            deleteFile("./tools/update1.bat");
+            deleteFile("./tools/update2.bat");
         }
     }
 
