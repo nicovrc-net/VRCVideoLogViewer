@@ -257,7 +257,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: v${{ github.ref }}
           body: |
-            - 起動バッチとアップデートバッチをPowershell化
+            - 内部リファクタリング
           draft: false
           prerelease: false
 
