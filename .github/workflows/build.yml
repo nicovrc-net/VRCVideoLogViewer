@@ -118,7 +118,7 @@ jobs:
           path: ./7z.tar.xz
 
   release:
-    needs: [build-21, build-24, download-7zip]
+    needs: [build-21, download-7zip]
     runs-on: ubuntu-24.04
     permissions:
       contents: write
