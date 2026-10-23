@@ -2,20 +2,32 @@ if ( -not (Test-Path '.\tools')){
     New-Item -ItemType Directory -Path ./tools
 }
 
-if ( -not (Test-Path './tools/jdk-21')) {
-  Invoke-WebRequest -Uri https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_windows-x64_bin.zip -OutFile ./tools/openjdk-21.0.2_windows-x64_bin.zip
-  Expand-Archive -Path ./tools/openjdk-21.0.2_windows-x64_bin.zip -DestinationPath ./tools/
-  Rename-Item .\tools\jdk-21.0.2 jdk-21
+Remove-Item -Path "./tools/jdk-21" -Recurse -Force
+if ( -not (Test-Path './tools/jdk21')) {
+  $url = "https://api.adoptium.net/v3/assets/latest/21/hotspot?vendor=eclipse"
+  $jsonContent = Invoke-RestMethod -Uri $url -Method Get
+  $windowsJdk = $jsonContent | Where-Object {
+    $_.binary.os -eq "windows" -and $_.binary.image_type -eq "jdk"
+  }
+  $zipUrl = $windowsJdk.binary.package.link[0]
+  $package_name = $windowsJdk.release_name[0]
+
+  Invoke-WebRequest -Uri $zipUrl -OutFile ./jdk-21.zip
+  Expand-Archive -Path ./jdk-21.zip -DestinationPath ./
+  Remove-Item ./jdk-21.zip
+  Rename-Item ./$package_name ./tools/jdk21
 }
 
-if ( -not (Test-Path './tools/javafx-sdk-21')) {
-  Invoke-WebRequest -Uri https://download2.gluonhq.com/openjfx/21.0.10/openjfx-21.0.10_windows-x64_bin-sdk.zip -OutFile ./tools/openjfx-21.0.10_windows-x64_bin-sdk.zip
-  Expand-Archive -Path ./tools/openjfx-21.0.10_windows-x64_bin-sdk.zip -DestinationPath ./tools/
-  Rename-Item .\tools\javafx-sdk-21.0.10 javafx-sdk-21
+Remove-Item -Path "./tools/javafx-sdk-21" -Recurse -Force
+if ( -not (Test-Path './tools/javafx-sdk21')) {
+  Invoke-WebRequest -Uri https://download2.gluonhq.com/openjfx/21.0.13/openjfx-21.0.13_windows-x64_bin-sdk.zip -OutFile ./tools/openjfx-21.0.13_windows-x64_bin-sdk.zip
+  Expand-Archive -Path ./tools/openjfx-21.0.13_windows-x64_bin-sdk.zip -DestinationPath ./tools/
+  Rename-Item .\tools\javafx-sdk-21.0.13 .\tools\javafx-sdk21
+  Remove-Item -Path ./tools/openjfx-21.0.13_windows-x64_bin-sdk.zip
 }
 
 Write-Output "Starting..."
-.\tools\jdk-21\bin\java.exe --module-path "./tools/javafx-sdk-21/lib" --add-modules javafx.controls,javafx.fxml -jar ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
+.\tools\jdk21\bin\java.exe --module-path "./tools/javafx-sdk21/lib" --add-modules javafx.controls,javafx.fxml -jar ./VRCVideoLogViewer-1.0-SNAPSHOT-all.jar
 
 Write-Host 'Please Enter Key...'
 Read-Host
