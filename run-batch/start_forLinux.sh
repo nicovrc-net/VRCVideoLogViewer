@@ -9,7 +9,7 @@ if [ -d ./tools ]; then
 	if [ -d ./tools/7z2605 ]; then
 		echo "7z OK"
 	else
-		curl https://www.7-zip.org/a/7z2605-linux-x64.tar.xz --output ./tools/7z2605-linux-x64.tar.xz
+		curl https://github.com/ip7z/7zip/releases/download/26.05/7z2605-linux-x64.tar.xz --output ./tools/7z2605-linux-x64.tar.xz
 		tar -Jxvf ./tools/7z2605-linux-x64.tar.xz
 		mkdir ./tools/7z2605
 		mv ./7zz ./tools/7z2605
