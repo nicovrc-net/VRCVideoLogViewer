@@ -48,7 +48,7 @@ if [ -d ./tools ]; then
 else 
 	mkdir ./tools
 	
-	curl https://www.7-zip.org/a/7z2605-linux-x64.tar.xz --output ./tools/7z2605-linux-x64.tar.xz
+	curl -L https://github.com/ip7z/7zip/releases/download/26.05/7z2605-linux-x64.tar.xz --output ./tools/7z2605-linux-x64.tar.xz
 	tar -Jxvf ./tools/7z2605-linux-x64.tar.xz
 	mkdir ./tools/7z2605
 	mv ./7zz ./tools/7z2605
@@ -66,7 +66,7 @@ else
 	chmod +x ./tools/jdk-21.0.13-9/bin/java
 
 	curl https://download2.gluonhq.com/openjfx/21.0.13/openjfx-21.0.13_linux-x64_bin-sdk.zip --output ./tools/openjfx-21.0.13_linux-x64_bin-sdk.zip
-	./tools/7z2501/7zz x ./tools/openjfx-21.0.13_linux-x64_bin-sdk.zip
+	./tools/7z2605/7zz x ./tools/openjfx-21.0.13_linux-x64_bin-sdk.zip
 	mv ./javafx-sdk-21.0.13 ./tools
 	mv ./tools/javafx-sdk-21.0.13 ./tools/javafx-sdk21
   rm ./tools/openjfx-21.0.13_linux-x64_bin-sdk.zip -fr
