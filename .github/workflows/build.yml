@@ -185,7 +185,7 @@ jobs:
           cd ./tmp
           chmod +x ./start_forLinux.sh
           screen -UAmdS test ./start_forLinux.sh
-          sleep 15s
+          sleep 25s
           if [ -d ./tools ]; then
             echo "Tools Folder OK"
             if [ -d ./tools/jdk-21.0.13-9 ]; then
